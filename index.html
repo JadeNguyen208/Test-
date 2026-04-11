@@ -3,96 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN - Minimalist 3D Hex</title>
+    <title>JN - The Ultimate 3D Gold Experience</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #D4AF37; --bg: #050505; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; cursor: default; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; cursor: none; }
         
-        /* Chấm vàng nền tĩnh lặng */
-        .bg-dots {
-            position: fixed; inset: 0; z-index: -1;
-            background-image: radial-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px);
-            background-size: 40px 40px;
+        #bg-canvas { position: fixed; inset: 0; z-index: -1; }
+        #cursor-dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 1000; }
+        #cursor-glow { width: 400px; height: 400px; background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%); position: fixed; top: -200px; left: -200px; pointer-events: none; z-index: 999; }
+
+        .main-container { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; perspective: 1500px; }
+
+        /* JN 3D Rotation */
+        .jn-system { position: relative; z-index: 100; transform-style: preserve-3d; }
+        #jn-logo { 
+            font-size: 110px; font-weight: 900; letter-spacing: -8px; color: #fff; 
+            display: inline-block; transform-style: preserve-3d; 
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.1));
         }
-
-        .main-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; perspective: 1000px; }
-
-        /* JN Center */
-        .jn-center { position: relative; z-index: 100; text-align: center; }
-        #jn-logo { font-size: 110px; font-weight: 900; letter-spacing: -8px; color: #fff; line-height: 1; margin: 10px 0; }
-        .badge-svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; pointer-events: none; }
-        .badge-path { fill: none; }
+        
+        /* Rotating Badge */
+        #badge-svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 320px; height: 320px; pointer-events: none; }
         .badge-text { font-size: 11px; font-weight: 800; text-transform: uppercase; fill: var(--gold); letter-spacing: 5px; }
 
-        /* Title */
-        .top-header { position: absolute; top: 8%; width: 100%; text-align: center; z-index: 10; }
-        .top-header h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px; }
+        /* Layout Positions */
+        .top-header { position: absolute; top: 5%; width: 100%; text-align: center; }
+        .top-header h1 { font-size: 48px; font-weight: 900; letter-spacing: -1px; margin-bottom: 0; }
 
-        /* Hexagon Path */
-        #hex-svg { position: absolute; width: 480px; height: 480px; pointer-events: none; }
-        .draw-hex { fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-dasharray: 1800; stroke-dashoffset: 1800; opacity: 0.5; }
+        #hex-svg { position: absolute; width: 500px; height: 500px; pointer-events: none; top: 52%; left: 50%; transform: translate(-50%, -50%); }
+        .draw-hex { fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-dasharray: 1800; stroke-dashoffset: 1800; opacity: 0.4; }
 
-        /* Service Cards - No White Box */
+        /* Service Cards - Gold Frames */
         .card-wrapper { position: absolute; z-index: 110; }
         .service-card {
-            width: 240px; padding: 20px; 
-            border: 1px solid var(--gold); 
-            background: transparent;
+            width: 240px; padding: 18px; 
+            border: 1px solid var(--gold); background: rgba(0,0,0,0.6);
             opacity: 0; transform: translateY(20px);
-            transition: border-width 0.3s;
-            cursor: pointer;
-            transform-style: preserve-3d;
+            cursor: pointer; transform-style: preserve-3d; transition: background 0.3s;
         }
+        .service-card:hover { background: rgba(212, 175, 55, 0.05); }
         
-        .card-title { font-weight: 800; font-size: 13px; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; pointer-events: none; }
-        .card-sub { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0; pointer-events: none; }
+        .card-title { font-weight: 800; font-size: 13px; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
+        .card-sub { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
         
-        /* Nội dung hiện ra khi click */
+        /* White text bullet points */
         .card-content { 
-            max-height: 0; overflow: hidden; opacity: 0; 
-            transition: all 0.5s ease; border-top: 0px solid rgba(212, 175, 55, 0.2);
-            margin-top: 0;
+            max-height: 0; overflow: hidden; opacity: 0; transition: all 0.5s ease;
+            border-top: 0px solid rgba(212, 175, 55, 0.3); margin-top: 0;
         }
-        .service-card.open { border-width: 2px; }
-        .service-card.open .card-content { max-height: 200px; opacity: 1; margin-top: 15px; padding-top: 15px; border-top-width: 1px; }
-        
-        .bullet-list { font-size: 11px; color: #fff; list-style: none; line-height: 1.6; }
+        .service-card.open .card-content { max-height: 200px; opacity: 1; margin-top: 12px; padding-top: 12px; border-top-width: 1px; }
+        .bullet-list { font-size: 11px; color: #ffffff; list-style: none; line-height: 1.6; }
         .bullet-list li::before { content: "• "; color: var(--gold); margin-right: 5px; }
         
-        .card-icon { font-size: 24px; position: absolute; top: -15px; right: -15px; opacity: 0; transition: opacity 0.3s; }
-        .service-card:hover .card-icon { opacity: 1; }
+        .card-icon { font-size: 22px; position: absolute; top: -12px; right: -12px; }
     </style>
 </head>
 <body>
 
-    <div class="bg-dots"></div>
+    <div id="cursor-dot"></div>
+    <div id="cursor-glow"></div>
+    <canvas id="bg-canvas"></canvas>
 
     <div class="main-container">
         <div class="top-header">
             <h1>What I can do <span style="color:var(--gold); font-style: italic;">for you?</span></h1>
         </div>
 
-        <div class="jn-center">
+        <div class="jn-system">
             <div id="jn-logo">JN</div>
-            <svg class="badge-svg" viewBox="0 0 200 200">
-                <path id="badgePath" d="M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0" class="badge-path" />
+            <svg id="badge-svg" viewBox="0 0 200 200">
+                <path id="badgePath" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" fill="none" />
                 <text class="badge-text">
                     <textPath href="#badgePath" startOffset="0%">
                         • DIGITAL DESIGN • FRONTEND WEB DEVELOPER • DIGITAL DESIGN • FRONTEND WEB DEVELOPER
                     </textPath>
                 </text>
             </svg>
-            <div style="font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: #444; font-weight: 800; margin-top: -5px;">Creative Developer</div>
+            <div style="font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: #444; font-weight: 800; margin-top: 5px; text-align: center;">Creative Developer</div>
         </div>
 
         <svg id="hex-svg" viewBox="0 0 600 600">
             <path class="draw-hex" id="active-line" d="M 300 50 L 516 175 L 516 425 L 300 550 L 84 425 L 84 175 Z" />
         </svg>
 
-        <div id="cards-layer"></div>
+        <div id="elements-layer"></div>
     </div>
 
     <script>
@@ -105,77 +102,58 @@
             { icon: "📊", title: "Marketing", sub: "Growth & SEO", items: ["On-page SEO", "Product Hunt", "Social Strategy"] }
         ];
 
-        const layer = document.getElementById('cards-layer');
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight / 2;
-        const r = 240; // Hex radius
+        // 1. Background Particles
+        const canvas = document.getElementById('bg-canvas'); const ctx = canvas.getContext('2d');
+        let particles = [];
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        window.dispatchEvent(new Event('resize'));
+        class Particle {
+            constructor() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.s = Math.random()*2; this.v = Math.random()*0.5; }
+            draw() { ctx.fillStyle = 'rgba(212, 175, 55, 0.3)'; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
+            update() { this.y -= this.v; if(this.y < 0) this.y = canvas.height; }
+        }
+        for(let i=0; i<100; i++) particles.push(new Particle());
+        function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(anim); } anim();
 
-        const pts = [
-            {x:cx, y:cy-r}, {x:cx+r*0.866, y:cy-r*0.5}, {x:cx+r*0.866, y:cy+r*0.5},
-            {x:cx, y:cy+r}, {x:cx-r*0.866, y:cy+r*0.5}, {x:cx-r*0.866, y:cy-r*0.5}
-        ];
+        // 2. Hex Layout
+        const layer = document.getElementById('elements-layer');
+        const cx = window.innerWidth/2; const cy = window.innerHeight/2 + 30; const r = 250;
+        const pts = [{x:cx, y:cy-r}, {x:cx+r*0.866, y:cy-r*0.5}, {x:cx+r*0.866, y:cy+r*0.5}, {x:cx, y:cy+r}, {x:cx-r*0.866, y:cy+r*0.5}, {x:cx-r*0.866, y:cy-r*0.5}];
 
         services.forEach((s, i) => {
-            const wrap = document.createElement('div');
-            wrap.className = 'card-wrapper';
+            const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
             const ang = (i * 60 - 90) * (Math.PI/180);
             wrap.style.left = `${pts[i].x + Math.cos(ang)*110 - 120}px`;
-            wrap.style.top = `${pts[i].y + Math.sin(ang)*60 - 50}px`;
-
-            wrap.innerHTML = `
-                <div class="service-card" onclick="this.classList.toggle('open')">
-                    <div class="card-icon">${s.icon}</div>
-                    <div class="card-title">${i+1}. ${s.title}</div>
-                    <div class="card-sub">${s.sub}</div>
-                    <div class="card-content">
-                        <ul class="bullet-list">${s.items.map(li => `<li>${li}</li>`).join('')}</ul>
-                    </div>
-                </div>
-            `;
+            wrap.style.top = `${pts[i].y + Math.sin(ang)*60 - 60}px`;
+            wrap.innerHTML = `<div class="service-card" onclick="this.classList.toggle('open')"><div class="card-icon">${s.icon}</div><div class="card-title">${i+1}. ${s.title}</div><div class="card-sub">${s.sub}</div><div class="card-content"><ul class="bullet-list">${s.items.map(li => `<li>${li}</li>`).join('')}</ul></div></div>`;
             layer.appendChild(wrap);
         });
 
-        // GSAP Animations
+        // 3. Animations
         const tl = gsap.timeline();
+        
+        // JN Auto-rotate
+        gsap.to("#jn-logo", { rotationY: 360, duration: 8, repeat: -1, ease: "none" });
+        // Badge rotate
+        gsap.to("#badge-svg", { rotation: -360, duration: 20, repeat: -1, ease: "none" });
 
-        // Rotate Badge
-        gsap.to(".badge-svg", { rotation: 360, duration: 25, repeat: -1, ease: "none" });
-
-        // Intro & Draw Hex
-        tl.from(".jn-center", { opacity: 0, scale: 0.8, duration: 1.5, ease: "expo.out" })
-          .to("#active-line", { strokeDashoffset: 0, duration: 7, ease: "none", onUpdate: function() {
-              const p = this.progress();
-              document.querySelectorAll('.service-card').forEach((card, i) => {
-                  if (p >= i/6) gsap.to(card, { opacity: 1, y: 0, duration: 0.5, overwrite: "auto" });
-              });
+        tl.from(".top-header", { y: -50, opacity: 0, duration: 1 })
+          .from(".jn-system", { scale: 0, opacity: 0, duration: 1 }, "-=0.5")
+          .to("#active-line", { strokeDashoffset: 0, duration: 6, ease: "none", onUpdate: function() {
+              const p = this.progress(); 
+              document.querySelectorAll('.service-card').forEach((card, i) => { if(p >= i/6) gsap.to(card, { opacity: 1, y: 0, duration: 0.4, overwrite: "auto" }); });
           }});
 
-        // 3D Hover Effect (Only on Hover)
-        document.querySelectorAll('.service-card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
+        window.addEventListener('mousemove', (e) => {
+            gsap.to("#cursor-dot", { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to("#cursor-glow", { x: e.clientX, y: e.clientY, duration: 0.4 });
+            document.querySelectorAll('.service-card').forEach(card => {
                 const rect = card.getBoundingClientRect();
-                const x = (e.clientX - rect.left - rect.width/2) / 8;
-                const y = (e.clientY - rect.top - rect.height/2) / 8;
-                gsap.to(card, { 
-                    rotationY: x, 
-                    rotationX: -y, 
-                    y: -10,
-                    boxShadow: "0 20px 40px rgba(212, 175, 55, 0.2)",
-                    duration: 0.4 
-                });
-            });
-
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, { 
-                    rotationY: 0, 
-                    rotationX: 0, 
-                    y: 0,
-                    boxShadow: "none",
-                    duration: 0.5 
-                });
+                const x = (e.clientX - rect.left - rect.width/2)/10;
+                const y = (e.clientY - rect.top - rect.height/2)/10;
+                gsap.to(card, { rotationY: x, rotationX: -y, duration: 0.4 });
             });
         });
-
     </script>
 </body>
 </html>
