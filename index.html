@@ -7,16 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; cursor: none; }
+        body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; scroll-behavior: smooth; cursor: none; }
 
-        /* ── BACKGROUND & CURSOR ── */
+        /* ── BACKGROUND ── */
         #pcanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         #custom-mouse { position: fixed; width: 10px; height: 10px; background: #f0c040; border-radius: 50%; z-index: 10000; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 15px #f0c040; }
+        .trail { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: opacity 0.4s; }
         
-        .digital-silk { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.7em; color: rgba(240, 192, 64, 0.3); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .digital-silk { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.6em; color: rgba(240, 192, 64, 0.2); display: flex; align-items: center; justify-content: center; z-index: 100; }
 
         /* ── HERO SECTION ── */
-        #hero-section { display: flex; align-items: center; justify-content: space-around; min-height: 80vh; padding: 0 10%; perspective: 1000px; z-index: 10; position: relative; }
+        #hero-section { display: flex; align-items: center; justify-content: space-around; min-height: 70vh; padding: 0 10%; perspective: 1000px; z-index: 10; position: relative; }
         .hero-text { flex: 1; }
         .hero-text h2 { font-size: clamp(48px, 6vw, 92px); line-height: 1.1; font-weight: 300; white-space: nowrap; }
         .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.4); font-weight: 700; }
@@ -25,73 +26,62 @@
         .line-right { transform: translateX(150%); animation: flyIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; margin-top: -10px; }
         @keyframes flyIn { to { transform: translateX(0); } }
 
-        /* ── TERMINAL ── */
-        .terminal-container { flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.95); border: 1px solid rgba(240, 192, 64, 0.3); border-radius: 12px; padding: 30px; font-family: 'Space Mono', monospace; font-size: 13px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 400px; transform: rotateY(8deg); }
+        /* ── TERMINAL + RUNNING BORDER ── */
+        .terminal-container { 
+            flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.95); 
+            border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; 
+            padding: 30px; font-family: 'Space Mono', monospace; font-size: 13px; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 420px; 
+            transform: rotateY(8deg); position: relative; overflow: hidden;
+        }
+        
+        /* Hiệu ứng viền chạy cho Terminal khi đang gõ code */
+        .t-border { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; z-index: 5; opacity: 0; transition: opacity 0.5s; }
+        .t-active .t-border { opacity: 1; }
+        .t-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runR 2s linear infinite; }
+        .t-2 { bottom: 0; right: -100%; width: 100%; height: 2px; animation: runL 2s linear infinite; }
+        @keyframes runR { from { left: -100%; } to { left: 100%; } }
+        @keyframes runL { from { right: -100%; } to { right: 100%; } }
+
         .terminal-header { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
-        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
         #code-output { color: #999; line-height: 1.8; }
         .code-key { color: #f0c040; } .code-val { color: #c9a84c; font-style: italic; }
         .cursor { border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; }
         @keyframes blink { 50% { opacity: 0; } }
 
-        /* ── STRATEGIC SUMMARY LINE (MỚI) ── */
-        .summary-line {
-            width: 100%;
-            text-align: center;
-            font-family: 'Space Mono', monospace;
-            font-weight: 700;
-            color: #f0c040;
-            font-size: 14px;
-            letter-spacing: 0.4em;
-            text-transform: uppercase;
-            padding: 40px 0;
-            z-index: 10;
-            position: relative;
-            text-shadow: 0 0 10px rgba(240, 192, 64, 0.5);
-            opacity: 0;
-            animation: fadeIn 1.5s ease 2s forwards;
-        }
-        @keyframes fadeIn { to { opacity: 1; } }
+        /* ── STRATEGIC SUMMARY ── */
+        .summary-line { width: 100%; text-align: center; font-family: 'Space Mono', monospace; font-weight: 700; color: #f0c040; font-size: 14px; letter-spacing: 0.4em; text-transform: uppercase; padding: 20px 0; z-index: 10; position: relative; text-shadow: 0 0 10px #f0c040; }
 
-        /* ── GRID ── */
-        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; padding: 0 10% 80px 8%; z-index: 10; position: relative; }
+        /* ── GRID: ĐẨY SÁT LÊN ── */
+        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; padding: 0 10% 50px 8%; z-index: 10; position: relative; }
         
-        .info-card { background: rgba(15, 15, 12, 0.95); padding: 50px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.15); position: relative; overflow: hidden; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); transform-style: preserve-3d; }
+        .info-card { background: rgba(15, 15, 12, 0.95); padding: 45px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.15); position: relative; overflow: hidden; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); transform-style: preserve-3d; }
         
-        /* Running Border */
         .card-border-box { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 1; }
         .info-card:hover .card-border-box { opacity: 1; }
-        .b-line { position: absolute; background: linear-gradient(90deg, transparent, #f0c040, transparent); box-shadow: 0 0 15px #f0c040; }
-        .b-line-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runRight 1.5s linear infinite; }
-        .b-line-2 { bottom: 0; right: -100%; width: 100%; height: 2px; animation: runLeft 1.5s linear infinite; }
-        .b-line-3 { left: 0; bottom: -100%; width: 2px; height: 100%; background: linear-gradient(0deg, transparent, #f0c040, transparent); animation: runUp 1.5s linear infinite; }
-        .b-line-4 { right: 0; top: -100%; width: 2px; height: 100%; background: linear-gradient(180deg, transparent, #f0c040, transparent); animation: runDown 1.5s linear infinite; }
+        .b-line { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; }
+        .b-line-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runR 1.5s linear infinite; }
+        .b-line-2 { bottom: 0; right: -100%; width: 100%; height: 2px; animation: runL 1.5s linear infinite; }
 
-        @keyframes runRight { 0% { left: -100%; } 100% { left: 100%; } }
-        @keyframes runLeft  { 0% { right: -100%; } 100% { right: 100%; } }
-        @keyframes runUp    { 0% { bottom: -100%; } 100% { bottom: 100%; } }
-        @keyframes runDown  { 0% { top: -100%; } 100% { top: 100%; } }
-
-        .info-card:hover { transform: translateY(-10px) translateZ(40px); background: rgba(20, 20, 18, 1); border-color: rgba(255, 255, 255, 0.4); }
+        .info-card:hover { transform: translateY(-5px) translateZ(40px); background: rgba(20, 20, 18, 1); border-color: #fff; }
         .info-card:hover h3, .info-card:hover p, .info-card:hover li { color: #fff; text-shadow: 0 0 10px #fff; }
 
-        .card-label { font-family: 'Space Mono', monospace; font-size: 11px; color: #f0c040; letter-spacing: 5px; margin-bottom: 25px; display: block; border-bottom: 1px solid rgba(240,192,64,0.3); width: fit-content; }
-        .info-card h3 { font-size: 32px; margin-bottom: 20px; font-weight: 400; color: #f5f5f5; }
-        .info-card p, .info-card li { color: #bbb; font-family: 'Space Mono', monospace; font-size: 14px; line-height: 2; }
+        .card-label { font-family: 'Space Mono', monospace; font-size: 11px; color: #f0c040; letter-spacing: 5px; margin-bottom: 25px; display: block; }
+        .info-card h3 { font-size: 28px; margin-bottom: 20px; color: #f5f5f5; }
+        .info-card p, .info-card li { color: #bbb; font-family: 'Space Mono', monospace; font-size: 14px; line-height: 1.8; }
         .info-card li { margin-bottom: 12px; padding-left: 20px; position: relative; list-style: none; }
         .info-card li::before { content: '>'; position: absolute; left: 0; color: #f0c040; font-weight: bold; }
-        .highlight { color: #f0c040; font-weight: 700; text-shadow: 0 0 8px rgba(240,192,64,0.4); }
+        .highlight { color: #f0c040; font-weight: 700; }
 
         /* ── JN BADGE: DIGITAL ORBIT ── */
-        #jn-badge-corner { position: fixed; bottom: 40px; left: 40px; width: 110px; height: 110px; z-index: 1000; transition: transform 0.4s ease; }
+        #jn-badge-corner { position: fixed; bottom: 40px; left: 40px; width: 110px; height: 110px; z-index: 1000; }
         #jn-ring-svg { width: 100%; height: 100%; overflow: visible; }
         .orbit { fill: none; stroke: rgba(240, 192, 64, 0.4); stroke-width: 0.8px; stroke-dasharray: 4 4; transform-origin: center; animation: jnSpin 10s linear infinite; }
         @keyframes jnSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .main-text { fill: #fff; font-weight: 700; font-size: 24px; text-shadow: 0 0 10px #f0c040; }
-        .orbit-text { fill: #f0c040; font-size: 6px; letter-spacing: 2.1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
+        .orbit-text { fill: #f0c040; font-size: 6px; letter-spacing: 2px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
 
-        @media (max-width: 900px) { #hero-section { flex-direction: column; text-align: center; } #experience-grid { grid-template-columns: 1fr; } .summary-line { font-size: 10px; letter-spacing: 0.2em; } }
+        @media (max-width: 900px) { #hero-section { flex-direction: column; } #experience-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -100,55 +90,55 @@
     <div id="custom-mouse"></div>
     <div class="digital-silk">Digital Designer & Creative Developer — 2026</div>
 
-    <section id="hero-section">
-        <div class="hero-text">
-            <h2 class="line-left">Design that <span class="gold-highlight">works.</span></h2>
-            <h2 class="line-right">Code that <span class="gold-highlight">ships.</span></h2>
-            <div style="font-family:'Space Mono'; color:rgba(240,192,64,0.7); margin-top:20px;">> Senior Creative Engine Activated.</div>
-        </div>
-
-        <div class="terminal-container">
-            <div class="terminal-header">
-                <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+    <div class="page-container">
+        <section id="hero-section">
+            <div class="hero-text">
+                <h2 class="line-left">Design that <span class="gold-highlight">works.</span></h2>
+                <h2 class="line-right">Code that <span class="gold-highlight">ships.</span></h2>
             </div>
-            <div id="code-output"></div>
-            <span class="cursor"></span>
-        </div>
-    </section>
 
-    <div class="summary-line">
-        Strategic Leadership • Sharp Visual Logic • Innovative Execution
+            <div class="terminal-container" id="terminal-main">
+                <div class="t-border t-1"></div><div class="t-border t-2"></div>
+                <div class="terminal-header">
+                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                </div>
+                <div id="code-output"></div>
+                <span class="cursor"></span>
+            </div>
+        </section>
+
+        <div class="summary-line">Strategic Leadership • Sharp Visual Logic • Innovative Execution</div>
+
+        <section id="experience-grid">
+            <div class="info-card">
+                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
+                <span class="card-label">Curriculum Vitae</span>
+                <ul>
+                    <li>BSc Digital Marketing - Cardiff Met, UK</li>
+                    <li><span class="highlight">CS50p Python & CS50x Harvard</span></li>
+                    <li><span class="highlight">Rapidly mastering new tech</span> for live design.</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
+                <span class="card-label">Expertise</span>
+                <h3>Sharp Visual Eye</h3>
+                <p>Mastering aesthetic precision with a <span class="highlight">sharp eye for visual balance</span>. Expert in interactive prototyping.</p>
+            </div>
+            <div class="info-card">
+                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
+                <span class="card-label">Leadership</span>
+                <h3>Strategic Execution</h3>
+                <p><span class="highlight">Led 20+ design projects</span> while managing <span class="highlight">multiple teams simultaneously</span>.</p>
+            </div>
+            <div class="info-card">
+                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
+                <span class="card-label">Philosophy</span>
+                <h3>Always Creative</h3>
+                <p>Design is solving. I bridge concepts and products with <span class="highlight">continuous learning</span> and innovation.</p>
+            </div>
+        </section>
     </div>
-
-    <section id="experience-grid">
-        <div class="info-card">
-            <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
-            <span class="card-label">Curriculum Vitae</span>
-            <ul>
-                <li>BSc Digital Marketing Management - Cardiff Met, UK</li>
-                <li><span class="highlight">CS50p Python & CS50x Harvard</span> - Mastering Logic</li>
-                <li><span class="highlight">Rapidly mastering new tech</span> for live design.</li>
-            </ul>
-        </div>
-        <div class="info-card">
-            <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
-            <span class="card-label">Expertise</span>
-            <h3>Sharp Visual Eye</h3>
-            <p>Mastering aesthetic precision with a <span class="highlight">sharp eye for visual balance</span>. Expert in high-end interactive prototyping.</p>
-        </div>
-        <div class="info-card">
-            <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
-            <span class="card-label">Leadership</span>
-            <h3>Strategic Execution</h3>
-            <p><span class="highlight">Led 20+ design projects</span> while managing <span class="highlight">multiple teams simultaneously</span>. Concept to live.</p>
-        </div>
-        <div class="info-card">
-            <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
-            <span class="card-label">Philosophy</span>
-            <h3>Always Creative</h3>
-            <p>Design is solving. I bridge concepts and products with <span class="highlight">continuous learning</span> and rapid tech adoption.</p>
-        </div>
-    </section>
 
     <div id="jn-badge-corner">
         <svg id="jn-ring-svg" viewBox="0 0 100 100">
@@ -164,7 +154,7 @@
         let W,H,mx=-999,my=-999;
         function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
         class Amb{
-            constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.15;this.vy=(Math.random()-.5)*.15;this.size=Math.random()*1.8;this.alpha=Math.random()*.5+.1;}
+            constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.15;this.vy=(Math.random()-.5)*.15;this.size=Math.random()*2;this.alpha=Math.random()*.5+.1;}
             update(){
                 const dx=this.x-mx, dy=this.y-my, d=Math.sqrt(dx*dx+dy*dy);
                 if(d<80){this.x-=(dx/d)*0.8;this.y-=(dy/d)*0.8;}
@@ -177,32 +167,49 @@
         function init(){resize();ambients=[];for(let i=0;i<180;i++)ambients.push(new Amb());}
         function render(){requestAnimationFrame(render);ctx.fillStyle='rgba(7,7,5,0.2)';ctx.fillRect(0,0,W,H);ambients.forEach(a=>{a.update();a.draw();});}
         window.addEventListener('resize',init);init();render();
-        document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;document.getElementById('custom-mouse').style.left=mx+'px';document.getElementById('custom-mouse').style.top=my+'px';});
+
+        const trails=[];
+        for(let i=0;i<8;i++){
+            const d=document.createElement('div');d.className='trail';
+            d.style.cssText=`width:${4+i}px;height:${4+i}px;background:rgba(240,192,64,${0.6-i*0.05})`;
+            document.body.appendChild(d);trails.push({el:d,x:0,y:0});
+        }
+        document.addEventListener('mousemove',e=>{
+            mx=e.clientX;my=e.clientY;
+            document.getElementById('custom-mouse').style.left=mx+'px';
+            document.getElementById('custom-mouse').style.top=my+'px';
+        });
+        (function trailLoop(){
+            let px=mx, py=my;
+            trails.forEach((t,i)=>{t.x+=(px-t.x)*0.15;t.y+=(py-t.y)*0.15;t.el.style.left=t.x+'px';t.el.style.top=t.y+'px';px=t.x;py=t.y;});
+            requestAnimationFrame(trailLoop);
+        })();
 
         const output = document.getElementById('code-output');
+        const term = document.getElementById('terminal-main');
         const codeLines = [
-            {t:"> [LIVE]: I am Jade Nguyen...", c:"#f0c040"},
-            {t:"> [STATUS]: Senior Engine Engaged", c:"#fff"},
+            {t:"> [CORE]: I am Jade Nguyen...", c:"#f0c040"},
+            {t:"> [EXEC]: Interface Engineering Live", c:"#fff"},
+            {t:"> [SYST]: Design Engine v2.6 Ready", c:"#27c93f"},
             {t:"", c:""},
             {t:"const Jade = {", c:"#666"},
-            {t:"  role: 'Senior Digital Designer',", isCode:true},
-            {t:"  leadership: '20+ projects led',", isCode:true},
-            {t:"  teams: 'Multi-team coordination',", isCode:true},
-            {t:"  output: () => 'Concept to Live'", isCode:true},
+            {t:"  vision: 'Pixel Perfection',", isCode:true},
+            {t:"  output: 'Live Dynamic Products',", isCode:true},
+            {t:"  leadership: '20+ Projects Led'", isCode:true},
             {t:"};", c:"#666"}
         ];
         let lineIdx=0;
         function typeCode(){
+            term.classList.add('t-active');
             if(lineIdx<codeLines.length){
                 const l=codeLines[lineIdx];const d=document.createElement('div');
                 if(l.isCode){const p=l.t.split(':');d.innerHTML=`<span class="code-key">${p[0]}</span>:<span class="code-val">${p[1]}</span>`;}
                 else{d.style.color=l.c;d.textContent=l.t;}
-                output.appendChild(d);lineIdx++;setTimeout(typeCode, 200); // Code chạy nhanh hơn (200ms)
+                output.appendChild(d);lineIdx++;setTimeout(typeCode, 150);
             }
         }
-        setTimeout(typeCode, 1500);
+        setTimeout(typeCode, 1000);
 
-        // 3D Tilt
         document.querySelectorAll('.info-card').forEach(card=>{
             card.addEventListener('mousemove',e=>{
                 const r=card.getBoundingClientRect();
