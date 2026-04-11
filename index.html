@@ -9,173 +9,115 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; cursor: none; }
 
-        /* ── BACKGROUND PARTICLES ── */
+        /* ── BACKGROUND ── */
         #pcanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .page-container { position: relative; z-index: 10; }
-
-        /* ── INTERACTIVE CURSOR trail (Page 1) ── */
         #custom-mouse { position: fixed; width: 10px; height: 10px; background: #f0c040; border-radius: 50%; z-index: 10000; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 15px #f0c040; }
-        .trail { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9990; transform: translate(-50%, -50%); transition: opacity 0.5s; }
-
-        /* ── SIDEBAR VERTICAL TEXT (Page 1 Sync) ── */
-        .side-text-vertical {
-            position: fixed;
-            right: 30px;
-            top: 0;
-            bottom: 0;
-            writing-mode: vertical-rl;
-            text-transform: uppercase;
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 0.6em;
-            color: rgba(240, 192, 64, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
-            white-space: nowrap;
-        }
+        
+        .digital-silk { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.6em; color: rgba(240, 192, 64, 0.2); display: flex; align-items: center; justify-content: center; z-index: 50; white-space: nowrap; }
 
         /* ── HERO SECTION ── */
-        #hero-section {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            min-height: 100vh;
-            padding: 0 12% 0 8%;
-            perspective: 1000px;
-        }
+        #hero-section { display: flex; align-items: center; justify-content: space-around; min-height: 85vh; padding: 0 10%; perspective: 1000px; position: relative; z-index: 10; }
+        .hero-text { flex: 1; display: flex; flex-direction: column; }
+        .hero-text h2 { font-size: clamp(40px, 6vw, 85px); line-height: 1.1; font-weight: 300; white-space: nowrap; }
+        .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.4); font-weight: 700; }
 
-        .hero-text-3d {
-            flex: 1;
-            opacity: 0;
-            transform: rotateY(-25deg) translateZ(-100px);
-            animation: reveal3D 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .line-left { transform: translateX(-150%); animation: flyIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .line-right { transform: translateX(150%); animation: flyIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; margin-top: -10px; }
+        @keyframes flyIn { to { transform: translateX(0); } }
 
-        .hero-text-3d h2 { font-size: clamp(48px, 6vw, 92px); line-height: 1.1; margin-bottom: 5px; font-weight: 300; color: #eee; }
-        .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.3); font-weight: 700; }
+        .intro-text { font-family: 'Space Mono', monospace; color: rgba(240,192,64,0.7); font-size: 14px; margin-top: 25px; line-height: 1.6; }
 
-        @keyframes reveal3D { to { opacity: 1; transform: rotateY(0) translateZ(0); } }
-
-        /* Chữ gõ giới thiệu phía trên code */
-        .type-header { font-family: 'Space Mono', monospace; color: rgba(240,192,64,0.7); font-size: 16px; margin-bottom: 15px; }
-
-        .terminal-container {
-            flex: 1;
-            max-width: 550px;
-            background: rgba(10, 10, 8, 0.9);
-            border: 1px solid rgba(240, 192, 64, 0.15);
-            border-radius: 12px;
-            padding: 30px;
-            font-family: 'Space Mono', monospace;
-            font-size: 13px;
-            position: relative;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
-            min-height: 380px;
-            transform: rotateY(8deg);
-        }
-
-        .terminal-header { display: flex; gap: 8px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        /* ── TERMINAL ── */
+        .terminal-container { flex: 1; max-width: 500px; background: rgba(10, 10, 8, 0.9); border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; padding: 25px; font-family: 'Space Mono', monospace; font-size: 12px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.7); min-height: 350px; transform: rotateY(8deg); }
+        .terminal-header { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
         .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
-        
-        #code-output { color: #888; line-height: 1.8; }
-        .code-key { color: #f0c040; }
-        .code-val { color: #c9a84c; font-style: italic; }
-        .cursor { border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; vertical-align: middle; }
+        #code-output { color: #999; line-height: 1.8; }
+        .code-key { color: #f0c040; } .code-val { color: #c9a84c; font-style: italic; }
+        .cursor { border-left: 6px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; }
         @keyframes blink { 50% { opacity: 0; } }
 
-        /* ── CREATIVE GRID ── */
-        #experience-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-            padding: 0 12% 100px 8%;
-            perspective: 1500px;
+        /* ── EXPERIENCE GRID: ĐẨY SÁT LÊN ── */
+        #experience-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 30px; 
+            padding: 20px 10% 80px 8%; /* Giảm padding top từ 100px xuống 20px */
+            position: relative; 
+            z-index: 10; 
+            margin-top: -40px; /* Kéo grid lên cao hơn nữa */
         }
-
+        
         .info-card {
-            background: rgba(15, 15, 12, 0.85);
-            border: 1px solid rgba(240, 192, 64, 0.1);
+            background: rgba(15, 15, 12, 0.9);
             padding: 45px;
             border-radius: 16px;
+            position: relative;
+            overflow: hidden;
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Viền trắng mảnh theo yêu cầu */
         }
 
-        .info-card:hover {
+        /* Running Border Effect */
+        .card-border-box { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 1; }
+        .info-card:hover .card-border-box { opacity: 1; }
+        .b-line { position: absolute; background: linear-gradient(90deg, transparent, #f0c040, transparent); box-shadow: 0 0 15px #f0c040; }
+        .b-line-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runRight 1.5s linear infinite; }
+        .b-line-2 { bottom: 0; right: -100%; width: 100%; height: 2px; animation: runLeft 1.5s linear infinite; }
+        .b-line-3 { left: 0; bottom: -100%; width: 2px; height: 100%; background: linear-gradient(0deg, transparent, #f0c040, transparent); animation: runUp 1.5s linear infinite; }
+        .b-line-4 { right: 0; top: -100%; width: 2px; height: 100%; background: linear-gradient(180deg, transparent, #f0c040, transparent); animation: runDown 1.5s linear infinite; }
+
+        @keyframes runRight { 0% { left: -100%; } 100% { left: 100%; } }
+        @keyframes runLeft  { 0% { right: -100%; } 100% { right: 100%; } }
+        @keyframes runUp    { 0% { bottom: -100%; } 100% { bottom: 100%; } }
+        @keyframes runDown  { 0% { top: -100%; } 100% { top: 100%; } }
+
+        .info-card:hover { 
+            transform: translateZ(30px);
             background: rgba(20, 20, 18, 1);
-            border-color: rgba(240, 192, 64, 0.6);
-            transform: translateZ(50px) rotateX(2deg) rotateY(-2deg);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            border-color: rgba(255, 255, 255, 0.4);
         }
-
         .info-card:hover h3, .info-card:hover p, .info-card:hover li { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.4); }
 
-        .card-label { font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 5px; color: #f0c040; margin-bottom: 30px; display: block; opacity: 0.7; }
-        .info-card h3 { font-size: 28px; margin-bottom: 20px; font-weight: 400; color: #f5f5f5; }
-        .info-card p, .info-card ul { color: #bbb; font-family: 'Space Mono', monospace; font-size: 13px; line-height: 2; list-style: none; }
-        .info-card li { margin-bottom: 12px; padding-left: 20px; position: relative; }
+        .card-label { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 4px; color: #f0c040; margin-bottom: 25px; display: block; border-bottom: 1px solid rgba(240,192,64,0.3); width: fit-content; padding-bottom: 5px; }
+        .info-card h3 { font-size: 30px; margin-bottom: 20px; font-weight: 400; color: #f5f5f5; }
+        .info-card p, .info-card ul { color: #bbb; font-family: 'Space Mono', monospace; font-size: 14px; line-height: 1.8; }
+        .info-card li { margin-bottom: 12px; padding-left: 20px; position: relative; list-style: none; }
         .info-card li::before { content: '>'; position: absolute; left: 0; color: #f0c040; font-weight: bold; }
         
-        .highlight-tech { color: #f0c040; font-weight: 700; }
+        .highlight { color: #f0c040; font-weight: 700; text-shadow: 0 0 5px rgba(240,192,64,0.3); }
 
-        /* ── JN BADGE: GHOST (Page 1 Sync - Khôi phục) ── */
-        #jn-badge-corner {
-            position: fixed;
-            bottom: 40px;
-            left: 40px;
-            width: 100px;
-            height: 100px;
-            opacity: 0;
-            z-index: 100;
-            animation: badgeReveal 2.5s ease 2s forwards, floatBadge 6s ease-in-out infinite;
-        }
-
-        @keyframes badgeReveal {
-            0% { opacity: 0; transform: scale(0.8) translateY(10px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        @keyframes floatBadge {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        /* SVG Chi tiết */
+        /* ── JN BADGE: DIGITAL ORBIT ── */
+        #jn-badge-corner { position: fixed; bottom: 40px; left: 40px; width: 110px; height: 110px; z-index: 1000; transition: transform 0.4s ease; }
+        #jn-badge-corner:hover { transform: scale(1.1); }
         #jn-ring-svg { width: 100%; height: 100%; overflow: visible; }
-        .orbit-circle { fill: none; stroke: rgba(240, 192, 64, 0.4); stroke-width: 0.8px; stroke-dasharray: 4 4; }
-        .jn-text { fill: #fff; font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 24px; text-shadow: 0 0 10px rgba(240, 192, 64, 0.8); }
+        .orbit { fill: none; stroke: rgba(240, 192, 64, 0.3); stroke-width: 0.5px; stroke-dasharray: 2 4; transform-origin: center; animation: jnSpin 12s linear infinite; }
+        @keyframes jnSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .main-text { fill: #fff; font-weight: 700; font-size: 24px; text-shadow: 0 0 10px #f0c040; }
+        .orbit-text { fill: #f0c040; font-size: 5.5px; letter-spacing: 2px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
 
-        @media (max-width: 900px) {
-            #hero-section { flex-direction: column; text-align: center; padding-top: 100px; }
-            #experience-grid { grid-template-columns: 1fr; }
-            .side-text-vertical { display: none; }
-        }
+        @media (max-width: 900px) { #hero-section { flex-direction: column; text-align: center; } #experience-grid { grid-template-columns: 1fr; margin-top: 20px; } .digital-silk { display: none; } }
     </style>
 </head>
 <body>
 
     <canvas id="pcanvas"></canvas>
     <div id="custom-mouse"></div>
-    <div class="side-text-vertical">Digital Designer & Creative Developer — 2026</div>
+    <div class="digital-silk">Digital Designer & Creative Developer — 2026</div>
 
     <div class="page-container">
         <section id="hero-section">
-            <div class="hero-text-3d">
-                <h2>Design that</h2>
-                <h2 class="gold-highlight">works.</h2>
-                <h2>Code that</h2>
-                <h2 class="gold-highlight">ships.</h2>
+            <div class="hero-text">
+                <h2 class="line-left">Design that <span class="gold-highlight">works.</span></h2>
+                <h2 class="line-right">Code that <span class="gold-highlight">ships.</span></h2>
+                <div class="intro-text">> I am Jade Nguyen...<br>> Senior Creative Engine Activated.</div>
             </div>
 
             <div class="terminal-container">
                 <div class="terminal-header">
                     <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-                    <span style="color: #444; font-size: 10px; margin-left: 10px;">jade-nguyen.js</span>
                 </div>
-                <div class="type-header" id="type-header"></div>
                 <div id="code-output"></div>
                 <span class="cursor"></span>
             </div>
@@ -183,45 +125,50 @@
 
         <section id="experience-grid">
             <div class="info-card">
+                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
                 <span class="card-label">Curriculum Vitae</span>
                 <ul>
-                    <li>BSc Digital Marketing Management - Cardiff Met University, UK</li>
-                    <li><span class="highlight-tech">CS50p Python & CS50x Harvard</span> - Mastering Logic</li>
-                    <li>Data-Driven Visual Communication Expertise</li>
+                    <li>BSc Digital Marketing Management - Cardiff Met, UK</li>
+                    <li><span class="highlight">CS50p Python & CS50x Harvard</span> - Mastering Logic</li>
+                    <li><span class="highlight">Rapidly mastering new tech</span> to drive innovation.</li>
                 </ul>
             </div>
             <div class="info-card">
+                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
                 <span class="card-label">Expertise</span>
-                <h3>Senior Visual Design</h3>
-                <p>Mastering aesthetic precision with a sharp eye for balance. Expert in WordPress, Motion UI, and interactive high-end web experiences.</p>
+                <h3>Sharp Visual Eye</h3>
+                <p>Mastering aesthetic precision with a <span class="highlight">sharp eye for visual balance</span>. Expert in interactive high-end web experiences.</p>
             </div>
             <div class="info-card">
+                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
                 <span class="card-label">Leadership</span>
                 <h3>Strategic Execution</h3>
-                <p>A Senior Designer solves. I <span class="highlight-tech">led 20+ projects</span>, bridging complex timelines between creative concepts and live products.</p>
+                <p><span class="highlight">Led 20+ design projects</span> while managing <span class="highlight">multiple teams simultaneously</span>. Concept to live deployment.</p>
             </div>
             <div class="info-card">
-                <span class="card-label">Status</span>
-                <h3>Open for Hire</h3>
-                <p>Remote-ready, UK-based. Powered by <span class="highlight-tech">continuous learning</span> and ready for ambitious international creative projects.</p>
+                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
+                <span class="card-label">Philosophy</span>
+                <h3>Always Creative</h3>
+                <p>Design is solving. I bridge creative concepts and live products with <span class="highlight">continuous learning</span> and strategic execution.</p>
             </div>
         </section>
     </div>
 
     <div id="jn-badge-corner">
-        <svg viewBox="0 0 100 100">
-            <circle class="orbit-circle" cx="50" cy="50" r="38" />
-            <text x="50" y="58" text-anchor="middle" class="jn-text">JN</text>
+        <svg id="jn-ring-svg" viewBox="0 0 100 100">
+            <circle class="orbit" cx="50" cy="50" r="38" />
+            <text x="50" y="58" text-anchor="middle" class="main-text">JN</text>
+            <path id="orbitPath" d="M15,50 A35,35 0 1,1 85,50 A35,35 0 1,1 15,50" fill="none"/>
+            <text class="orbit-text"><textPath href="#orbitPath">Digital Designer • Creative Developer •&nbsp;</textPath></text>
         </svg>
     </div>
 
     <script>
-        // BACKGROUND Particles
         const cv=document.getElementById('pcanvas'),ctx=cv.getContext('2d');
         let W,H,mx=-999,my=-999;
         function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
         class Amb{
-            constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.15;this.vy=(Math.random()-.5)*.15;this.size=Math.random()*2;this.alpha=Math.random()*.5+.1;}
+            constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.15;this.vy=(Math.random()-.5)*.15;this.size=Math.random()*1.8;this.alpha=Math.random()*.5+.1;}
             update(){
                 const dx=this.x-mx, dy=this.y-my, d=Math.sqrt(dx*dx+dy*dy);
                 if(d<80){this.x-=(dx/d)*0.8;this.y-=(dy/d)*0.8;}
@@ -231,32 +178,23 @@
             draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle=`rgba(240,192,64,${this.alpha})`;ctx.fill();}
         }
         let ambients=[];
-        function initAmb(){resize();ambients=[];for(let i=0;i<220;i++)ambients.push(new Amb());}
+        function init(){resize();ambients=[];for(let i=0;i<180;i++)ambients.push(new Amb());}
         function render(){requestAnimationFrame(render);ctx.fillStyle='rgba(7,7,5,0.2)';ctx.fillRect(0,0,W,H);ambients.forEach(a=>{a.update();a.draw();});}
-        window.addEventListener('resize',initAmb);initAmb();render();
+        window.addEventListener('resize',init);init();render();
         document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;document.getElementById('custom-mouse').style.left=mx+'px';document.getElementById('custom-mouse').style.top=my+'px';});
 
-        // Typewriter Effect
-        const typeHeader = document.getElementById('type-header');
         const output = document.getElementById('code-output');
-        const intro = "> I am Jade Nguyen...\n> Senior Creative Engine Activated.";
         const codeLines = [
             {t:"Are you ready?", c:"#f0c040"},
             {t:"", c:""},
-            {t:"const jade = {", c:"#666"},
+            {t:"const Jade = {", c:"#666"},
             {t:"  role: 'Senior Digital Designer',", isCode:true},
             {t:"  leadership: '20+ projects led',", isCode:true},
-            {t:"  teams: 'Multi-team leadership',", isCode:true},
-            {t:"  output: () => 'Live Product'", isCode:true},
+            {t:"  teams: 'Multi-team coordination',", isCode:true},
+            {t:"  output: () => 'Concept to Live'", isCode:true},
             {t:"};", c:"#666"}
         ];
-        let charIdx=0, lineIdx=0;
-        function typeIntro(){
-            if(charIdx<intro.length){
-                typeHeader.textContent+=intro[charIdx];charIdx++;
-                setTimeout(typeIntro, intro[charIdx-1]==='\n'?600:40);
-            } else { setTimeout(typeCode, 800); }
-        }
+        let lineIdx=0;
         function typeCode(){
             if(lineIdx<codeLines.length){
                 const l=codeLines[lineIdx];const d=document.createElement('div');
@@ -265,8 +203,7 @@
                 output.appendChild(d);lineIdx++;setTimeout(typeCode, 350);
             }
         }
-        // Bắt đầu gõ sau khi tiêu đề chính bay ra
-        setTimeout(typeIntro, 1200);
+        setTimeout(typeCode, 2000);
     </script>
 </body>
 </html>
