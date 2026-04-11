@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; scroll-behavior: smooth; cursor: none; }
+        body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; cursor: none; }
 
-        /* ── BACKGROUND ── */
+        /* ── BACKGROUND & CURSOR ── */
         #pcanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         #custom-mouse { position: fixed; width: 10px; height: 10px; background: #f0c040; border-radius: 50%; z-index: 10000; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 15px #f0c040; }
         .trail { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: opacity 0.4s; }
@@ -26,16 +26,20 @@
         .line-right { transform: translateX(150%); animation: flyIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; margin-top: -10px; }
         @keyframes flyIn { to { transform: translateX(0); } }
 
+        /* TAGLINE MẠNH BẠO */
+        .power-tagline { font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 25px; line-height: 1.8; max-width: 450px; }
+        .power-tagline b { color: #f0c040; }
+
         /* ── TERMINAL + RUNNING BORDER ── */
         .terminal-container { 
-            flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.95); 
+            flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.98); 
             border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; 
             padding: 30px; font-family: 'Space Mono', monospace; font-size: 13px; 
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 420px; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 450px; 
             transform: rotateY(8deg); position: relative; overflow: hidden;
         }
         
-        /* Hiệu ứng viền chạy cho Terminal khi đang gõ code */
+        /* Running Border cho Terminal */
         .t-border { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; z-index: 5; opacity: 0; transition: opacity 0.5s; }
         .t-active .t-border { opacity: 1; }
         .t-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runR 2s linear infinite; }
@@ -44,15 +48,15 @@
         @keyframes runL { from { right: -100%; } to { right: 100%; } }
 
         .terminal-header { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
         #code-output { color: #999; line-height: 1.8; }
         .code-key { color: #f0c040; } .code-val { color: #c9a84c; font-style: italic; }
         .cursor { border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; }
-        @keyframes blink { 50% { opacity: 0; } }
 
         /* ── STRATEGIC SUMMARY ── */
         .summary-line { width: 100%; text-align: center; font-family: 'Space Mono', monospace; font-weight: 700; color: #f0c040; font-size: 14px; letter-spacing: 0.4em; text-transform: uppercase; padding: 20px 0; z-index: 10; position: relative; text-shadow: 0 0 10px #f0c040; }
 
-        /* ── GRID: ĐẨY SÁT LÊN ── */
+        /* ── EXPERIENCE GRID: ĐẨY CAO ── */
         #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; padding: 0 10% 50px 8%; z-index: 10; position: relative; }
         
         .info-card { background: rgba(15, 15, 12, 0.95); padding: 45px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.15); position: relative; overflow: hidden; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); transform-style: preserve-3d; }
@@ -88,19 +92,24 @@
 
     <canvas id="pcanvas"></canvas>
     <div id="custom-mouse"></div>
-    <div class="digital-silk">Digital Designer & Creative Developer — 2026</div>
+    <div class="digital-silk">Senior Digital Designer & Creative Developer — 2026</div>
 
     <div class="page-container">
         <section id="hero-section">
             <div class="hero-text">
                 <h2 class="line-left">Design that <span class="gold-highlight">works.</span></h2>
                 <h2 class="line-right">Code that <span class="gold-highlight">ships.</span></h2>
+                <div class="power-tagline">
+                    Using <b>HTML, CSS, JS & Python</b> to build pixel-perfect 3D experiences. Making <b>live products</b>, not just mockups.
+                </div>
             </div>
 
             <div class="terminal-container" id="terminal-main">
                 <div class="t-border t-1"></div><div class="t-border t-2"></div>
                 <div class="terminal-header">
-                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                    <div class="dot" style="background:#ff5f56"></div>
+                    <div class="dot" style="background:#ffbd2e"></div>
+                    <div class="dot" style="background:#27c93f"></div>
                 </div>
                 <div id="code-output"></div>
                 <span class="cursor"></span>
@@ -123,7 +132,7 @@
                 <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
                 <span class="card-label">Expertise</span>
                 <h3>Sharp Visual Eye</h3>
-                <p>Mastering aesthetic precision with a <span class="highlight">sharp eye for visual balance</span>. Expert in interactive prototyping.</p>
+                <p>Mastering aesthetic precision with a <span class="highlight">sharp eye for visual balance</span>. Expert in 3D interactive prototyping.</p>
             </div>
             <div class="info-card">
                 <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
@@ -188,14 +197,16 @@
         const output = document.getElementById('code-output');
         const term = document.getElementById('terminal-main');
         const codeLines = [
-            {t:"> [CORE]: I am Jade Nguyen...", c:"#f0c040"},
-            {t:"> [EXEC]: Interface Engineering Live", c:"#fff"},
-            {t:"> [SYST]: Design Engine v2.6 Ready", c:"#27c93f"},
+            {t:"> [LIVE]: I am Jade Nguyen...", c:"#f0c040"},
+            {t:"> [INFO]: Nào... hãy cùng trải nghiệm 3D Design.", c:"#fff"},
+            {t:"> [INFO]: Đây là một trong những thế mạnh của tôi.", c:"#fff"},
+            {t:"> [SYST]: Ứng dụng code cho Visual 3D...", c:"#27c93f"},
             {t:"", c:""},
-            {t:"const Jade = {", c:"#666"},
-            {t:"  vision: 'Pixel Perfection',", isCode:true},
-            {t:"  output: 'Live Dynamic Products',", isCode:true},
-            {t:"  leadership: '20+ Projects Led'", isCode:true},
+            {t:"const SeniorJade = {", c:"#666"},
+            {t:"  status: 'Senior Digital Designer Active',", isCode:true},
+            {t:"  experience: '20+ design projects led',", isCode:true},
+            {t:"  logic: 'HTML/CSS/JS/Python',", isCode:true},
+            {t:"  output: () => 'Live Dynamic Product'", isCode:true},
             {t:"};", c:"#666"}
         ];
         let lineIdx=0;
@@ -205,10 +216,10 @@
                 const l=codeLines[lineIdx];const d=document.createElement('div');
                 if(l.isCode){const p=l.t.split(':');d.innerHTML=`<span class="code-key">${p[0]}</span>:<span class="code-val">${p[1]}</span>`;}
                 else{d.style.color=l.c;d.textContent=l.t;}
-                output.appendChild(d);lineIdx++;setTimeout(typeCode, 150);
+                output.appendChild(d);lineIdx++;setTimeout(typeCode, 120); // Gõ cực nhanh (120ms)
             }
         }
-        setTimeout(typeCode, 1000);
+        setTimeout(typeCode, 1200);
 
         document.querySelectorAll('.info-card').forEach(card=>{
             card.addEventListener('mousemove',e=>{
