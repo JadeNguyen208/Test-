@@ -3,259 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jade Nguyen - Services 3D Experience</title>
+    <title>Jade Nguyen - $50k Interactive Experience</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --black: #111; }
-        body { background-color: #fcfcfc; color: var(--black); font-family: 'Inter', sans-serif; overflow-x: hidden; cursor: none; }
-        .font-serif { font-family: 'Playfair Display', serif; }
+        :root { --gold: #D4AF37; }
+        body { background-color: #ffffff; color: #111; font-family: 'Inter', sans-serif; overflow: hidden; }
         
-        /* Background Decorations */
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
-        .code-snippet { position: absolute; font-family: monospace; font-size: 10px; color: rgba(0,0,0,0.03); pointer-events: none; user-select: none; }
-
         /* Cursor */
-        #cursor { width: 12px; height: 12px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
-        #cursor-follower { width: 40px; height: 40px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.1s; }
+        #cursor { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; }
+        #cursor-f { width: 35px; height: 35px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
 
-        /* 3D Orbit */
-        .orbit-wrapper { perspective: 1000px; transform-style: preserve-3d; }
-        .orbiting-text { position: absolute; white-space: nowrap; font-weight: 800; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color: #333; }
+        .main-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
 
-        /* Content Styling */
-        .service-item { transition: all 0.4s ease; opacity: 0.8; }
-        .service-item:hover { opacity: 1; transform: scale(1.05); }
-        .item-number { font-family: 'Playfair Display'; color: var(--gold); font-size: 1.5rem; margin-right: 10px; }
-        .bullet-list { font-size: 0.85rem; color: #666; margin-top: 8px; list-style-type: none; }
+        /* JN Stylized Center */
+        .jn-wrapper { position: relative; z-index: 50; text-align: center; }
+        #jn-logo { font-size: 100px; font-weight: 900; letter-spacing: -8px; position: relative; display: inline-block; }
+        .jn-subtext { font-size: 10px; letter-spacing: 5px; color: var(--gold); font-weight: 800; text-transform: uppercase; margin-top: -15px; }
+
+        /* SVG Circle Path */
+        #orbit-svg { position: absolute; width: 800px; height: 800px; pointer-events: none; transform: rotate(-90deg); }
+        .base-circle { fill: none; stroke: #f0f0f0; stroke-width: 1; }
+        .progress-circle { fill: none; stroke: var(--gold); stroke-width: 2; stroke-dasharray: 2512; stroke-dashoffset: 2512; }
+
+        /* Dots & Cards */
+        .node { position: absolute; width: 12px; height: 12px; background: white; border: 2px solid #ddd; border-radius: 50%; z-index: 60; opacity: 0; transform: scale(0); transition: all 0.3s ease; }
+        .node.active { opacity: 1; transform: scale(1); border-color: var(--gold); background: var(--gold); box-shadow: 0 0 15px var(--gold); }
+
+        .info-card {
+            position: absolute; width: 280px; padding: 20px; background: white;
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            opacity: 0; transform: translateY(20px); pointer-events: none; z-index: 70;
+            border-left: 3px solid var(--gold);
+        }
+        .info-card.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+
+        .item-num { font-family: 'Playfair Display'; color: var(--gold); font-weight: bold; font-size: 1.2rem; }
+        .bullet-list { font-size: 0.75rem; color: #666; margin-top: 8px; list-style: none; }
         .bullet-list li::before { content: "— "; color: var(--gold); }
     </style>
 </head>
 <body>
 
     <div id="cursor"></div>
-    <div id="cursor-follower"></div>
-    <canvas id="bg-canvas"></canvas>
+    <div id="cursor-f"></div>
 
-    <div class="code-snippet" style="top:10%; left:5%">.service-card:hover { transform: translateY(-10px); }</div>
-    <div class="code-snippet" style="top:40%; right:10%">fetch('/api/data').then(res => res.json())</div>
-    <div class="code-snippet" style="bottom:20%; left:15%">gsap.to(".jn-logo", { duration: 2, bounce: 0.5 })</div>
-
-    <div class="min-h-screen flex flex-col items-center py-20 px-10 relative">
-        
-        <h1 id="title" class="text-5xl md:text-7xl font-serif font-bold mb-40 text-center opacity-0">
-            What I can do <span class="italic text-[#D4AF37]">for you?</span>
-        </h1>
-
-        <div class="relative flex justify-center items-center mb-40 h-20 w-full">
-            <div id="jn-logo" class="text-7xl font-bold tracking-tighter relative z-10">
-                JN<span class="text-[#D4AF37]">.</span>
-            </div>
-            
-            <div id="line-l" class="absolute h-[1px] bg-black/20 w-0 right-[55%]"></div>
-            <div id="line-r" class="absolute h-[1px] bg-black/20 w-0 left-[55%]"></div>
-
-            <div class="orbit-wrapper absolute inset-0 flex justify-center items-center">
-                <div class="orbiting-text" id="orbit1">FRONTEND WEB DEVELOPMENT</div>
-                <div class="orbiting-text" id="orbit2">DIGITAL DESIGNER</div>
-            </div>
+    <div class="main-container">
+        <div class="jn-wrapper">
+            <div id="jn-logo">JN</div>
+            <div class="jn-subtext">Creative Developer</div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-16 max-w-6xl w-full">
-            
-            <div class="space-y-16">
-                <div class="service-item group">
-                    <div class="flex items-baseline">
-                        <span class="item-number">1.</span>
-                        <h3 class="text-xl font-bold uppercase tracking-widest">Web Design & Build</h3>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-2 italic">From landing pages to full web apps — responsive, fast, and on-brand.</p>
-                    <ul class="bullet-list">
-                        <li>HTML/CSS/JS from scratch</li>
-                        <li>WordPress design & setup</li>
-                        <li>Webflow & Framer sites</li>
-                        <li>Cross-browser compatible</li>
-                    </ul>
-                </div>
+        <svg id="orbit-svg" viewBox="0 0 800 800">
+            <circle class="base-circle" cx="400" cy="400" r="320" />
+            <circle class="progress-circle" id="main-path" cx="400" cy="400" r="320" />
+        </svg>
 
-                <div class="service-item group">
-                    <div class="flex items-baseline">
-                        <span class="item-number">2.</span>
-                        <h3 class="text-xl font-bold uppercase tracking-widest">Visual & Digital Design</h3>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-2 italic">Graphic assets, social media visuals, ads, and brand-consistent UI.</p>
-                    <ul class="bullet-list">
-                        <li>Social media graphics</li>
-                        <li>Digital ad creatives</li>
-                        <li>Landing page layouts</li>
-                        <li>UI components & icons</li>
-                    </ul>
-                </div>
-
-                <div class="service-item group">
-                    <div class="flex items-baseline">
-                        <span class="item-number">3.</span>
-                        <h3 class="text-xl font-bold uppercase tracking-widest">Motion & Video Content</h3>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-2 italic">Promotional video, motion graphics, and short-form content for social.</p>
-                    <ul class="bullet-list">
-                        <li>After Effects animations</li>
-                        <li>CapCut video editing</li>
-                        <li>AI-generated video (Veo 3, Kling)</li>
-                        <li>Product launch content</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="space-y-16">
-                <div class="service-item group">
-                    <div class="flex items-baseline">
-                        <span class="item-number">4.</span>
-                        <h3 class="text-xl font-bold uppercase tracking-widest">Interactive UX</h3>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-2 italic">Engaging web experiences with animation, sound, and real-time effects.</p>
-                    <ul class="bullet-list">
-                        <li>Canvas API animations</li>
-                        <li>Web Audio integration</li>
-                        <li>Smooth micro-interactions</li>
-                        <li>Multi-language support</li>
-                    </ul>
-                </div>
-
-                <div class="service-item group">
-                    <div class="flex items-baseline">
-                        <span class="item-number">5.</span>
-                        <h3 class="text-xl font-bold uppercase tracking-widest">AI-Powered Workflows</h3>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-2 italic">Using AI tools to produce more, faster — without losing creative direction.</p>
-                    <ul class="bullet-list">
-                        <li>AI image gen (Nano Banana Pro)</li>
-                        <li>AI video (Veo 3, Kling, Whisk)</li>
-                        <li>Rapid prototyping & ideation</li>
-                        <li>AI-assisted copywriting</li>
-                    </ul>
-                </div>
-
-                <div class="service-item group">
-                    <div class="flex items-baseline">
-                        <span class="item-number">6.</span>
-                        <h3 class="text-xl font-bold uppercase tracking-widest">Digital Marketing</h3>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-2 italic">BSc-level background in marketing — aligning content with business goals.</p>
-                    <ul class="bullet-list">
-                        <li>On-page SEO basics</li>
-                        <li>Product Hunt launches</li>
-                        <li>Social media strategy</li>
-                        <li>Content planning</li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
+        <div id="nodes-container"></div>
     </div>
 
     <script>
-        // --- 1. Canvas Background (Particles) ---
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
+        // Data content
+        const services = [
+            { title: "Web Design & Build", desc: "Landing pages & Apps", items: ["HTML/CSS/JS", "WordPress & Webflow", "Framer sites"] },
+            { title: "Visual Design", desc: "Branding & Assets", items: ["Social Graphics", "Digital Ads", "UI Components"] },
+            { title: "Motion & Video", desc: "Short-form content", items: ["After Effects", "CapCut", "AI Video (Veo 3)"] },
+            { title: "Interactive UX", desc: "Experience design", items: ["Canvas API", "Web Audio", "Micro-interactions"] },
+            { title: "AI-Powered", desc: "Efficiency & Tech", items: ["AI Image Gen", "Rapid Prototyping", "AI Copywriting"] },
+            { title: "Marketing", desc: "Growth & SEO", items: ["On-page SEO", "Product Hunt", "Social Strategy"] }
+        ];
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speedX = Math.random() * 0.5 - 0.25;
-                this.speedY = Math.random() * 0.5 - 0.25;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.x > canvas.width) this.x = 0;
-                if (this.y > canvas.height) this.y = 0;
-            }
-            draw() {
-                ctx.fillStyle = 'rgba(212, 175, 55, 0.3)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
+        const container = document.getElementById('nodes-container');
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        const radius = 320;
 
-        for (let i = 0; i < 50; i++) particles.push(new Particle());
+        // Create Nodes and Cards
+        services.forEach((s, i) => {
+            const angle = (i * 60) * (Math.PI / 180) - (Math.PI / 2);
+            const x = centerX + radius * Math.cos(angle);
+            const y = centerY + radius * Math.sin(angle);
 
-        function animateBg() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateBg);
-        }
-        animateBg();
+            // Node dot
+            const node = document.createElement('div');
+            node.className = `node node-${i}`;
+            node.style.left = `${x - 6}px`;
+            node.style.top = `${y - 6}px`;
+            container.appendChild(node);
 
-        // --- 2. Cursor Effect ---
-        const cursor = document.getElementById('cursor');
-        const follower = document.getElementById('cursor-follower');
-        window.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-            gsap.to(follower, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.3 });
+            // Info Card
+            const card = document.createElement('div');
+            card.className = `info-card card-${i}`;
+            // Adjust card position to not overlap circle
+            const cardX = centerX + (radius + 160) * Math.cos(angle);
+            const cardY = centerY + (radius + 50) * Math.sin(angle);
+            card.style.left = `${cardX - 140}px`;
+            card.style.top = `${cardY - 60}px`;
+
+            card.innerHTML = `
+                <p class="item-num">${i + 1}. ${s.title}</p>
+                <p class="text-[10px] text-gray-400 uppercase font-bold">${s.desc}</p>
+                <ul class="bullet-list">${s.items.map(item => `<li>${item}</li>`).join('')}</ul>
+            `;
+            container.appendChild(card);
         });
 
-        // --- 3. Entrance & Orbit Animation ---
+        // --- Animations ---
         const tl = gsap.timeline();
 
-        tl.to("#title", { opacity: 1, y: -20, duration: 1 })
-          .from("#jn-logo", { 
-              x: -window.innerWidth/2, 
-              y: -500, 
-              rotation: -45, 
-              duration: 1.5, 
-              ease: "bounce.out" 
-          }, "-=0.5")
-          .to("#line-l, #line-r", { width: "30%", duration: 1, ease: "power4.inOut" });
+        // 1. JN Drop
+        tl.from("#jn-logo", { y: -200, opacity: 0, duration: 1.5, ease: "bounce.out" })
+          .from(".jn-subtext", { opacity: 0, trackingSpacing: 20, duration: 1 }, "-=0.5");
 
-        // Orbit Loop
-        function setupOrbit(id, radius, speed, delay) {
-            gsap.to(id, {
-                duration: speed,
-                repeat: -1,
-                ease: "none",
-                onUpdate: function() {
-                    const time = (Date.now() * 0.001 * speed * 0.1) + delay;
-                    const x = Math.cos(time) * radius;
-                    const z = Math.sin(time) * radius;
-                    const scale = (z + radius) / (2 * radius) * 0.5 + 0.5;
-                    gsap.set(id, { 
-                        x: x, 
-                        z: z, 
-                        scale: scale, 
-                        opacity: scale,
-                        zIndex: Math.round(z)
-                    });
-                }
+        // 2. Draw Circle Path and Reveal Nodes
+        tl.to("#main-path", {
+            strokeDashoffset: 0,
+            duration: 4,
+            ease: "power2.inOut",
+            onUpdate: function() {
+                const progress = this.progress();
+                services.forEach((_, i) => {
+                    if (progress >= i / 5) {
+                        document.querySelector(`.node-${i}`).classList.add('active');
+                        document.querySelector(`.card-${i}`).classList.add('visible');
+                    }
+                });
+            }
+        });
+
+        // 3. Floating Effect for Cards
+        gsap.to(".info-card", {
+            y: "-=10",
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            stagger: 0.2
+        });
+
+        // Cursor
+        window.addEventListener('mousemove', (e) => {
+            gsap.to("#cursor", { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to("#cursor-f", { x: e.clientX - 17, y: e.clientY - 17, duration: 0.3 });
+        });
+
+        // Card Hover
+        document.querySelectorAll('.info-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                gsap.to(card, { scale: 1.05, borderColor: '#D4AF37', duration: 0.3 });
+                gsap.to("#cursor-f", { scale: 1.5, borderColor: '#111', duration: 0.3 });
             });
-        }
-
-        setupOrbit("#orbit1", 200, 10, 0);
-        setupOrbit("#orbit2", 220, 12, Math.PI);
-
-        // --- 4. Hover Interactions ---
-        document.querySelectorAll('.service-item').forEach(item => {
-            item.addEventListener('mouseenter', () => {
-                gsap.to(follower, { scale: 1.5, backgroundColor: "rgba(214, 175, 55, 0.1)", duration: 0.3 });
-                // Mờ các cái khác
-                gsap.to('.service-item', { opacity: 0.2, duration: 0.3 });
-                gsap.to(item, { opacity: 1, duration: 0.3 });
-            });
-            item.addEventListener('mouseleave', () => {
-                gsap.to(follower, { scale: 1, backgroundColor: "transparent", duration: 0.3 });
-                gsap.to('.service-item', { opacity: 0.8, duration: 0.3 });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { scale: 1, borderColor: '#D4AF37', duration: 0.3 });
+                gsap.to("#cursor-f", { scale: 1, borderColor: '#D4AF37', duration: 0.3 });
             });
         });
     </script>
