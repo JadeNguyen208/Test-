@@ -1,87 +1,98 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN - Ultimate 3D Interactive</title>
+    <title>JN - Minimalist 3D Hex</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #D4AF37; --bg: #050505; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; cursor: none; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; cursor: default; }
         
-        /* 1. Nền Canvas cho chấm vàng tương tác */
-        #bg-canvas { position: fixed; inset: 0; z-index: -1; }
-
-        /* 2. Custom Cursor với quầng sáng */
-        #cursor-dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 1000; }
-        #cursor-glow { 
-            width: 300px; height: 300px; 
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%); 
-            position: fixed; top: -150px; left: -150px; pointer-events: none; z-index: 999; 
+        /* Chấm vàng nền tĩnh lặng */
+        .bg-dots {
+            position: fixed; inset: 0; z-index: -1;
+            background-image: radial-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
-        .main-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; perspective: 1500px; }
+        .main-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; perspective: 1000px; }
 
-        /* Lõi JN */
-        .jn-core { position: relative; z-index: 100; text-align: center; transform-style: preserve-3d; }
-        .label-text { font-size: 11px; letter-spacing: 5px; color: #666; text-transform: uppercase; }
-        #jn-logo { font-size: 110px; font-weight: 900; letter-spacing: -8px; line-height: 1; color: #fff; margin: 10px 0; }
-        .sub-gold { color: var(--gold); font-size: 9px; text-transform: uppercase; letter-spacing: 6px; font-weight: 800; }
+        /* JN Center */
+        .jn-center { position: relative; z-index: 100; text-align: center; }
+        #jn-logo { font-size: 110px; font-weight: 900; letter-spacing: -8px; color: #fff; line-height: 1; margin: 10px 0; }
+        .badge-svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; pointer-events: none; }
+        .badge-path { fill: none; }
+        .badge-text { font-size: 11px; font-weight: 800; text-transform: uppercase; fill: var(--gold); letter-spacing: 5px; }
 
-        /* Orbiting Text (Hệ mặt trời) */
-        .orbit-text { position: absolute; white-space: nowrap; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--gold); pointer-events: none; }
+        /* Title */
+        .top-header { position: absolute; top: 8%; width: 100%; text-align: center; z-index: 10; }
+        .top-header h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px; }
 
-        /* Hexagon SVG */
-        #hex-svg { position: absolute; width: 500px; height: 500px; pointer-events: none; }
-        .base-hex { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 1; }
-        .draw-hex { fill: none; stroke: var(--gold); stroke-width: 2.5; stroke-dasharray: 1800; stroke-dashoffset: 1800; filter: drop-shadow(0 0 8px var(--gold)); }
+        /* Hexagon Path */
+        #hex-svg { position: absolute; width: 480px; height: 480px; pointer-events: none; }
+        .draw-hex { fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-dasharray: 1800; stroke-dashoffset: 1800; opacity: 0.5; }
 
-        /* Service Cards (3D Tilt) */
-        .card-wrapper { position: absolute; perspective: 1000px; z-index: 110; }
+        /* Service Cards - No White Box */
+        .card-wrapper { position: absolute; z-index: 110; }
         .service-card {
-            width: 240px; padding: 20px; background: #ffffff; color: #111;
-            border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            opacity: 0; transform: scale(0.8); pointer-events: none;
-            transition: transform 0.1s ease-out; transform-style: preserve-3d;
+            width: 240px; padding: 20px; 
+            border: 1px solid var(--gold); 
+            background: transparent;
+            opacity: 0; transform: translateY(20px);
+            transition: border-width 0.3s;
+            cursor: pointer;
+            transform-style: preserve-3d;
         }
-        .service-card.active { opacity: 1; transform: scale(1); pointer-events: all; }
         
-        .card-icon { font-size: 26px; margin-bottom: 10px; }
-        .card-title { font-weight: 800; font-size: 14px; color: var(--gold); text-transform: uppercase; }
-        .card-sub { font-size: 10px; color: #888; margin-bottom: 10px; font-weight: 600; }
-        .bullet-list { font-size: 11px; color: #444; list-style: none; border-top: 1px solid #eee; padding-top: 8px; }
-        .bullet-list li::before { content: "• "; color: var(--gold); }
-
-        h1 { position: absolute; top: 10%; font-size: 40px; font-weight: 800; letter-spacing: -1px; z-index: 10; }
+        .card-title { font-weight: 800; font-size: 13px; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; pointer-events: none; }
+        .card-sub { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0; pointer-events: none; }
+        
+        /* Nội dung hiện ra khi click */
+        .card-content { 
+            max-height: 0; overflow: hidden; opacity: 0; 
+            transition: all 0.5s ease; border-top: 0px solid rgba(212, 175, 55, 0.2);
+            margin-top: 0;
+        }
+        .service-card.open { border-width: 2px; }
+        .service-card.open .card-content { max-height: 200px; opacity: 1; margin-top: 15px; padding-top: 15px; border-top-width: 1px; }
+        
+        .bullet-list { font-size: 11px; color: #fff; list-style: none; line-height: 1.6; }
+        .bullet-list li::before { content: "• "; color: var(--gold); margin-right: 5px; }
+        
+        .card-icon { font-size: 24px; position: absolute; top: -15px; right: -15px; opacity: 0; transition: opacity 0.3s; }
+        .service-card:hover .card-icon { opacity: 1; }
     </style>
 </head>
 <body>
 
-    <div id="cursor-dot"></div>
-    <div id="cursor-glow"></div>
-    <canvas id="bg-canvas"></canvas>
+    <div class="bg-dots"></div>
 
     <div class="main-container">
-        <h1>What can I do <span style="color:var(--gold); font-style: italic;">for you?</span></h1>
+        <div class="top-header">
+            <h1>What I can do <span style="color:var(--gold); font-style: italic;">for you?</span></h1>
+        </div>
 
-        <div class="jn-core">
-            <div class="label-text">what can (do)</div>
+        <div class="jn-center">
             <div id="jn-logo">JN</div>
-            <div class="label-text">do for you?</div>
-            <div class="sub-gold">Creative Developer</div>
-
-            <div class="orbit-text" id="planet1">Digital Design</div>
-            <div class="orbit-text" id="planet2">Frontend Web Developer</div>
+            <svg class="badge-svg" viewBox="0 0 200 200">
+                <path id="badgePath" d="M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0" class="badge-path" />
+                <text class="badge-text">
+                    <textPath href="#badgePath" startOffset="0%">
+                        • DIGITAL DESIGN • FRONTEND WEB DEVELOPER • DIGITAL DESIGN • FRONTEND WEB DEVELOPER
+                    </textPath>
+                </text>
+            </svg>
+            <div style="font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: #444; font-weight: 800; margin-top: -5px;">Creative Developer</div>
         </div>
 
         <svg id="hex-svg" viewBox="0 0 600 600">
-            <path class="base-hex" d="M 300 50 L 516 175 L 516 425 L 300 550 L 84 425 L 84 175 Z" />
             <path class="draw-hex" id="active-line" d="M 300 50 L 516 175 L 516 425 L 300 550 L 84 425 L 84 175 Z" />
         </svg>
 
-        <div id="elements-layer"></div>
+        <div id="cards-layer"></div>
     </div>
 
     <script>
@@ -94,106 +105,77 @@
             { icon: "📊", title: "Marketing", sub: "Growth & SEO", items: ["On-page SEO", "Product Hunt", "Social Strategy"] }
         ];
 
-        // --- 1. Background Particles (Interactive) ---
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        let mouse = { x: -100, y: -100 };
+        const layer = document.getElementById('cards-layer');
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        const r = 240; // Hex radius
 
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-        window.dispatchEvent(new Event('resize'));
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.baseX = this.x; this.baseY = this.y;
-                this.size = Math.random() * 2;
-                this.density = (Math.random() * 30) + 1;
-            }
-            draw() {
-                ctx.fillStyle = 'rgba(212, 175, 55, 0.4)';
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-            }
-            update() {
-                let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx*dx + dy*dy);
-                let forceDirectionX = dx / distance; let forceDirectionY = dy / distance;
-                let maxDistance = 150;
-                let force = (maxDistance - distance) / maxDistance;
-                if (distance < maxDistance) {
-                    this.x -= forceDirectionX * force * this.density;
-                    this.y -= forceDirectionY * force * this.density;
-                } else {
-                    if (this.x !== this.baseX) this.x -= (this.x - this.baseX) * 0.1;
-                    if (this.y !== this.baseY) this.y -= (this.y - this.baseY) * 0.1;
-                }
-            }
-        }
-        for(let i=0; i<150; i++) particles.push(new Particle());
-        function animateBg() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(animateBg); }
-        animateBg();
-
-        // --- 2. Build Hex Grid ---
-        const layer = document.getElementById('elements-layer');
-        const cx = window.innerWidth/2; const cy = window.innerHeight/2; const r = 250;
         const pts = [
-            {x: cx, y: cy-r}, {x: cx+r*0.866, y: cy-r*0.5}, {x: cx+r*0.866, y: cy+r*0.5},
-            {x: cx, y: cy+r}, {x: cx-r*0.866, y: cy+r*0.5}, {x: cx-r*0.866, y: cy-r*0.5}
+            {x:cx, y:cy-r}, {x:cx+r*0.866, y:cy-r*0.5}, {x:cx+r*0.866, y:cy+r*0.5},
+            {x:cx, y:cy+r}, {x:cx-r*0.866, y:cy+r*0.5}, {x:cx-r*0.866, y:cy-r*0.5}
         ];
 
         services.forEach((s, i) => {
             const wrap = document.createElement('div');
             wrap.className = 'card-wrapper';
-            const angle = (i * 60 - 90) * (Math.PI / 180);
-            wrap.style.left = `${pts[i].x + Math.cos(angle)*100 - 120}px`;
-            wrap.style.top = `${pts[i].y + Math.sin(angle)*50 - 60}px`;
+            const ang = (i * 60 - 90) * (Math.PI/180);
+            wrap.style.left = `${pts[i].x + Math.cos(ang)*110 - 120}px`;
+            wrap.style.top = `${pts[i].y + Math.sin(ang)*60 - 50}px`;
 
             wrap.innerHTML = `
-                <div class="service-card card-${i}">
+                <div class="service-card" onclick="this.classList.toggle('open')">
                     <div class="card-icon">${s.icon}</div>
                     <div class="card-title">${i+1}. ${s.title}</div>
                     <div class="card-sub">${s.sub}</div>
-                    <ul class="bullet-list">${s.items.map(li => `<li>${li}</li>`).join('')}</ul>
+                    <div class="card-content">
+                        <ul class="bullet-list">${s.items.map(li => `<li>${li}</li>`).join('')}</ul>
+                    </div>
                 </div>
             `;
             layer.appendChild(wrap);
         });
 
-        // --- 3. Mouse Tilt & Custom Cursor ---
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX; mouse.y = e.clientY;
-            gsap.to("#cursor-dot", { x: e.clientX, y: e.clientY, duration: 0.1 });
-            gsap.to("#cursor-glow", { x: e.clientX, y: e.clientY, duration: 0.4 });
+        // GSAP Animations
+        const tl = gsap.timeline();
 
-            // 3D Tilt cho các Card
-            document.querySelectorAll('.service-card.active').forEach(card => {
+        // Rotate Badge
+        gsap.to(".badge-svg", { rotation: 360, duration: 25, repeat: -1, ease: "none" });
+
+        // Intro & Draw Hex
+        tl.from(".jn-center", { opacity: 0, scale: 0.8, duration: 1.5, ease: "expo.out" })
+          .to("#active-line", { strokeDashoffset: 0, duration: 7, ease: "none", onUpdate: function() {
+              const p = this.progress();
+              document.querySelectorAll('.service-card').forEach((card, i) => {
+                  if (p >= i/6) gsap.to(card, { opacity: 1, y: 0, duration: 0.5, overwrite: "auto" });
+              });
+          }});
+
+        // 3D Hover Effect (Only on Hover)
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width/2;
-                const y = e.clientY - rect.top - rect.height/2;
-                gsap.to(card, { rotationY: x/10, rotationX: -y/10, duration: 0.5 });
+                const x = (e.clientX - rect.left - rect.width/2) / 8;
+                const y = (e.clientY - rect.top - rect.height/2) / 8;
+                gsap.to(card, { 
+                    rotationY: x, 
+                    rotationX: -y, 
+                    y: -10,
+                    boxShadow: "0 20px 40px rgba(212, 175, 55, 0.2)",
+                    duration: 0.4 
+                });
+            });
+
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { 
+                    rotationY: 0, 
+                    rotationX: 0, 
+                    y: 0,
+                    boxShadow: "none",
+                    duration: 0.5 
+                });
             });
         });
 
-        // --- 4. Animation Sequence ---
-        const tl = gsap.timeline();
-        tl.from(".jn-core", { opacity: 0, scale: 0.5, duration: 1.5, ease: "expo.out" })
-          .to("#active-line", { strokeDashoffset: 0, duration: 7, ease: "none", onUpdate: function() {
-              const p = this.progress();
-              services.forEach((_, i) => { if (p >= i/6) document.querySelector(`.card-${i}`).classList.add('active'); });
-          }});
-
-        // Orbit Loop
-        function setupOrbit(id, rx, ry, delay) {
-            gsap.to({}, { duration: 12, repeat: -1, ease: "none", onUpdate: function() {
-                const time = (Date.now() * 0.001 * 1.5) + delay;
-                const x = Math.cos(time) * rx; const y = Math.sin(time) * ry; const z = Math.sin(time) * 80;
-                const scale = gsap.utils.mapRange(-80, 80, 0.7, 1.2, z);
-                gsap.set(id, { x, y, scale, opacity: scale, zIndex: Math.round(z)+50 });
-            }});
-        }
-        setupOrbit("#planet1", 130, 40, 0);
-        setupOrbit("#planet2", 150, -30, Math.PI);
     </script>
 </body>
 </html>
