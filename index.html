@@ -29,7 +29,7 @@
         .power-tagline { font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 25px; line-height: 1.8; max-width: 450px; }
         .power-tagline b { color: #f0c040; }
 
-        /* ── TERMINAL + RUNNING BORDER ── */
+        /* ── TERMINAL ── */
         .terminal-container { 
             flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.98); 
             border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; 
@@ -37,7 +37,6 @@
             box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 420px; 
             transform: rotateY(8deg); position: relative; overflow: hidden;
         }
-        
         .t-border { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; z-index: 5; opacity: 0; transition: opacity 0.5s; }
         .t-active .t-border { opacity: 1; }
         .t-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runR 2s linear infinite; }
@@ -189,7 +188,7 @@
         }
         let ambients=[];
         function init(){resize();ambients=[];for(let i=0;i<190;i++)ambients.push(new Amb());}
-        function render(){requestAnimationFrame(render);ctx.clearRect(0,0,W,H);ambients.forEach(a=>{a.update();a.draw();});}
+        function render(){requestAnimationFrame(render);ctx.clearRect(0,0,W,H);ctx.fillStyle='#070705';ctx.fillRect(0,0,W,H);ambients.forEach(a=>{a.update();a.draw();});}
         window.addEventListener('resize',init);init();render();
 
         const trails=[];
@@ -200,8 +199,8 @@
         }
         document.addEventListener('mousemove',e=>{
             mx=e.clientX;my=e.clientY;
-            document.getElementById('custom-mouse').style.left=mx+'px';
-            document.getElementById('custom-mouse').style.top=my+'px';
+            const mc = document.getElementById('custom-mouse');
+            if(mc){mc.style.left=mx+'px';mc.style.top=my+'px';}
         });
         (function trailLoop(){
             let px=mx, py=my;
@@ -228,12 +227,13 @@
         ];
         let lineIdx=0;
         function typeCode(){
-            term.classList.add('t-active');
+            if(term) term.classList.add('t-active');
             if(lineIdx<codeLines.length){
                 const l=codeLines[lineIdx];const d=document.createElement('div');
                 if(l.isCode){const p=l.t.split(':');d.innerHTML=`<span class="code-key">${p[0]}</span>:<span class="code-val">${p[1]}</span>`;}
                 else{d.style.color=l.c;d.textContent=l.t;}
-                output.appendChild(d);lineIdx++;setTimeout(typeCode, 100);
+                if(output) output.appendChild(d);
+                lineIdx++;setTimeout(typeCode, 100);
             }
         }
         setTimeout(typeCode, 1400);
