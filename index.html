@@ -15,15 +15,15 @@
   --black: #070705;
   --white: #f0ebe0;
 }
-html, body { width:100%; height:100%; background:var(--black); overflow:hidden; cursor:none; }
+html, body { width:100%; height:100%; background:#070705; overflow:hidden; cursor:none; }
 
 /* ── CURSOR ─────────────────────────────── */
 #cur-dot {
 position:fixed; z-index:9999; pointer-events:none;
 width:7px; height:7px; border-radius:50%;
-background:var(–gold-bright);
+background:#f0c040;
 transform:translate(-50%,-50%);
-box-shadow: 0 0 8px var(–gold-bright), 0 0 20px rgba(240,192,64,.4);
+box-shadow: 0 0 8px #f0c040, 0 0 20px rgba(240,192,64,.4);
 transition: width .3s, height .3s;
 }
 #cur-ring1 {
@@ -56,7 +56,7 @@ padding:28px 52px;
 }
 .nav-logo {
 font-family:‘Cormorant Garamond’,serif; font-size:11px;
-letter-spacing:.3em; color:var(–gold-bright); text-transform:uppercase;
+letter-spacing:.3em; color:#f0c040; text-transform:uppercase;
 border:1px solid rgba(201,168,76,.7); padding:8px 16px; line-height:1.6;
 opacity:0; animation:fadeIn .8s ease 2.8s forwards;
 }
@@ -66,7 +66,7 @@ font-family:‘Space Mono’,monospace; font-size:10px;
 letter-spacing:.22em; color:#ffffff;
 text-decoration:none; text-transform:uppercase; transition:color .3s;
 }
-.nav-links a:hover { color:var(–gold-bright); }
+.nav-links a:hover { color:#f0c040; }
 .nav-cta {
 font-family:‘Space Mono’,monospace; font-size:10px;
 letter-spacing:.15em; color:#070705; background:#ffffff;
@@ -74,7 +74,7 @@ padding:10px 20px; text-decoration:none; text-transform:uppercase;
 opacity:0; animation:fadeIn .8s ease 3s forwards;
 transition:background .3s, color .3s;
 }
-.nav-cta:hover { background:var(–gold-bright); color:#070705; }
+.nav-cta:hover { background:#f0c040; color:#070705; }
 
 /* ── HERO ───────────────────────────────── */
 #hero {
@@ -87,7 +87,7 @@ pointer-events:none;
 
 .eyebrow {
 font-family:‘Space Mono’,monospace; font-size:10px;
-letter-spacing:.45em; color:var(–gold-bright);
+letter-spacing:.45em; color:#f0c040;
 text-transform:uppercase;
 border:1px solid rgba(201,168,76,.5); padding:8px 20px;
 margin-bottom:clamp(20px,3vw,40px);
@@ -191,7 +191,7 @@ pointer-events:none;
 font-family:‘Cormorant Garamond’,serif;
 font-style:italic; font-weight:300;
 font-size:clamp(28px,4.5vw,62px);
-letter-spacing:.04em; color:var(–white);
+letter-spacing:.04em; color:#f0ebe0;
 line-height:1;
 margin-top:clamp(20px,2.5vw,36px);
 opacity:0; transform:translateY(18px);
@@ -201,15 +201,15 @@ transition:opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1);
 
 .divider {
 width:48px; height:1px;
-background:linear-gradient(to right, transparent, var(–gold), transparent);
+background:linear-gradient(to right, transparent, #c9a84c, transparent);
 margin:clamp(14px,2vw,28px) auto;
 opacity:0; animation:fadeIn .8s ease 2s forwards;
 }
 
 .name-line {
-font-family:‘Cormorant Garamond’,serif; font-weight:300;
+font-family:‘Cormorant Garamond’,serif; font-weight:400;
 font-size:clamp(11px,1.4vw,18px);
-letter-spacing:.5em; color:var(–gold);
+letter-spacing:.5em; color:#f0c040;
 text-transform:uppercase;
 opacity:0; animation:fadeIn .8s ease 2.2s forwards;
 }
@@ -217,7 +217,7 @@ opacity:0; animation:fadeIn .8s ease 2.2s forwards;
 .subtitle {
 font-family:‘Cormorant Garamond’,serif; font-style:italic;
 font-size:clamp(14px,1.6vw,22px);
-letter-spacing:.12em; color:rgba(240,235,224,.75);
+letter-spacing:.12em; color:rgba(240,235,224,.95);
 margin-top:10px;
 opacity:0; animation:fadeIn .8s ease 2.4s forwards;
 }
@@ -230,12 +230,12 @@ opacity:0; animation:fadeIn .8s ease 2.6s forwards;
 .btn-p {
 font-family:‘Space Mono’,monospace; font-size:11px;
 letter-spacing:.2em; text-transform:uppercase;
-color:var(–black); background:var(–gold);
+color:#070705; background:#c9a84c;
 padding:13px 32px; text-decoration:none;
 position:relative; overflow:hidden; transition:color .3s;
 }
 .btn-p::before {
-content:’’; position:absolute; inset:0; background:var(–gold-bright);
+content:’’; position:absolute; inset:0; background:#f0c040;
 transform:translateX(-101%); transition:transform .4s cubic-bezier(.16,1,.3,1);
 }
 .btn-p:hover::before { transform:translateX(0); }
@@ -258,6 +258,7 @@ opacity:0; animation:fadeIn .8s ease 3.2s forwards;
 .stats-bar {
 display:flex; border-top:1px solid rgba(201,168,76,.15); border-left:1px solid rgba(201,168,76,.15);
 opacity:0; animation:fadeIn .8s ease 3.2s forwards;
+margin-right: 80px;
 }
 .st { padding:16px 28px; border-right:1px solid rgba(201,168,76,.15); text-align:center; }
 .st:last-child { border-right:none; }
@@ -280,9 +281,9 @@ opacity:0; animation:fadeIn 1s ease 2s forwards;
 #jn-inner {
 position:absolute; inset:0;
 display:flex; align-items:center; justify-content:center;
-font-family:‘Cormorant Garamond’,serif; font-size:22px;
-font-weight:700; color:var(–gold-bright);
-text-shadow:0 0 16px rgba(240,192,64,0.9), 0 0 30px rgba(240,192,64,0.5);
+font-family:‘Cormorant Garamond’,serif; font-size:26px;
+font-weight:700; color:#ffe066;
+text-shadow:0 0 8px #fff, 0 0 18px #f0c040, 0 0 40px rgba(240,192,64,0.8);
 letter-spacing:.05em;
 }
 #jn-ring { position:absolute; inset:0; }
@@ -343,10 +344,7 @@ background-size:160px; animation:grn .7s steps(1) infinite;
   <p class="frontend-line">Frontend Web Developer</p>
   <div class="divider"></div>
   <p class="name-line">Jade Nguyen</p>
-  <p class="subtitle">Based in <span style="color:var(--gold-bright);font-style:normal;">United Kingdom</span> · Available for <span style="color:var(--gold-bright);font-style:normal;">remote</span> &amp; UK opportunities</p>
-  <div class="cta-row">
-    <a href="#" class="btn-p"><span>explore my work ↓</span></a>
-  </div>
+  <p class="subtitle">Based in <span style="color:#f0c040;font-style:normal;">United Kingdom</span> · Available for <span style="color:#f0c040;font-style:normal;">remote</span> &amp; UK opportunities</p>
 </section>
 
 <div id="jn-badge">
@@ -360,7 +358,7 @@ background-size:160px; animation:grn .7s steps(1) infinite;
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
-      <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(201,168,76,0.7)" stroke-width="1.2"/>
+      <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(240,192,64,0.9)" stroke-width="1.5"/>
       <circle r="3.5" fill="#f0c040" filter="url(#glow72)">
         <animateMotion dur="3s" repeatCount="indefinite">
           <mpath href="#orbit"/>
@@ -374,9 +372,12 @@ background-size:160px; animation:grn .7s steps(1) infinite;
 </div>
 
 <div class="hero-bottom">
-  <div class="status">
-    <div class="sdot"></div>
-    <span class="sdot-t">Available for hire</span>
+  <div style="display:flex; align-items:center; gap:32px; padding:0 52px 36px;">
+    <div class="status" style="padding:0;">
+      <div class="sdot"></div>
+      <span class="sdot-t">Available for hire</span>
+    </div>
+    <a href="#" class="btn-p" style="opacity:0; animation:fadeIn .8s ease 3.2s forwards; pointer-events:all;"><span>explore my work ↓</span></a>
   </div>
   <div class="stats-bar" id="stats-bar">
     <div class="st"><span class="st-n" id="n1">0</span><span class="st-l">Years<br>Experience</span></div>
