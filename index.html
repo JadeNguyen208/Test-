@@ -14,7 +14,7 @@
         #custom-mouse { position: fixed; width: 10px; height: 10px; background: #f0c040; border-radius: 50%; z-index: 10000; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 15px #f0c040; }
         .trail { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: opacity 0.4s; }
         
-        .digital-silk { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.7em; color: rgba(240, 192, 64, 0.2); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .digital-silk { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.6em; color: rgba(240, 192, 64, 0.2); display: flex; align-items: center; justify-content: center; z-index: 100; }
 
         /* ── HERO SECTION ── */
         #hero-section { display: flex; align-items: center; justify-content: space-around; min-height: 65vh; padding: 0 10%; perspective: 1000px; z-index: 10; position: relative; }
@@ -26,14 +26,14 @@
         .line-right { transform: translateX(150%); animation: flyIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; margin-top: -10px; }
         @keyframes flyIn { to { transform: translateX(0); } }
 
-        .power-tagline { font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 25px; line-height: 1.8; max-width: 450px; }
+        .power-tagline { font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 25px; line-height: 1.8; max-width: 450px; }
         .power-tagline b { color: #f0c040; }
 
-        /* ── TERMINAL ── */
+        /* ── TERMINAL + RUNNING BORDER ── */
         .terminal-container { 
             flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.98); 
             border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; 
-            padding: 30px; font-family: 'Space Mono', monospace; font-size: 13px; 
+            padding: 30px; font-family: 'Space Mono', monospace; font-size: 12px; 
             box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 420px; 
             transform: rotateY(8deg); position: relative; overflow: hidden;
         }
@@ -47,25 +47,26 @@
 
         .terminal-header { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; }
-        #code-output { color: #999; line-height: 1.8; }
+        #code-output { color: #999; line-height: 1.8; text-align: left; }
         .code-key { color: #f0c040; } .code-val { color: #c9a84c; font-style: italic; }
         .cursor { border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; }
+        @keyframes blink { 50% { opacity: 0; } }
 
         /* ── SUMMARY LINE ── */
         .summary-line { 
             width: 100%; text-align: center; font-family: 'Space Mono', monospace; font-weight: 700; color: #f0c040; 
-            font-size: 14px; letter-spacing: 0.4em; text-transform: uppercase; padding: 15px 0; 
+            font-size: 13px; letter-spacing: 0.4em; text-transform: uppercase; padding: 15px 0; 
             z-index: 10; position: relative; text-shadow: 0 0 10px #f0c040;
             transform: translateX(-100%); opacity: 0;
-            animation: slideInLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.8s forwards;
+            animation: slideInLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
         }
         @keyframes slideInLeft { to { transform: translateX(0); opacity: 1; } }
 
-        /* ── GRID: ĐẨY SÁT LÊN ── */
-        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; padding: 0 10% 40px 8%; z-index: 10; position: relative; }
+        /* ── INFO CARDS GRID ── */
+        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 0 10% 40px 8%; z-index: 10; position: relative; }
         
         .info-card { 
-            background: rgba(15, 15, 12, 0.95); padding: 45px; border-radius: 16px; 
+            background: rgba(15, 15, 12, 0.95); padding: 40px; border-radius: 16px; 
             border: 1px solid rgba(255, 255, 255, 0.2); 
             position: relative; overflow: hidden; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); 
             transform-style: preserve-3d; 
@@ -80,20 +81,20 @@
         .info-card:hover { transform: translateY(-5px) translateZ(40px); background: rgba(20, 20, 18, 1); border-color: #fff; }
         .info-card:hover h3, .info-card:hover p, .info-card:hover li { color: #fff; text-shadow: 0 0 10px #fff; }
 
-        .card-label { font-family: 'Space Mono', monospace; font-size: 11px; color: #f0c040; letter-spacing: 5px; margin-bottom: 25px; display: block; }
-        .info-card h3 { font-size: 28px; margin-bottom: 20px; font-weight: 400; color: #f5f5f5; }
-        .info-card p, .info-card li { color: #bbb; font-family: 'Space Mono', monospace; font-size: 14px; line-height: 1.8; }
-        .info-card li { margin-bottom: 12px; padding-left: 20px; position: relative; list-style: none; }
+        .card-label { font-family: 'Space Mono', monospace; font-size: 10px; color: #f0c040; letter-spacing: 5px; margin-bottom: 20px; display: block; border-bottom: 1px solid rgba(240,192,64,0.3); width: fit-content; }
+        .info-card h3 { font-size: 26px; margin-bottom: 15px; font-weight: 400; color: #f5f5f5; }
+        .info-card p, .info-card li { color: #bbb; font-family: 'Space Mono', monospace; font-size: 13px; line-height: 1.8; }
+        .info-card li { margin-bottom: 8px; padding-left: 18px; position: relative; list-style: none; }
         .info-card li::before { content: '>'; position: absolute; left: 0; color: #f0c040; font-weight: bold; }
-        .highlight { color: #f0c040; font-weight: 700; }
+        .highlight { color: #f0c040; font-weight: 700; text-shadow: 0 0 8px rgba(240,192,64,0.4); }
 
         /* ── JN BADGE ── */
-        #jn-badge-corner { position: fixed; bottom: 40px; left: 40px; width: 110px; height: 110px; z-index: 1000; }
+        #jn-badge-corner { position: fixed; bottom: 30px; left: 30px; width: 100px; height: 100px; z-index: 1000; }
         #jn-ring-svg { width: 100%; height: 100%; overflow: visible; }
         .orbit { fill: none; stroke: rgba(240, 192, 64, 0.4); stroke-width: 0.8px; stroke-dasharray: 4 4; transform-origin: center; animation: jnSpin 10s linear infinite; }
         @keyframes jnSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .main-text { fill: #fff; font-weight: 700; font-size: 24px; text-shadow: 0 0 10px #f0c040; }
-        .orbit-text { fill: #f0c040; font-size: 6px; letter-spacing: 2px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
+        .orbit-text { fill: #f0c040; font-size: 5.5px; letter-spacing: 2.1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
 
         @media (max-width: 900px) { #hero-section { flex-direction: column; } #experience-grid { grid-template-columns: 1fr; } }
     </style>
@@ -133,28 +134,33 @@
                 <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
                 <span class="card-label">Curriculum Vitae</span>
                 <ul>
-                    <li>BSc Digital Marketing - Cardiff Met, UK</li>
-                    <li><span class="highlight">CS50p Python & CS50x Harvard</span></li>
-                    <li><span class="highlight">Rapidly mastering new tech</span> for live design.</li>
+                    <li>BSc Digital Marketing — Cardiff Met, UK (2025)</li>
+                    <li><span class="highlight">CS50x Harvard Computer Science</span> (in progress)</li>
+                    <li>5 years <span class="highlight">Motion Design & Frontend Development</span></li>
+                    <li>After Effects · HTML/CSS/JS · <span class="highlight">Web Audio API</span></li>
+                    <li>AI-native: Claude API · Midjourney · ChatGPT</li>
                 </ul>
             </div>
+
             <div class="info-card">
                 <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
                 <span class="card-label">Expertise</span>
                 <h3>Sharp Visual Eye</h3>
-                <p>Mastering aesthetic precision with a <span class="highlight">sharp eye for visual balance</span>. Expert in 3D interactive prototyping.</p>
+                <p>Bridging aesthetics and engineering — from frame-perfect <span class="highlight">After Effects</span> animation to interactive web experiences. Built <span class="highlight">SleepSoundMixer</span>: a live product with 40+ synthesized sounds, real-time 3D canvas visuals, and 4-language UI. Expert in motion-first design thinking.</p>
             </div>
+
             <div class="info-card">
                 <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
                 <span class="card-label">Leadership</span>
                 <h3>Strategic Execution</h3>
-                <p><span class="highlight">Led 20+ design projects</span> while managing <span class="highlight">multiple teams simultaneously</span>.</p>
+                <p>Delivered <span class="highlight">12+ end-to-end projects</span> — concept, design, build, deploy. Managed full visual identity for a <span class="highlight">500-member organisation</span> across print, motion and digital. Comfortable owning a brief solo or leading within a team.</p>
             </div>
+
             <div class="info-card">
                 <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
                 <span class="card-label">Philosophy</span>
                 <h3>Always Creative</h3>
-                <p>Design is solving. I bridge concepts and products with <span class="highlight">continuous learning</span> and innovation.</p>
+                <p>Design is problem-solving with taste. I build tools people actually use — not just mockups. Currently expanding into <span class="highlight">CS50x</span> and <span class="highlight">German (B1)</span> to work and grow across European markets.</p>
             </div>
         </section>
     </div>
@@ -207,15 +213,17 @@
         const output = document.getElementById('code-output');
         const term = document.getElementById('terminal-main');
         const codeLines = [
-            {t:"> [LIVE]: Senior Digital Designer Active...", c:"#f0c040"},
-            {t:"> [INFO]: Experience 3D design, one of my core strengths.", c:"#fff"},
-            {t:"> [SYST]: Applying code to realize complex 3D visuals.", c:"#27c93f"},
+            {t:"> [LIVE]: Senior Digital Designer · Available Now", c:"#f0c040"},
+            {t:"> [INFO]: Motion design meets frontend engineering.", c:"#fff"},
+            {t:"> [SYST]: Building products people actually use.", c:"#27c93f"},
             {t:"", c:""},
             {t:"const SeniorJade = {", c:"#666"},
-            {t:"  focus: '3D Pixel Perfection',", isCode:true},
-            {t:"  leadership: '20+ projects led',", isCode:true},
-            {t:"  mastery: 'HTML/CSS/JS/Python',", isCode:true},
-            {t:"  output: () => 'Live Dynamic Products'", isCode:true},
+            {t:"  focus: 'Motion · Web · 3D Visual Design',", isCode:true},
+            {t:"  experience: '5+ years · Remote & Freelance',", isCode:true},
+            {t:"  stack: 'HTML/CSS/JS · After Effects · Web Audio API',", isCode:true},
+            {t:"  ai: 'Claude API · Midjourney · AI-native workflow',", isCode:true},
+            {t:"  product: 'SleepSoundMixer — live, shipped, real users',", isCode:true},
+            {t:"  output: () => 'Concepts → Code → Live Products'", isCode:true},
             {t:"};", c:"#666"}
         ];
         let lineIdx=0;
