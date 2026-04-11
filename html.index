@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jade Nguyen — Digital Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --gold: #c9a84c;
+  --gold-bright: #f0c040;
+  --gold-dim: rgba(201,168,76,0.3);
+  --black: #070705;
+  --white: #f0ebe0;
+}
+html, body { width:100%; height:100%; background:var(--black); overflow:hidden; cursor:none; }
+
+/* ── CURSOR ─────────────────────────────── */
+#cur-dot {
+position:fixed; z-index:9999; pointer-events:none;
+width:7px; height:7px; border-radius:50%;
+background:var(–gold-bright);
+transform:translate(-50%,-50%);
+box-shadow: 0 0 8px var(–gold-bright), 0 0 20px rgba(240,192,64,.4);
+transition: width .3s, height .3s;
+}
+#cur-ring1 {
+position:fixed; z-index:9998; pointer-events:none;
+width:28px; height:28px; border-radius:50%;
+border:1px solid rgba(201,168,76,.7);
+transform:translate(-50%,-50%);
+transition: width .4s, height .4s;
+}
+#cur-ring2 {
+position:fixed; z-index:9997; pointer-events:none;
+width:52px; height:52px; border-radius:50%;
+border:1px solid rgba(201,168,76,.2);
+transform:translate(-50%,-50%);
+transition: width .5s, height .5s;
+}
+
+/* ── CANVAS (particles only) ─────────────── */
+#pcanvas {
+position:fixed; inset:0;
+width:100%; height:100%;
+z-index:1; pointer-events:none;
+}
+
+/* ── NAV ─────────────────────────────────── */
+nav {
+position:fixed; top:0; left:0; right:0; z-index:100;
+display:flex; justify-content:space-between; align-items:center;
+padding:28px 52px;
+}
+.nav-logo {
+font-family:‘Cormorant Garamond’,serif; font-size:11px;
+letter-spacing:.3em; color:var(–gold); text-transform:uppercase;
+border:1px solid rgba(201,168,76,.35); padding:8px 16px; line-height:1.6;
+opacity:0; animation:fadeIn .8s ease 2.8s forwards;
+}
+.nav-links { display:flex; gap:36px; list-style:none; opacity:0; animation:fadeIn .8s ease 3s forwards; }
+.nav-links a {
+font-family:‘Space Mono’,monospace; font-size:10px;
+letter-spacing:.22em; color:rgba(240,235,224,.35);
+text-decoration:none; text-transform:uppercase; transition:color .3s;
+}
+.nav-links a:hover { color:var(–gold); }
+.nav-cta {
+font-family:‘Space Mono’,monospace; font-size:10px;
+letter-spacing:.15em; color:var(–black); background:var(–gold);
+padding:10px 20px; text-decoration:none; text-transform:uppercase;
+opacity:0; animation:fadeIn .8s ease 3s forwards;
+transition:background .3s;
+}
+.nav-cta:hover { background:var(–gold-bright); }
+
+/* ── HERO CONTENT ───────────────────────── */
+#hero {
+position:fixed; inset:0; z-index:10;
+display:flex; flex-direction:column;
+justify-content:center; align-items:center;
+text-align:center;
+pointer-events:none;
+}
+
+/* Eyebrow badge */
+.eyebrow {
+font-family:‘Space Mono’,monospace; font-size:10px;
+letter-spacing:.45em; color:rgba(201,168,76,.55);
+text-transform:uppercase;
+border:1px solid rgba(201,168,76,.18); padding:8px 20px;
+margin-bottom:clamp(28px,4vw,52px);
+opacity:0; animation:fadeIn .8s ease .2s forwards;
+}
+
+/* Digital Designer — CSS text, no canvas needed */
+#particle-zone {
+height: auto;
+width:100%;
+position:relative;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+#dd-text {
+font-family:‘Cormorant Garamond’, serif;
+font-weight: 700;
+font-size: clamp(80px, 14vw, 196px);
+line-height: 1;
+letter-spacing: -.01em;
+text-align: center;
+color: #f0ebe0;
+position: relative;
+opacity: 0;
+animation: ddReveal 1.2s cubic-bezier(.16,1,.3,1) .3s forwards;
+/* gold glow */
+text-shadow:
+0 0 20px rgba(240,192,64,0.5),
+0 0 60px rgba(240,192,64,0.2),
+0 0 2px rgba(255,230,100,0.8);
+}
+
+/* Shine sweep across text */
+#dd-text::after {
+content: ‘Digital Designer’;
+position: absolute;
+inset: 0;
+background: linear-gradient(
+105deg,
+transparent 30%,
+rgba(255,240,180,0.55) 50%,
+transparent 70%
+);
+-webkit-background-clip: text;
+background-clip: text;
+-webkit-text-fill-color: transparent;
+background-size: 200% 100%;
+animation: shine 3s ease-in-out 1.5s infinite;
+}
+
+@keyframes ddReveal {
+from { opacity:0; transform: translateY(16px); }
+to   { opacity:1; transform: translateY(0); }
+}
+@keyframes shine {
+0%   { background-position: -100% 0; }
+40%  { background-position: 200% 0; }
+100% { background-position: 200% 0; }
+}
+/* Running border — CSS animation only, no JS per frame */
+#zone-border {
+position:absolute; inset:-14px;
+pointer-events:none; z-index:20;
+opacity:0; transition:opacity 1s ease;
+}
+#zone-border.show { opacity:1; }
+
+/* 4 individual edge lines */
+.b-edge {
+position:absolute;
+background: transparent;
+overflow:hidden;
+}
+.b-edge::after {
+content:’’;
+position:absolute;
+background: linear-gradient(90deg, transparent, #f0c040, transparent);
+border-radius:2px;
+box-shadow: 0 0 8px #f0c040, 0 0 16px rgba(240,192,64,0.5);
+}
+
+/* TOP — runner left→right */
+.b-top    { top:0; left:0; right:0; height:2px; }
+.b-top::after {
+top:0; height:2px; width:140px;
+animation: runRight 1.2s linear infinite;
+}
+/* BOTTOM — runner right→left */
+.b-bottom { bottom:0; left:0; right:0; height:2px; }
+.b-bottom::after {
+top:0; height:2px; width:140px;
+animation: runLeft 1.2s linear infinite;
+}
+/* LEFT — runner top→bottom */
+.b-left   { left:0; top:0; bottom:0; width:2px; }
+.b-left::after {
+left:0; width:2px; height:80px;
+background: linear-gradient(180deg, transparent, rgba(201,168,76,0.6), transparent);
+box-shadow: 0 0 6px rgba(201,168,76,0.4);
+animation: runDown 1.2s linear infinite;
+animation-delay: -0.3s;
+}
+/* RIGHT — runner bottom→top */
+.b-right  { right:0; top:0; bottom:0; width:2px; }
+.b-right::after {
+left:0; width:2px; height:80px;
+background: linear-gradient(180deg, transparent, rgba(201,168,76,0.6), transparent);
+box-shadow: 0 0 6px rgba(201,168,76,0.4);
+animation: runUp 1.2s linear infinite;
+animation-delay: -0.6s;
+}
+
+/* dim static border */
+#zone-border .b-static {
+position:absolute; inset:0;
+border:1px solid rgba(201,168,76,0.12);
+pointer-events:none;
+}
+
+@keyframes runRight {
+from { left:-60px; }
+to   { left:100%; }
+}
+@keyframes runLeft {
+from { right:-60px; left:auto; }
+to   { right:100%; left:auto; }
+}
+@keyframes runDown {
+from { top:-40px; }
+to   { top:100%; }
+}
+@keyframes runUp {
+from { bottom:-40px; top:auto; }
+to   { bottom:100%; top:auto; }
+}
+
+/* Frontend Web Developer — hidden, JS triggers after particles settle */
+.frontend-line {
+font-family:‘Cormorant Garamond’,serif;
+font-style:italic; font-weight:300;
+font-size:clamp(38px,6.8vw,92px);
+letter-spacing:.04em; color:var(–white);
+line-height:1;
+margin-top:clamp(28px,3vw,44px);
+opacity:0;
+transform:translateY(18px);
+transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1);
+}
+.frontend-line.show { opacity:1; transform:translateY(0); }
+
+/* Divider */
+.divider {
+width:48px; height:1px;
+background:linear-gradient(to right, transparent, var(–gold), transparent);
+margin:clamp(16px,2.5vw,32px) auto;
+opacity:0; animation:fadeIn .8s ease 2s forwards;
+}
+
+/* “Jade Nguyen” */
+.name-line {
+font-family:‘Cormorant Garamond’,serif; font-weight:300;
+font-size:clamp(11px,1.4vw,18px);
+letter-spacing:.5em; color:var(–gold);
+text-transform:uppercase;
+opacity:0; animation:fadeIn .8s ease 2.2s forwards;
+}
+
+/* Subtitle */
+.subtitle {
+font-family:‘Cormorant Garamond’,serif; font-style:italic;
+font-size:clamp(15px,1.8vw,24px);
+letter-spacing:.15em; color:rgba(240,235,224,.7);
+margin-top:10px;
+opacity:0; animation:fadeIn .8s ease 2.4s forwards;
+}
+
+/* CTA row */
+.cta-row {
+display:flex; gap:18px; margin-top:clamp(28px,4vw,52px);
+pointer-events:all;
+opacity:0; animation:fadeIn .8s ease 2.6s forwards;
+}
+.btn-p {
+font-family:‘Space Mono’,monospace; font-size:11px;
+letter-spacing:.2em; text-transform:uppercase;
+color:var(–black); background:var(–gold);
+padding:13px 32px; text-decoration:none;
+position:relative; overflow:hidden; transition:color .3s;
+}
+.btn-p::before {
+content:’’; position:absolute; inset:0; background:var(–gold-bright);
+transform:translateX(-101%); transition:transform .4s cubic-bezier(.16,1,.3,1);
+}
+.btn-p:hover::before { transform:translateX(0); }
+.btn-p span { position:relative; z-index:1; }
+.btn-s {
+font-family:‘Space Mono’,monospace; font-size:11px;
+letter-spacing:.2em; text-transform:uppercase;
+color:var(–gold); background:transparent;
+border:1px solid rgba(201,168,76,.3);
+padding:13px 32px; text-decoration:none; transition:border-color .3s, color .3s;
+}
+.btn-s:hover { border-color:var(–gold); color:var(–gold-bright); }
+
+/* ── BOTTOM ──────────────────────────────── */
+.hero-bottom {
+position:fixed; bottom:0; left:0; right:0; z-index:20;
+display:flex; justify-content:space-between; align-items:flex-end;
+}
+
+.status {
+padding:0 52px 36px;
+display:flex; align-items:center; gap:10px;
+opacity:0; animation:fadeIn .8s ease 3.2s forwards;
+}
+.sdot { width:6px; height:6px; border-radius:50%; background:#4ade80; box-shadow:0 0 8px #4ade80; animation:blink 2s ease infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.sdot-t { font-family:‘Space Mono’,monospace; font-size:9px; letter-spacing:.3em; color:rgba(74,222,128,.7); text-transform:uppercase; }
+
+.stats-bar {
+display:flex; border-top:1px solid rgba(201,168,76,.1); border-left:1px solid rgba(201,168,76,.1);
+opacity:0; animation:fadeIn .8s ease 3.2s forwards;
+}
+.st { padding:16px 28px; border-right:1px solid rgba(201,168,76,.1); text-align:center; }
+.st:last-child { border-right:none; }
+.st-n { font-family:‘Cormorant Garamond’,serif; font-size:clamp(42px,5.2vw,64px); font-weight:900; color:#f5c430; display:block; line-height:1; text-shadow:0 0 14px rgba(245,196,48,0.6); }
+.st-l { font-family:‘Space Mono’,monospace; font-size:12px; font-weight:700; letter-spacing:.18em; color:rgba(240,235,224,.9); text-transform:uppercase; display:block; margin-top:6px; line-height:1.5; }
+
+/* side text */
+.side-r {
+position:fixed; right:20px; top:50%; transform:translateY(-50%) rotate(90deg);
+font-family:‘Space Mono’,monospace; font-size:9px; letter-spacing:.3em;
+color:rgba(201,168,76,.18); text-transform:uppercase; white-space:nowrap; z-index:50;
+opacity:0; animation:fadeIn 1s ease 3s forwards;
+}
+
+/* ── JN corner badge ── */
+#jn-badge {
+position:fixed; bottom:80px; left:52px; z-index:50;
+width:72px; height:72px;
+opacity:0; animation:fadeIn 1s ease 2s forwards;
+}
+#jn-inner {
+position:absolute; inset:0;
+display:flex; align-items:center; justify-content:center;
+font-family:‘Cormorant Garamond’,serif; font-size:22px;
+font-weight:700; color:var(–gold-bright);
+text-shadow:0 0 12px rgba(240,192,64,0.6);
+letter-spacing:.05em;
+}
+#jn-ring {
+position:absolute; inset:0;
+}
+#jn-ring svg {
+width:100%; height:100%;
+animation: jnSpin 8s linear infinite;
+transform-origin:center;
+}
+@keyframes jnSpin {
+from { transform:rotate(0deg); }
+to   { transform:rotate(360deg); }
+}
+
+/* ── cursor trail ── */
+.trail {
+position:fixed; border-radius:50%;
+pointer-events:none; z-index:9990;
+transform:translate(-50%,-50%);
+transition: opacity .4s;
+}
+
+/* grain */
+#grain {
+position:fixed; inset:0; z-index:6; pointer-events:none; opacity:.022;
+background-image:url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 200 200’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’/%3E%3C/svg%3E”);
+background-size:160px; animation:grn .7s steps(1) infinite;
+}
+@keyframes grn{0%,100%{background-position:0 0}25%{background-position:-8% 12%}50%{background-position:12% -8%}75%{background-position:-4% 18%}}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+</style>
+
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring1"></div>
+<div id="cur-ring2"></div>
+<canvas id="pcanvas"></canvas>
+<div id="grain"></div>
+
+<nav>
+  <div class="nav-logo">Jade<br>Nguyen</div>
+  <ul class="nav-links">
+    <li><a href="#">About</a></li>
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Project</a></li>
+    <li><a href="#">Skills</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <a href="#" class="nav-cta">↓ Save PDF</a>
+</nav>
+
+<div class="side-r">Available · Remote · UK · 2026</div>
+
+<section id="hero">
+  <p class="eyebrow">Crafting motion &amp; web experiences · 2026</p>
+  <div id="particle-zone">
+    <h1 id="dd-text">Digital Designer</h1>
+    <div id="zone-border">
+      <div class="b-static"></div>
+      <div class="b-edge b-top"></div>
+      <div class="b-edge b-bottom"></div>
+      <div class="b-edge b-left"></div>
+      <div class="b-edge b-right"></div>
+    </div>
+  </div>
+  <p class="frontend-line">Frontend Web Developer</p>
+  <div class="divider"></div>
+  <p class="name-line">Jade Nguyen</p>
+  <p class="subtitle">Based in <span style="color:var(--gold-bright);font-style:normal;">United Kingdom</span> · Available for <span style="color:var(--gold-bright);font-style:normal;">remote</span> &amp; UK opportunities</p>
+  <div class="cta-row">
+    <a href="#" class="btn-p"><span>explore my work ↓</span></a>
+  </div>
+</section>
+
+<!-- JN orbiting badge -->
+
+<div id="jn-badge">
+  <div id="jn-inner">JN</div>
+  <div id="jn-ring">
+    <svg viewBox="0 0 72 72">
+      <defs>
+        <path id="orbit" d="M36,6 a30,30 0 1,1 -0.01,0 z"/>
+      </defs>
+      <!-- dim track -->
+      <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+      <!-- running dot on orbit -->
+      <circle r="3" fill="#f0c040" filter="url(#glow72)">
+        <animateMotion dur="3s" repeatCount="indefinite">
+          <mpath href="#orbit"/>
+        </animateMotion>
+      </circle>
+      <!-- text on orbit -->
+      <text font-family="'Space Mono',monospace" font-size="7" fill="rgba(201,168,76,0.5)" letter-spacing="3">
+        <textPath href="#orbit" startOffset="0%">
+          DIGITAL · DESIGNER · FRONTEND ·&nbsp;
+        </textPath>
+      </text>
+      <defs>
+        <filter id="glow72">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+    </svg>
+  </div>
+</div>
+
+<div class="hero-bottom">
+  <div class="status">
+    <div class="sdot"></div>
+    <span class="sdot-t">Available for hire</span>
+  </div>
+  <div class="stats-bar" id="stats-bar">
+    <div class="st"><span class="st-n" id="n1">0</span><span class="st-l">Years<br>Experience</span></div>
+    <div class="st"><span class="st-n" id="n2">0</span><span class="st-l">People<br>Led</span></div>
+    <div class="st"><span class="st-n" id="n3">0</span><span class="st-l">Projects<br>Led</span></div>
+    <div class="st"><span class="st-n" id="n4">0</span><span class="st-l">Languages<br>Spoken</span></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CURSOR  — dot + two rings with lag
+// ═══════════════════════════════════════════════════════
+const dot   = document.getElementById('cur-dot');
+const ring1 = document.getElementById('cur-ring1');
+const ring2 = document.getElementById('cur-ring2');
+let mx=0,my=0, r1x=0,r1y=0, r2x=0,r2y=0;
+
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  dot.style.left=mx+'px'; dot.style.top=my+'px';
+});
+(function tickCur(){
+  r1x+=(mx-r1x)*.18; r1y+=(my-r1y)*.18;
+  r2x+=(mx-r2x)*.08; r2y+=(my-r2y)*.08;
+  ring1.style.left=r1x+'px'; ring1.style.top=r1y+'px';
+  ring2.style.left=r2x+'px'; ring2.style.top=r2y+'px';
+  requestAnimationFrame(tickCur);
+})();
+
+document.querySelectorAll('a').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    dot.style.width='14px'; dot.style.height='14px';
+    ring1.style.width='44px'; ring1.style.height='44px';
+    ring2.style.width='72px'; ring2.style.height='72px';
+  });
+  el.addEventListener('mouseleave',()=>{
+    dot.style.width='7px'; dot.style.height='7px';
+    ring1.style.width='28px'; ring1.style.height='28px';
+    ring2.style.width='52px'; ring2.style.height='52px';
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// PARTICLE SYSTEM — "Digital Designer" only
+// ═══════════════════════════════════════════════════════
+const cv  = document.getElementById('pcanvas');
+const ctx = cv.getContext('2d');
+let W, H, CY; // CY = vertical centre of particle zone
+
+function resize(){
+  W = cv.width  = window.innerWidth;
+  H = cv.height = window.innerHeight;
+  const zone = document.getElementById('particle-zone');
+  const r    = zone.getBoundingClientRect();
+  CY = r.top + r.height / 2;
+}
+
+// ── sample text at 3× resolution ──────────────────────
+function samplePoints(){
+  const SCALE = 3;
+  const oW    = W * SCALE;
+  const oH    = 480;
+  const fs    = Math.min(oW * 0.42, 280); // fill zone, not full screen
+
+  const oc = document.createElement('canvas');
+  oc.width=oW; oc.height=oH;
+  const ox=oc.getContext('2d');
+  ox.clearRect(0,0,oW,oH);
+  ox.fillStyle='#fff';
+  ox.font=`900 ${fs}px 'Cormorant Garamond', serif`;
+  ox.textAlign='center'; ox.textBaseline='middle';
+  ox.fillText('Digital Designer', oW/2, oH/2);
+
+  const data=ox.getImageData(0,0,oW,oH).data;
+  const pts=[];
+  const STEP = 2; // every 2px at 3× → denser text
+  for(let y=0;y<oH;y+=STEP){
+    for(let x=0;x<oW;x+=STEP){
+      if(data[(y*oW+x)*4+3]>30){
+        pts.push({
+          tx:(x/oW)*W,
+          ty: CY + (y - oH/2)/SCALE
+        });
+      }
+    }
+  }
+  return pts;
+}
+
+// ── Particle class ─────────────────────────────────────
+class P {
+  constructor(tx,ty){
+    this.tx=tx; this.ty=ty;
+    // spawn from scattered cloud around screen centre
+    const a=Math.random()*Math.PI*2;
+    const d=180+Math.random()*320;
+    this.sx = W/2 + Math.cos(a)*d;  // spawn X
+    this.sy = H/2 + Math.sin(a)*d;  // spawn Y
+    this.x = this.sx; this.y = this.sy;
+    this.rx=0; this.ry=0; // repel offset
+    this.size = Math.random()*1.4 + 1.0;
+    this.alpha = 0;
+    this.settled = false;
+    // gold colour variation
+    const v=Math.random();
+    if(v<0.5)      {this.cr=240;this.cg=192;this.cb=64;}
+    else if(v<0.8) {this.cr=255;this.cg=218;this.cb=95;}
+    else           {this.cr=201;this.cg=168;this.cb=76;}
+    this.depth = 0.88 + Math.random()*0.12;
+  }
+  update(mouseX, mouseY, progress){
+    // progress: 0→1 over ~1.2s, eased
+    // pure lerp — NO velocity, NO jitter ever
+    this.alpha = Math.min(1, this.alpha + 0.07);
+
+    const ease = progress < 1
+      ? 1 - Math.pow(1 - progress, 3)  // ease-out cubic
+      : 1;
+
+    // target position interpolated from spawn → final
+    let tx = this.sx + (this.tx - this.sx) * ease;
+    let ty = this.sy + (this.ty - this.sy) * ease;
+
+    // mouse repel — only after settled
+    if(progress >= 1){
+      const dx=tx-mouseX, dy=ty-mouseY;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      const R=60;
+      if(dist<R){
+        const f=(R-dist)/R * (1 - Math.min(1,(dist/R)*1.5));
+        const nx=dx/(dist||1), ny=dy/(dist||1);
+        // push away, then lerp back — handled next frame
+        this.rx = (this.rx||0)*0.7 + nx*f*28;
+        this.ry = (this.ry||0)*0.7 + ny*f*28;
+      } else {
+        this.rx = (this.rx||0)*0.75;
+        this.ry = (this.ry||0)*0.75;
+      }
+    } else {
+      this.rx=0; this.ry=0;
+    }
+
+    this.x = tx + (this.rx||0);
+    this.y = ty + (this.ry||0);
+  }
+  draw(){
+    const a = this.alpha * this.depth;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+    ctx.fillStyle=`rgba(${this.cr},${this.cg},${this.cb},${a})`;
+    ctx.shadowBlur  = 12;
+    ctx.shadowColor = `rgba(255,220,80,${a*0.9})`;
+    ctx.fill();
+    ctx.shadowBlur=0;
+  }
+}
+
+// ── Ambient sparkles ────────────────────────────────────
+class Amb {
+  constructor(){
+    this.x=Math.random()*W; this.y=Math.random()*H;
+    this.ox=this.x; this.oy=this.y;
+    this.vx=(Math.random()-.5)*.15; this.vy=(Math.random()-.5)*.15;
+    this.size=Math.random()*1.1+.2;
+    this.alpha=Math.random()*.35+.06;
+    this.ph=Math.random()*Math.PI*2;
+    this.sp=Math.random()*.01+.004;
+  }
+  update(mouseX,mouseY){
+    this.ph+=this.sp;
+    const dx=this.x-mouseX,dy=this.y-mouseY,d=Math.sqrt(dx*dx+dy*dy);
+    if(d<80){const f=(80-d)/80;this.vx+=(dx/d)*f*1.1;this.vy+=(dy/d)*f*1.1;}
+    this.vx+=(this.ox-this.x)*.0004; this.vy+=(this.oy-this.y)*.0004;
+    this.vx*=.96; this.vy*=.96;
+    this.x+=this.vx; this.y+=this.vy;
+  }
+  draw(){
+    const a=this.alpha*(Math.sin(this.ph)*.3+.7);
+    ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(201,168,76,${a})`; ctx.fill();
+  }
+}
+
+// ── Scene ──────────────────────────────────────────────
+let ambients=[], mouseX=-999, mouseY=-999;
+let triggered=false;
+
+document.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;});
+
+function init(){
+  resize();
+  ambients=[];
+  const n=Math.min(180,Math.floor(W*H/12000));
+  for(let i=0;i<n;i++) ambients.push(new Amb());
+
+  // no particles — using CSS text
+}
+
+// ── Render loop ────────────────────────────────────────
+const t0=performance.now();
+let frame=0;
+
+function render(){
+  requestAnimationFrame(render);
+  const now=performance.now();
+  const t=(now-t0)*.001;
+  frame++;
+
+  // semi-transparent clear → motion trail
+  ctx.fillStyle='rgba(7,7,5,0.18)';
+  ctx.fillRect(0,0,W,H);
+
+  // connection lines between close ambients
+  if(frame%2===0){
+    for(let i=0;i<ambients.length;i++){
+      for(let j=i+1;j<ambients.length;j++){
+        const a=ambients[i],b=ambients[j];
+        const dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<60){
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=`rgba(201,168,76,${(1-d/60)*.05})`;
+          ctx.lineWidth=.4; ctx.stroke();
+        }
+      }
+    }
+  }
+
+  ambients.forEach(a=>{a.update(mouseX,mouseY);a.draw();});
+  // no text particles — CSS handles Digital Designer
+
+  // when fully settled, show frontend line + border
+  // show frontend line at 1.2s
+  if(!triggered && t > 1.2){
+    triggered = true;
+    const fl=document.querySelector('.frontend-line');
+    if(fl) fl.classList.add('show');
+    const zb=document.getElementById('zone-border');
+    if(zb) zb.classList.add('show');
+  }
+}
+
+// ── Start after fonts ready ─────────────────────────────
+document.fonts.ready.then(()=>{
+  setTimeout(()=>{ init(); render(); },80);
+});
+
+
+window.addEventListener('resize',()=>{ init(); });
+
+// ── COUNTERS — CSS keyframe approach, works everywhere ──
+(function(){
+  var data = [
+    {id:'n1', target:5,  sfx:'+'},
+    {id:'n2', target:60, sfx:'+'},
+    {id:'n3', target:12, sfx:'+'},
+    {id:'n4', target:5,  sfx:''}
+  ];
+  var started = false;
+  function run(){
+    if(started) return;
+    started = true;
+    data.forEach(function(d, i){
+      var el = document.getElementById(d.id);
+      if(!el) return;
+      var v = 0;
+      var delay = 600 + i*220;
+      setTimeout(function(){
+        var iv = setInterval(function(){
+          v = v + d.target/70;
+          if(v >= d.target){ v = d.target; clearInterval(iv); }
+          el.textContent = Math.floor(v) + d.sfx;
+        }, 55);
+      }, delay);
+    });
+  }
+  // Try every possible trigger
+  setTimeout(run, 200);
+  document.addEventListener('DOMContentLoaded', function(){ setTimeout(run, 100); });
+  window.addEventListener('load', function(){ setTimeout(run, 100); });
+  if(document.readyState !== 'loading') setTimeout(run, 50);
+})();
+
+// ── CURSOR TRAIL ────────────────────────────────────────
+const trailColors = ['rgba(240,192,64,0.6)','rgba(201,168,76,0.4)','rgba(255,220,80,0.3)'];
+const trails = [];
+const TRAIL_COUNT = 8;
+for(let i=0;i<TRAIL_COUNT;i++){
+  const d = document.createElement('div');
+  d.className='trail';
+  const sz = 4 + i*1.5;
+  d.style.cssText=`width:${sz}px;height:${sz}px;background:${trailColors[i%3]};`;
+  document.body.appendChild(d);
+  trails.push({el:d, x:0, y:0});
+}
+
+let trailMx=0, trailMy=0;
+document.addEventListener('mousemove',e=>{trailMx=e.clientX;trailMy=e.clientY;});
+(function trailLoop(){
+  let px=trailMx, py=trailMy;
+  trails.forEach((t,i)=>{
+    const lag = 0.18 - i*0.015;
+    t.x += (px-t.x)*lag;
+    t.y += (py-t.y)*lag;
+    t.el.style.left = t.x+'px';
+    t.el.style.top  = t.y+'px';
+    t.el.style.opacity = 1 - i/TRAIL_COUNT;
+    px=t.x; py=t.y;
+  });
+  requestAnimationFrame(trailLoop);
+})();
+</script>
+
+</body>
+</html>
