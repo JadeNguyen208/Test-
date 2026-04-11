@@ -1,251 +1,192 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jade Nguyen — Senior Creative Engine</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Jade Nguyen Services 3D</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; scroll-behavior: smooth; cursor: none; }
-
-        /* ── BACKGROUND ── */
-        #pcanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        #custom-mouse { position: fixed; width: 10px; height: 10px; background: #f0c040; border-radius: 50%; z-index: 10000; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 15px #f0c040; }
-        .trail { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: opacity 0.4s; }
-        
-        .digital-silk { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.6em; color: rgba(240, 192, 64, 0.2); display: flex; align-items: center; justify-content: center; z-index: 100; }
-
-        /* ── HERO SECTION ── */
-        #hero-section { display: flex; align-items: center; justify-content: space-around; min-height: 65vh; padding: 0 10%; perspective: 1000px; z-index: 10; position: relative; }
-        .hero-text { flex: 1; }
-        .hero-text h2 { font-size: clamp(48px, 6vw, 92px); line-height: 1.1; font-weight: 300; white-space: nowrap; }
-        .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.4); font-weight: 700; }
-
-        .line-left { transform: translateX(-150%); animation: flyIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .line-right { transform: translateX(150%); animation: flyIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; margin-top: -10px; }
-        @keyframes flyIn { to { transform: translateX(0); } }
-
-        .power-tagline { font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 25px; line-height: 1.8; max-width: 450px; }
-        .power-tagline b { color: #f0c040; }
-
-        /* ── TERMINAL ── */
-        .terminal-container { 
-            flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.98); 
-            border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; 
-            padding: 30px; font-family: 'Space Mono', monospace; font-size: 12px; 
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 420px; 
-            transform: rotateY(8deg); position: relative; overflow: hidden;
+        :root {
+            --gold: #D4AF37;
+            --black: #111111;
+            --white: #ffffff;
         }
-        .t-border { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; z-index: 5; opacity: 0; transition: opacity 0.5s; }
-        .t-active .t-border { opacity: 1; }
-        .t-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runR 2s linear infinite; }
-        .t-2 { bottom: 0; right: -100%; width: 100%; height: 2px; animation: runL 2s linear infinite; }
-        @keyframes runR { from { left: -100%; } to { left: 100%; } }
-        @keyframes runL { from { right: -100%; } to { right: 100%; } }
-
-        .terminal-header { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
-        #code-output { color: #999; line-height: 1.8; text-align: left; }
-        .code-key { color: #f0c040; } .code-val { color: #c9a84c; font-style: italic; }
-        .cursor { border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; }
-
-        /* ── SUMMARY LINE ── */
-        .summary-line { 
-            width: 100%; text-align: center; font-family: 'Space Mono', monospace; font-weight: 700; color: #f0c040; 
-            font-size: 13px; letter-spacing: 0.4em; text-transform: uppercase; padding: 15px 0; 
-            z-index: 10; position: relative; text-shadow: 0 0 10px #f0c040;
-            transform: translateX(-100%); opacity: 0;
-            animation: slideInLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
+        body {
+            background-color: var(--white);
+            color: var(--black);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
-        @keyframes slideInLeft { to { transform: translateX(0); opacity: 1; } }
-
-        /* ── INFO CARDS GRID ── */
-        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 0 10% 40px 8%; z-index: 10; position: relative; }
+        .gold-text { color: var(--gold); }
         
-        .info-card { 
-            background: rgba(15, 15, 12, 0.95); padding: 40px; border-radius: 16px; 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            position: relative; overflow: hidden; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); 
-            transform-style: preserve-3d; 
+        /* Hiệu ứng chuột */
+        #cursor-dot {
+            width: 8px; height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 999;
         }
-        
-        .card-border-box { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 1; }
-        .info-card:hover .card-border-box { opacity: 1; }
-        .b-line { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; }
-        .b-line-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runR 1.5s linear infinite; }
-        .b-line-2 { bottom: 0; right: -100%; width: 100%; height: 2px; animation: runL 1.5s linear infinite; }
+        #cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 998;
+            transition: transform 0.1s ease;
+        }
 
-        .info-card:hover { transform: translateY(-5px) translateZ(40px); background: rgba(20, 20, 18, 1); border-color: #fff; }
-        .info-card:hover h3, .info-card:hover p, .info-card:hover li { color: #fff; text-shadow: 0 0 10px #fff; }
+        /* 3D Orbiting Labels */
+        .orbit-container {
+            perspective: 1000px;
+            position: absolute;
+            width: 300px; height: 300px;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .orbiting-label {
+            position: absolute;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            white-space: nowrap;
+            letter-spacing: 2px;
+        }
 
-        .card-label { font-family: 'Space Mono', monospace; font-size: 10px; color: #f0c040; letter-spacing: 5px; margin-bottom: 20px; display: block; border-bottom: 1px solid rgba(240,192,64,0.3); width: fit-content; }
-        .info-card h3 { font-size: 26px; margin-bottom: 15px; font-weight: 400; color: #f5f5f5; }
-        .info-card p, .info-card li { color: #bbb; font-family: 'Space Mono', monospace; font-size: 13px; line-height: 1.8; }
-        .info-card li { margin-bottom: 8px; padding-left: 18px; position: relative; list-style: none; }
-        .info-card li::before { content: '>'; position: absolute; left: 0; color: #f0c040; font-weight: bold; }
-        .highlight { color: #f0c040; font-weight: 700; text-shadow: 0 0 8px rgba(240,192,64,0.4); }
-
-        /* ── JN BADGE ── */
-        #jn-badge-corner { position: fixed; bottom: 30px; left: 30px; width: 100px; height: 100px; z-index: 1000; }
-        #jn-ring-svg { width: 100%; height: 100%; overflow: visible; }
-        .orbit { fill: none; stroke: rgba(240, 192, 64, 0.4); stroke-width: 0.8px; stroke-dasharray: 4 4; transform-origin: center; animation: jnSpin 10s linear infinite; }
-        @keyframes jnSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .main-text { fill: #fff; font-weight: 700; font-size: 24px; text-shadow: 0 0 10px #f0c040; }
-        .orbit-text { fill: #f0c040; font-size: 5.5px; letter-spacing: 2.1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
-
-        @media (max-width: 900px) { #hero-section { flex-direction: column; } #experience-grid { grid-template-columns: 1fr; } }
+        /* Service Cards */
+        .service-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid transparent;
+        }
+        .service-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            border-color: var(--gold);
+            background: white;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
 
-    <canvas id="pcanvas"></canvas>
-    <div id="custom-mouse"></div>
-    <div class="digital-silk">Senior Digital Designer & Creative Developer — 2026</div>
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
 
-    <div class="page-container">
-        <section id="hero-section">
-            <div class="hero-text">
-                <h2 class="line-left">Design that <span class="gold-highlight">works.</span></h2>
-                <h2 class="line-right">Code that <span class="gold-highlight">ships.</span></h2>
-                <div class="power-tagline">
-                    Using <b>HTML, CSS, JS & Python</b> to build pixel-perfect 3D experiences. Making <b>live products</b>, not just mockups.
+    <div class="min-h-screen p-8 md:p-20 flex flex-col items-center">
+        <h1 id="main-title" class="text-4xl md:text-6xl font-serif font-bold mb-32 opacity-0">
+            What I can do <span class="gold-text italic">for you?</span>
+        </h1>
+
+        <div class="relative flex justify-center items-center mb-32 h-40">
+            <div id="logo-jn" class="text-6xl font-bold tracking-tighter opacity-0 scale-50">
+                JN<span class="gold-text">.</span>
+            </div>
+            
+            <div id="line-l" class="absolute h-[2px] bg-black w-0 right-[120%]"></div>
+            <div id="line-r" class="absolute h-[2px] bg-black w-0 left-[120%]"></div>
+
+            <div id="orbit-labels" class="orbit-container opacity-0">
+                <div class="orbiting-label gold-text" id="label-1">Digital Designer</div>
+                <div class="orbiting-label" id="label-2">Frontend Web Development</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-6xl">
+            <div class="space-y-12">
+                <div class="service-card p-6 rounded-lg" data-index="1">
+                    <h3 class="text-xl font-bold mb-2">1. Web Design & Build</h3>
+                    <p class="text-gray-600 text-sm">HTML/CSS/JS, WordPress, Webflow & Framer.</p>
+                </div>
+                <div class="service-card p-6 rounded-lg" data-index="2">
+                    <h3 class="text-xl font-bold mb-2">2. Visual & Digital Design</h3>
+                    <p class="text-gray-600 text-sm">Graphic assets, social visuals, ads, and UI.</p>
+                </div>
+                <div class="service-card p-6 rounded-lg" data-index="3">
+                    <h3 class="text-xl font-bold mb-2">3. Motion & Video Content</h3>
+                    <p class="text-gray-600 text-sm">After Effects, CapCut, AI-generated video.</p>
                 </div>
             </div>
 
-            <div class="terminal-container" id="terminal-main">
-                <div class="t-border t-1"></div><div class="t-border t-2"></div>
-                <div class="terminal-header">
-                    <div class="dot" style="background:#ff5f56"></div>
-                    <div class="dot" style="background:#ffbd2e"></div>
-                    <div class="dot" style="background:#27c93f"></div>
+            <div class="space-y-12">
+                <div class="service-card p-6 rounded-lg" data-index="4">
+                    <h3 class="text-xl font-bold mb-2">4. Interactive UX</h3>
+                    <p class="text-gray-600 text-sm">Canvas API, Web Audio, smooth micro-interactions.</p>
                 </div>
-                <div id="code-output"></div>
-                <span class="cursor"></span>
+                <div class="service-card p-6 rounded-lg" data-index="5">
+                    <h3 class="text-xl font-bold mb-2">5. AI-Powered Workflows</h3>
+                    <p class="text-gray-600 text-sm">Rapid prototyping, AI-assisted copywriting.</p>
+                </div>
+                <div class="service-card p-6 rounded-lg" data-index="6">
+                    <h3 class="text-xl font-bold mb-2">6. Digital Marketing</h3>
+                    <p class="text-gray-600 text-sm">SEO, Product Hunt launches, content planning.</p>
+                </div>
             </div>
-        </section>
-
-        <div class="summary-line">Strategic Leadership • Sharp Visual Logic • Innovative Execution</div>
-
-        <section id="experience-grid">
-            <div class="info-card">
-                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
-                <span class="card-label">Curriculum Vitae</span>
-                <ul>
-                    <li>MSc Digital Marketing Management — Cardiff Met, UK (2025)</li>
-                    <li><span class="highlight">CS50x Harvard Computer Science</span> (in progress)</li>
-                    <li>5 years <span class="highlight">Motion Design & Frontend Development</span></li>
-                    <li>After Effects · HTML/CSS/JS · <span class="highlight">Web Audio API</span></li>
-                    <li>AI-native: Claude API · Midjourney · ChatGPT</li>
-                </ul>
-            </div>
-
-            <div class="info-card">
-                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
-                <span class="card-label">Expertise</span>
-                <h3>Sharp Visual Eye</h3>
-                <p>Bridging aesthetics and engineering — from frame-perfect <span class="highlight">After Effects</span> animation to interactive web experiences. Built <span class="highlight">SleepSoundMixer</span>: a live product with 40+ synthesized sounds, real-time 3D canvas visuals, and 4-language UI. Expert in motion-first design thinking.</p>
-            </div>
-
-            <div class="info-card">
-                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
-                <span class="card-label">Leadership</span>
-                <h3>Strategic Execution</h3>
-                <p>Delivered <span class="highlight">12+ end-to-end projects</span> — concept, design, build, deploy. Managed full visual identity for a <span class="highlight">500-member organisation</span> across print, motion and digital. Comfortable owning a brief solo or leading within a team.</p>
-            </div>
-
-            <div class="info-card">
-                <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div></div>
-                <span class="card-label">Philosophy</span>
-                <h3>Always Creative</h3>
-                <p>Design is problem-solving with taste. I build tools people actually use — not just mockups. Currently expanding into <span class="highlight">CS50x</span> and <span class="highlight">German (B1)</span> to work and grow across European markets.</p>
-            </div>
-        </section>
-    </div>
-
-    <div id="jn-badge-corner">
-        <svg id="jn-ring-svg" viewBox="0 0 100 100">
-            <circle class="orbit" cx="50" cy="50" r="38" />
-            <text x="50" y="58" text-anchor="middle" class="main-text">JN</text>
-            <path id="orbitPath" d="M15,50 A35,35 0 1,1 85,50 A35,35 0 1,1 15,50" fill="none"/>
-            <text class="orbit-text"><textPath href="#orbitPath">Digital Designer • Creative Developer •&nbsp;</textPath></text>
-        </svg>
+        </div>
     </div>
 
     <script>
-        const cv=document.getElementById('pcanvas'),ctx=cv.getContext('2d');
-        let W,H,mx=-999,my=-999;
-        function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
-        class Amb{
-            constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.15;this.vy=(Math.random()-.5)*.15;this.size=Math.random()*2.2;this.alpha=Math.random()*.5+.15;}
-            update(){
-                const dx=this.x-mx, dy=this.y-my, d=Math.sqrt(dx*dx+dy*dy);
-                if(d<85){this.x-=(dx/d)*0.85;this.y-=(dy/d)*0.85;}
-                this.x+=this.vx;this.y+=this.vy;
-                if(this.x<0||this.x>W)this.vx*=-1;if(this.y<0||this.y>H)this.vy*=-1;
-            }
-            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle=`rgba(240,192,64,${this.alpha})`;ctx.fill();}
-        }
-        let ambients=[];
-        function init(){resize();ambients=[];for(let i=0;i<190;i++)ambients.push(new Amb());}
-        function render(){requestAnimationFrame(render);ctx.clearRect(0,0,W,H);ctx.fillStyle='#070705';ctx.fillRect(0,0,W,H);ambients.forEach(a=>{a.update();a.draw();});}
-        window.addEventListener('resize',init);init();render();
+        // 1. Mouse Effect
+        const dot = document.getElementById('cursor-dot');
+        const outline = document.getElementById('cursor-outline');
 
-        const trails=[];
-        for(let i=0;i<8;i++){
-            const d=document.createElement('div');d.className='trail';
-            d.style.cssText=`width:${4+i}px;height:${4+i}px;background:rgba(240,192,64,${0.6-i*0.05})`;
-            document.body.appendChild(d);trails.push({el:d,x:0,y:0});
-        }
-        document.addEventListener('mousemove',e=>{
-            mx=e.clientX;my=e.clientY;
-            const mc = document.getElementById('custom-mouse');
-            if(mc){mc.style.left=mx+'px';mc.style.top=my+'px';}
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(outline, { x: e.clientX - 16, y: e.clientY - 16, duration: 0.3 });
         });
-        (function trailLoop(){
-            let px=mx, py=my;
-            trails.forEach((t,i)=>{t.x+=(px-t.x)*0.18;t.y+=(py-t.y)*0.18;t.el.style.left=t.x+'px';t.el.style.top=t.y+'px';px=t.x;py=t.y;});
-            requestAnimationFrame(trailLoop);
-        })();
 
-        const output = document.getElementById('code-output');
-        const term = document.getElementById('terminal-main');
-        const codeLines = [
-            {t:"> [LIVE]: Senior Digital Designer · Available Now", c:"#f0c040"},
-            {t:"> [INFO]: MSc-educated · Motion meets Engineering.", c:"#fff"},
-            {t:"> [SYST]: Building products people actually use.", c:"#27c93f"},
-            {t:"", c:""},
-            {t:"const SeniorJade = {", c:"#666"},
-            {t:"  focus: 'Motion · Web · 3D Visual Design',", isCode:true},
-            {t:"  education: 'MSc Digital Marketing — Cardiff Met, UK',", isCode:true},
-            {t:"  experience: '5+ years · Remote & Freelance',", isCode:true},
-            {t:"  stack: 'HTML/CSS/JS · After Effects · Web Audio API',", isCode:true},
-            {t:"  ai: 'Claude API · Midjourney · AI-native workflow',", isCode:true},
-            {t:"  product: 'SleepSoundMixer — live, shipped, real users',", isCode:true},
-            {t:"  output: () => 'Concepts → Code → Live Products'", isCode:true},
-            {t:"};", c:"#666"}
-        ];
-        let lineIdx=0;
-        function typeCode(){
-            if(term) term.classList.add('t-active');
-            if(lineIdx<codeLines.length){
-                const l=codeLines[lineIdx];const d=document.createElement('div');
-                if(l.isCode){const p=l.t.split(':');d.innerHTML=`<span class="code-key">${p[0]}</span>:<span class="code-val">${p[1]}</span>`;}
-                else{d.style.color=l.c;d.textContent=l.t;}
-                if(output) output.appendChild(d);
-                lineIdx++;setTimeout(typeCode, 100);
+        // 2. Main Animation Timeline
+        const tl = gsap.timeline();
+
+        tl.to("#main-title", { opacity: 1, y: -20, duration: 1, ease: "power4.out" })
+          .fromTo("#logo-jn", 
+            { y: -500, opacity: 0, scale: 2 }, 
+            { y: 0, opacity: 1, scale: 1, duration: 1.2, ease: "bounce.out" }, "-=0.5")
+          .to("#line-l, #line-r", { width: "100px", duration: 0.8, ease: "power2.inOut" })
+          .to("#orbit-labels", { opacity: 1, duration: 0.5 });
+
+        // 3. Orbiting Animation
+        gsap.to("#label-1", {
+            duration: 8,
+            repeat: -1,
+            ease: "none",
+            onUpdate: function() {
+                const time = Date.now() * 0.001;
+                const x = Math.cos(time) * 150;
+                const z = Math.sin(time) * 150;
+                gsap.set("#label-1", { x: x, z: z, opacity: (z + 150) / 300 + 0.2 });
             }
-        }
-        setTimeout(typeCode, 1400);
+        });
 
-        document.querySelectorAll('.info-card').forEach(card=>{
-            card.addEventListener('mousemove',e=>{
-                const r=card.getBoundingClientRect();
-                const x=(e.clientX-r.left)/r.width-0.5, y=(e.clientY-r.top)/r.height-0.5;
-                card.style.transform=`perspective(1000px) rotateX(${y*-15}deg) rotateY(${x*15}deg) translateZ(40px)`;
+        gsap.to("#label-2", {
+            duration: 8,
+            repeat: -1,
+            ease: "none",
+            onUpdate: function() {
+                const time = (Date.now() * 0.001) + Math.PI; // Opposite side
+                const x = Math.cos(time) * 180;
+                const z = Math.sin(time) * 180;
+                gsap.set("#label-2", { x: x, z: z, opacity: (z + 180) / 360 + 0.2 });
+            }
+        });
+
+        // 4. Reveal Service Cards
+        gsap.from(".service-card", {
+            scrollTrigger: ".service-card",
+            y: 50,
+            opacity: 0,
+            stagger: 0.2,
+            duration: 1,
+            ease: "power3.out"
+        });
+
+        // 5. Hover Effects for Cards
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                gsap.to(outline, { scale: 2, borderColor: '#000', duration: 0.3 });
             });
-            card.addEventListener('mouseleave',()=>card.style.transform='none');
+            card.addEventListener('mouseleave', () => {
+                gsap.to(outline, { scale: 1, borderColor: '#D4AF37', duration: 0.3 });
+            });
         });
+
     </script>
 </body>
 </html>
