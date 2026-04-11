@@ -3,199 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jade Nguyen - $50k Interactive Hex Showcase</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <title>JN - What I can do for you?</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root { --gold: #D4AF37; }
-        body { background-color: #ffffff; color: #111; font-family: 'Inter', sans-serif; overflow: hidden; }
-        
-        /* Cursor */
-        #cursor { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; }
-        #cursor-f { width: 35px; height: 35px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
-
-        .main-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; perspective: 1000px; }
-
-        /* Central Node */
-        .jn-wrapper { position: relative; z-index: 50; text-align: center; }
-        #top-text { font-size: 14px; letter-spacing: 2px; text-transform: uppercase; color: #333; margin-bottom: -15px; opacity: 0; }
-        #jn-logo { font-size: 100px; font-weight: 900; letter-spacing: -8px; position: relative; display: inline-block; opacity: 0; }
-        #bottom-text { font-size: 14px; letter-spacing: 2px; text-transform: uppercase; color: #333; margin-top: -15px; opacity: 0; }
-        .jn-subtext { font-size: 10px; letter-spacing: 5px; color: var(--gold); font-weight: 800; text-transform: uppercase; margin-top: 5px; opacity: 0; }
-
-        /* SVG Hexagon Path */
-        #orbit-svg { position: absolute; width: 600px; height: 600px; pointer-events: none; transform: rotate(-90deg); }
-        .base-hex { fill: none; stroke: #f0f0f0; stroke-width: 1; }
-        .progress-hex { fill: none; stroke: var(--gold); stroke-width: 2; stroke-dasharray: 2000; stroke-dashoffset: 2000; }
-
-        /* Nodes & Cards */
-        .node { position: absolute; width: 12px; height: 12px; background: white; border: 2px solid #ddd; border-radius: 50%; z-index: 60; opacity: 0; transform: scale(0); transition: all 0.3s ease; }
-        .node.active { opacity: 1; transform: scale(1); border-color: var(--gold); background: var(--gold); box-shadow: 0 0 15px var(--gold); }
-
-        .info-card {
-            position: absolute; width: 280px; padding: 20px; background: white;
-            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            opacity: 0; transform: translateY(20px); pointer-events: none; z-index: 70;
-            border-left: 3px solid var(--gold);
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#0a0a0a',
+                        white: '#fafafa',
+                        gold: '#d4af37',
+                        'light-gold': '#ffebc4',
+                    }
+                }
+            }
         }
-        .info-card.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+    </script>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #fafafa;
+            overflow: hidden;
+            background-image: radial-gradient(var(--light-gold) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
 
-        .card-header, .card-body { opacity: 0; }
-        .card-header.visible, .card-body.visible { opacity: 1; transition: opacity 0.5s ease-out; }
-        .card-body { transition-delay: 0.3s; }
+        .central-node {
+            position: relative;
+            z-index: 10;
+        }
 
-        .item-num { font-family: 'Playfair Display'; color: var(--gold); font-weight: bold; font-size: 1.2rem; }
-        .bullet-list { font-size: 0.75rem; color: #666; margin-top: 8px; list-style: none; }
-        .bullet-list li::before { content: "— "; color: var(--gold); }
+        .hexagon-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .service-card {
+            position: absolute;
+            width: 280px;
+            padding: 20px;
+            background: #fafafa;
+            color: #0a0a0a;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .service-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .card-number {
+            font-size: 3rem;
+            color: #d4af37;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .bullet-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #d4af37;
+            pointer-events: none;
+            display: none;
+        }
+
+        .bullet-point-revealed {
+            display: block;
+        }
+
+        .icon-circle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #fafafa;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 15;
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+
+        .orbiting-text {
+            position: absolute;
+            font-size: 0.8rem;
+            color: #ffebc4;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            will-change: transform;
+            pointer-events: none;
+        }
     </style>
 </head>
-<body>
+<body class="flex flex-col items-center min-h-screen pt-20">
 
-    <div id="cursor"></div>
-    <div id="cursor-f"></div>
+    <h1 class="text-4xl md:text-6xl font-serif font-bold mb-32 z-20">What I can do for you?</h1>
 
-    <div class="main-container">
-        <div class="jn-wrapper">
-            <div id="top-text">what can (do)</div>
-            <div id="jn-logo">JN</div>
-            <div id="bottom-text">do for you?</div>
-            <div class="jn-subtext">Creative Developer</div>
-        </div>
-
-        <svg id="orbit-svg" viewBox="0 0 600 600">
-            <path class="base-hex" d="M 300 50 L 516 175 L 516 425 L 300 550 L 84 425 L 84 175 Z" />
-            <path class="progress-hex" id="main-path" d="M 300 50 L 516 175 L 516 425 L 300 550 L 84 425 L 84 175 Z" />
+    <div class="relative w-full max-w-7xl flex items-center justify-center central-node">
+        
+        <svg class="hexagon-frame" viewBox="0 0 1000 600">
+            <path id="path-hex" d="M 500 50 L 800 175 L 800 425 L 500 550 L 200 425 L 200 175 Z" fill="none" stroke="#d4af37" stroke-width="2" />
         </svg>
 
-        <div id="nodes-container"></div>
+        <div id="bullet-points-container"></div>
+
+        <div class="flex flex-col items-center">
+            <div id="orbiting-design" class="orbiting-text">Digital Design</div>
+            <div class="text-9xl font-extrabold tracking-tighter mb-4 text-[#fafafa]">JN</div>
+            <div id="orbiting-dev" class="orbiting-text">Frontend Web Developer</div>
+            <div class="text-[12px] uppercase tracking-[5px] text-[#ffebc4]">Creative Developer</div>
+        </div>
+
+        <div id="services-grid" class="absolute w-full h-full"></div>
+        
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script>
-        // Data content từ Mind Map gốc
-        const services = [
-            { title: "Web Design & Build", desc: "Landing pages & Web apps", items: ["HTML/CSS/JS", "WordPress & Webflow", "Framer sites"] },
-            { title: "Visual Design", desc: "Branding & Assets", items: ["Social Graphics", "Digital Ads", "UI Components"] },
-            { title: "Motion & Video", desc: "Short-form content", items: ["After Effects", "CapCut", "AI Video (Veo 3)"] },
-            { title: "Interactive UX", desc: "Experience design", items: ["Canvas API", "Web Audio", "Micro-interactions"] },
-            { title: "AI-Powered", desc: "Efficiency & Tech", items: ["AI Image Gen", "Rapid Prototyping", "AI Copywriting"] },
-            { title: "Marketing", desc: "Growth & SEO", items: ["On-page SEO", "Product Hunt", "Social Strategy"] }
+        const servicesData = [
+            { id: 1, title: 'Web Design & Build', desc: 'From landing pages to full web apps - responsive, fast, and on-brand.', list: ['HTML/CSS/JS', 'WordPress design & setup', 'Webflow & Framer sites'] },
+            { id: 2, title: 'Visual & Digital Design', desc: 'Graphic assets, social media visuals, ads, and UI.', list: ['Social media graphics', 'Digital ad creatives', 'Landing page layouts'] },
+            { id: 3, title: 'Motion & Video Content', desc: 'Promotional video, motion graphics, and short-form content for social.', list: ['After Effects animations', 'CapCut video editing', 'AI-generated video (Veo 3)'] },
+            { id: 4, title: 'Interactive UX', desc: 'Engaging web experiences with animation, sound, and real-time effects.', list: ['Canvas API animations', 'Web Audio integration', 'Smooth micro-interactions'] },
+            { id: 5, title: 'AI-Powered Workflows', desc: 'Using AI tools to produce more, faster - without losing creative direction.', list: ['AI image gen (Nano Banana Pro)', 'AI video (Veo 3, Kling, Whisk)', 'Rapid prototyping & ideation'] },
+            { id: 6, title: 'Digital Marketing', desc: 'Aligning content with business goals.', list: ['On-page SEO basics', 'Product Hunt launches', 'Social media strategy'] },
         ];
 
-        const container = document.getElementById('nodes-container');
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-        const radius = 250; // Vòng nhỏ hơn (250 so với 320 của vòng tròn)
-        
-        // Tọa độ 6 đỉnh của hình lục giác
-        const hexPoints = [];
-        for (let i = 0; i < 6; i++) {
-            const angle = (i * 60 - 90) * (Math.PI / 180); // i * 60 độ, trừ 90 để 1 ở đỉnh
-            hexPoints.push({
-                x: centerX + radius * Math.cos(angle),
-                y: centerY + radius * Math.sin(angle)
-            });
-        }
+        const gridContainer = document.getElementById('services-grid');
+        const bulletsContainer = document.getElementById('bullet-points-container');
+        const path = document.getElementById('path-hex');
+        const pathLength = path.getTotalLength();
 
-        // Tạo Nodes và Cards
-        services.forEach((s, i) => {
-            // Node dot
-            const node = document.createElement('div');
-            node.className = `node node-${i}`;
-            node.style.left = `${hexPoints[i].x - 6}px`;
-            node.style.top = `${hexPoints[i].y - 6}px`;
-            container.appendChild(node);
+        servicesData.forEach((s, i) => {
+            const pointOnPath = path.getPointAtLength((i / 6) * pathLength);
+            
+            // Icon
+            const iconCircle = document.createElement('div');
+            iconCircle.className = 'icon-circle';
+            iconCircle.id = `icon-${s.id}`;
+            iconCircle.innerHTML = s.id === 3 ? '<span class="text-3xl">🎬</span>' : '<span class="text-3xl">🧩</span>'; // Keep icons
+            gridContainer.appendChild(iconCircle);
 
-            // Info Card
+            // Card
             const card = document.createElement('div');
-            card.className = `info-card card-${i}`;
-            // Điều chỉnh vị trí card không đè lên lục giác
-            // Card ở đỉnh và đáy đẩy ra xa hơn, card ở bên đẩy sang bên hơn
-            const cardAngle = (i * 60 - 90) * (Math.PI / 180);
-            const cardX = centerX + (radius + (i % 3 == 0 ? 100 : 160)) * Math.cos(cardAngle);
-            const cardY = centerY + (radius + (i % 3 == 0 ? 50 : 20)) * Math.sin(cardAngle);
-            card.style.left = `${cardX - 140}px`;
-            card.style.top = `${cardY - 60}px`;
-
+            card.className = 'service-card';
+            card.id = `card-${s.id}`;
             card.innerHTML = `
-                <div class="card-header header-${i}">
-                    <p class="item-num">${i + 1}. ${s.title}</p>
-                    <p class="text-[10px] text-gray-400 uppercase font-bold">${s.desc}</p>
-                </div>
-                <div class="card-body body-${i}">
-                    <ul class="bullet-list">${s.items.map(item => `<li>${item}</li>`).join('')}</ul>
+                <div class="flex items-center gap-4">
+                    <div class="card-number">${s.id}.</div>
+                    <div class="flex flex-col">
+                        <h3 class="text-lg font-bold">${s.title}</h3>
+                        <p class="text-sm text-gray-700">${s.desc}</p>
+                        <ul class="text-sm text-gray-600 mt-2 space-y-1">
+                            ${s.list.map(item => `<li>— ${item}</li>`).join('')}
+                        </ul>
+                    </div>
                 </div>
             `;
-            container.appendChild(card);
+            gridContainer.appendChild(card);
+
+            // Bullet Point
+            const bullet = document.createElement('div');
+            bullet.className = 'bullet-point';
+            bullet.id = `bullet-${s.id}`;
+            bullet.style.left = `${pointOnPath.x}px`;
+            bullet.style.top = `${pointOnPath.y}px`;
+            bulletsContainer.appendChild(bullet);
         });
 
-        // --- Animations ---
-        const tl = gsap.timeline({ scrollTrigger: ".main-container" });
+        // 1. Initial Icon and Card Reveal Timeline
+        const revealTL = gsap.timeline();
+        revealTL.from('.icon-circle', { opacity: 0, scale: 0, stagger: 0.1, duration: 0.8, ease: "back.out(1.7)" })
+                .from('.service-card', { opacity: 0, scale: 0, stagger: 0.1, duration: 0.8, ease: "back.out(1.7)" }, "-=0.6");
 
-        // 1. Scene 1: Central Text & Logo Drop
-        tl.to("#top-text", { y: -200, opacity: 1, duration: 1.2, ease: "bounce.out" })
-          .fromTo("#jn-logo", 
-            { y: -300, scale: 3 }, 
-            { y: 0, opacity: 1, scale: 1, duration: 1.5, ease: "bounce.out" }, "-=0.5")
-          .to("#bottom-text", { y: 200, opacity: 1, duration: 1.2, ease: "bounce.out" }, "-=1")
-          .to(".jn-subtext", { opacity: 1, trackingSpacing: 20, duration: 1 }, "-=0.5");
+        // 2. Main Progress Timeline (Gold line and progressive reveal)
+        const progressTL = gsap.timeline();
+        progressTL.fromTo("#path-hex", { strokeDasharray: pathLength, strokeDashoffset: pathLength }, { strokeDashoffset: 0, duration: 4, ease: "power2.inOut" });
 
-        // 2. Scene 2: Draw Hexagon Path (Tốc độ chậm hơn: duration 6s)
-        tl.to("#main-path", {
-            strokeDashoffset: 0,
-            duration: 6,
-            ease: "power2.inOut",
+        // Synchronize card reveal with progress
+        servicesData.forEach((s, i) => {
+            progressTL.to(`#bullet-${s.id}`, { className: "+=bullet-point-revealed", duration: 0.1 }, (i / 6) * 4);
+            progressTL.to(`#card-${s.id}`, { scale: 1.1, boxShadow: "0 10px 20px rgba(212, 175, 55, 0.4)", duration: 0.3 }, (i / 6) * 4);
+            progressTL.to(`#card-${s.id}`, { scale: 1, boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", duration: 0.3 }, (i / 6) * 4 + 0.3);
+        });
+
+        // 3. Orbiting Animation
+        gsap.to('#orbiting-design', {
+            duration: 6, repeat: -1, ease: "none",
             onUpdate: function() {
-                const progress = this.progress();
-                services.forEach((_, i) => {
-                    // Cột mốc tiến trình cho mỗi đỉnh
-                    const triggerProgress = i / 6;
-                    if (progress >= triggerProgress) {
-                        const node = document.querySelector(`.node-${i}`);
-                        const card = document.querySelector(`.card-${i}`);
-                        const header = document.querySelector(`.header-${i}`);
-                        const body = document.querySelector(`.body-${i}`);
-                        
-                        // Kích hoạt nút và thẻ
-                        node.classList.add('active');
-                        card.classList.add('visible');
-                        
-                        // Kích hoạt tuần tự nội dung trong thẻ
-                        header.classList.add('visible');
-                        body.classList.add('visible');
-                    }
-                });
+                const time = (Date.now() * 0.001 * 0.5) + Math.PI;
+                const x = Math.cos(time) * 200;
+                const z = Math.sin(time) * 150;
+                const scale = (z + 150) / 300 * 0.5 + 0.5;
+                gsap.set('#orbiting-design', { x: x, y: 120, z: z, scale: scale, opacity: scale, zIndex: z > 0 ? 12 : 8 });
             }
         });
 
-        // 3. Floating Effect for Cards
-        gsap.to(".info-card", {
-            y: "-=10",
-            duration: 2,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut",
-            stagger: 0.2
+        gsap.to('#orbiting-dev', {
+            duration: 6, repeat: -1, ease: "none",
+            onUpdate: function() {
+                const time = (Date.now() * 0.001 * 0.5);
+                const x = Math.cos(time) * 200;
+                const z = Math.sin(time) * 150;
+                const scale = (z + 150) / 300 * 0.5 + 0.5;
+                gsap.set('#orbiting-dev', { x: x, y: -20, z: z, scale: scale, opacity: scale, zIndex: z > 0 ? 12 : 8 });
+            }
         });
 
-        // Cursor
-        window.addEventListener('mousemove', (e) => {
-            gsap.to("#cursor", { x: e.clientX, y: e.clientY, duration: 0.1 });
-            gsap.to("#cursor-f", { x: e.clientX - 17, y: e.clientY - 17, duration: 0.3 });
-        });
-
-        // Card Hover
-        document.querySelectorAll('.info-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                gsap.to(card, { scale: 1.05, borderColor: '#D4AF37', duration: 0.3 });
-                gsap.to("#cursor-f", { scale: 1.5, borderColor: '#111', duration: 0.3 });
-            });
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, { scale: 1, borderColor: '#D4AF37', duration: 0.3 });
-                gsap.to("#cursor-f", { scale: 1, borderColor: '#D4AF37', duration: 0.3 });
-            });
-        });
     </script>
 </body>
 </html>
