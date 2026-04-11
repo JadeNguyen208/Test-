@@ -7,7 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; scroll-behavior: smooth; }
+        body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; scroll-behavior: smooth; cursor: none; } /* Ẩn con trỏ gốc */
+
+        /* ── PAGE LAYOUT ── */
+        .page-container { position: relative; z-index: 10; }
+
+        /* ── BACKGROUND PARTICLES (giống Page 1) ── */
+        #pcanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* ── MOUSE TRAIL (Vệt chuột) ── */
+        .trail-particle { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9990; transform: translate(-50%, -50%); transition: opacity 0.5s; }
 
         /* ── SECTION 1: HERO & TERMINAL ── */
         #hero-section {
@@ -26,22 +35,22 @@
             animation: reveal3D 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .hero-text-3d h2 { font-size: clamp(48px, 6vw, 92px); line-height: 1.1; margin-bottom: 5px; font-weight: 300; }
-        .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.25); font-weight: 700; }
+        .hero-text-3d h2 { font-size: clamp(48px, 6vw, 92px); line-height: 1.1; margin-bottom: 5px; font-weight: 300; color: #eee; }
+        .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.4); font-weight: 700; }
 
         @keyframes reveal3D { to { opacity: 1; transform: rotateY(0) translateZ(0); } }
 
         .terminal-container {
             flex: 1;
             max-width: 550px;
-            background: rgba(15, 15, 12, 0.9);
-            border: 1px solid rgba(240, 192, 64, 0.15);
+            background: rgba(15, 15, 12, 0.95);
+            border: 1px solid rgba(240, 192, 64, 0.2); /* Thêm viền cho terminal */
             border-radius: 12px;
             padding: 30px;
             font-family: 'Space Mono', monospace;
             font-size: 13px;
             position: relative;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
             min-height: 380px;
             transform: rotateY(5deg);
         }
@@ -50,7 +59,7 @@
         .dot { width: 10px; height: 10px; border-radius: 50%; }
         .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
         
-        #code-output { color: #888; line-height: 1.8; }
+        #code-output { color: #999; line-height: 1.8; }
         .code-key { color: #f0c040; }
         .code-val { color: #c9a84c; font-style: italic; }
         .cursor { border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; vertical-align: middle; }
@@ -62,12 +71,12 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 40px;
             padding: 100px 8%;
-            background: linear-gradient(to bottom, #070705, #0c0c0a);
+            position: relative;
         }
 
         .info-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(240, 192, 64, 0.08);
+            background: rgba(10, 10, 8, 0.9);
+            border: 1px solid rgba(240, 192, 64, 0.15); /* Viền vàng mảnh */
             padding: 45px;
             border-radius: 16px;
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
@@ -75,11 +84,17 @@
             position: relative;
         }
 
+        /* NÂNG CẤP HOVER: Nổi lên, sáng viền và SÁNG CHỮ */
         .info-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(240, 192, 64, 0.4);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            background: rgba(15, 15, 12, 0.98);
+            border-color: rgba(240, 192, 64, 0.6);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.6), 0 0 30px rgba(240, 192, 64, 0.1);
         }
+
+        /* Hiệu ứng sáng chữ khi hover vào card */
+        .info-card:hover h3 { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .info-card:hover p, .info-card:hover li { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.4); }
+        .info-card:hover li::before { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.8); }
 
         .card-label {
             font-family: 'Space Mono', monospace;
@@ -89,13 +104,15 @@
             color: #f0c040;
             margin-bottom: 30px;
             display: block;
-            opacity: 0.6;
+            opacity: 0.7;
         }
 
-        .info-card h3 { font-size: 28px; margin-bottom: 20px; font-weight: 400; color: #fff; }
-        .info-card p, .info-card ul { color: #999; font-family: 'Space Mono', monospace; font-size: 13px; line-height: 2; list-style: none; }
-        .info-card li { margin-bottom: 12px; padding-left: 25px; position: relative; }
-        .info-card li::before { content: '>'; position: absolute; left: 0; color: #f0c040; font-weight: bold; }
+        .info-card h3 { font-size: 28px; margin-bottom: 20px; font-weight: 400; color: #f5f5f5; transition: all 0.4s ease; } /* Chữ trắng sáng hơn */
+        .info-card p, .info-card ul { color: #bbb; font-family: 'Space Mono', monospace; font-size: 13px; line-height: 2; list-style: none; transition: all 0.4s ease; } /* Chữ trong khung rõ hơn */
+        
+        /* Bullet Points nâng cấp */
+        .info-card li { margin-bottom: 12px; padding-left: 25px; position: relative; transition: all 0.4s ease; }
+        .info-card li::before { content: '>'; position: absolute; left: 0; color: #f0c040; font-weight: bold; transition: all 0.4s ease; }
         
         .highlight-tech { 
             background: linear-gradient(90deg, #f0c040, #fff);
@@ -104,21 +121,17 @@
             font-weight: 700;
         }
 
-        /* ── JN BADGE: THE GHOST ── */
-        #jn-badge-ghost {
+        /* ── CUSTOM MOUSE (Optional: To replace hidden cursor) ── */
+        #custom-mouse {
             position: fixed;
-            bottom: 40px;
-            left: 40px;
-            width: 90px;
-            height: 90px;
-            opacity: 0;
-            filter: brightness(0);
-            z-index: 100;
-            animation: ghostReveal 4s ease 3s forwards;
-        }
-
-        @keyframes ghostReveal {
-            to { opacity: 1; filter: brightness(1.1) drop-shadow(0 0 20px rgba(240,192,64,0.4)); }
+            width: 10px;
+            height: 10px;
+            background: #f0c040;
+            border-radius: 50%;
+            z-index: 10000;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #f0c040;
         }
 
         @media (max-width: 900px) {
@@ -130,68 +143,87 @@
 </head>
 <body>
 
-    <section id="hero-section">
-        <div class="hero-text-3d">
-            <h2>Design that</h2>
-            <h2 class="gold-highlight">works.</h2>
-            <h2>Code that</h2>
-            <h2 class="gold-highlight">ships.</h2>
-        </div>
+    <canvas id="pcanvas"></canvas>
+    
+    <div id="custom-mouse"></div>
 
-        <div class="terminal-container">
-            <div class="terminal-header">
-                <div class="dot red"></div>
-                <div class="dot yellow"></div>
-                <div class="dot green"></div>
-                <span style="color: #444; font-size: 10px; margin-left: 10px;">jade-nguyen.js — creative-core</span>
+    <div class="page-container">
+        <section id="hero-section">
+            <div class="hero-text-3d">
+                <h2>Design that</h2>
+                <h2 class="gold-highlight">works.</h2>
+                <h2>Code that</h2>
+                <h2 class="gold-highlight">ships.</h2>
             </div>
-            <div id="code-output"></div>
-            <span class="cursor"></span>
-        </div>
-    </section>
 
-    <section id="experience-grid">
-        <div class="info-card">
-            <span class="card-label">Curriculum Vitae</span>
-            <ul>
-                <li>BSc Digital Marketing Management - Cardiff Met University, UK</li>
-                <li><span class="highlight-tech">CS50p Python & CS50x Computer Science</span> - Harvard University</li>
-                <li>Expertise in Data-Driven Visual Communication</li>
-            </ul>
-        </div>
+            <div class="terminal-container">
+                <div class="terminal-header">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                    <span style="color: #555; font-size: 10px; margin-left: 10px;">jade-nguyen.js — creative-core</span>
+                </div>
+                <div id="code-output"></div>
+                <span class="cursor"></span>
+            </div>
+        </section>
 
-        <div class="info-card">
-            <span class="card-label">Core Capabilities</span>
-            <h3>Senior Visual Design</h3>
-            <p>Mastering the intersection of aesthetic precision and functional code. Specializing in WordPress ecosystems, Motion UI, and interactive web experiences.</p>
-        </div>
+        <section id="experience-grid">
+            <div class="info-card">
+                <span class="card-label">Curriculum Vitae</span>
+                <ul>
+                    <li>BSc Digital Marketing Management - Cardiff Met University, UK</li>
+                    <li><span class="highlight-tech">CS50p Python & CS50x Computer Science</span> - Harvard University</li>
+                    <li>Expertise in Data-Driven Visual Communication</li>
+                </ul>
+            </div>
 
-        <div class="info-card">
-            <span class="card-label">Professional Philosophy</span>
-            <h3>Strategic Execution</h3>
-            <p>A Senior Designer doesn't just draw; they solve. I manage complex timelines and bridge the gap between creative concepts and live, high-performing products.</p>
-        </div>
+            <div class="info-card">
+                <span class="card-label">Core Capabilities</span>
+                <h3>Senior Visual Design</h3>
+                <p>Mastering the intersection of aesthetic precision and functional code. Specializing in WordPress ecosystems, Motion UI, and interactive web experiences.</p>
+            </div>
 
-        <div class="info-card">
-            <span class="card-label">Global Status</span>
-            <h3>Open for Hire</h3>
-            <p>Available for Senior Digital Design roles. Fully remote-capable, UK-based, and ready to lead or collaborate on international creative projects.</p>
-        </div>
-    </section>
+            <div class="info-card">
+                <span class="card-label">Professional Philosophy</span>
+                <h3>Strategic Execution</h3>
+                <p>A Senior Designer doesn't just draw; they solve. I manage complex timelines and bridge the gap between creative concepts and live, high-performing products.</p>
+            </div>
 
-    <div id="jn-badge-ghost">
-        <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(240,192,64,0.3)" stroke-width="0.5"/>
-            <text x="50" y="55" text-anchor="middle" fill="#f0c040" font-size="22" font-weight="700">JN</text>
-            <path id="ghostPath" d="M15,50 A35,35 0 1,1 85,50 A35,35 0 1,1 15,50" fill="none"/>
-            <text font-size="5" fill="#c9a84c" letter-spacing="3">
-                <textPath href="#ghostPath">CREATIVE · DIRECTOR · SENIOR · DESIGNER ·&nbsp;</textPath>
-            </text>
-        </svg>
+            <div class="info-card">
+                <span class="card-label">Global Status</span>
+                <h3>Open for Hire</h3>
+                <p>Available for Senior Digital Design roles. Fully remote-capable, UK-based, and ready to lead or collaborate on international creative projects.</p>
+            </div>
+        </section>
     </div>
 
     <script>
-        // Terminal Animation Logic
+        // ── 1. AMBIENT PARTICLES (Page 1 Background Logic) ──
+        const cv=document.getElementById('pcanvas'),ctx=cv.getContext('2d');
+        let W,H;
+        function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+        class Amb{
+          constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.15;this.vy=(Math.random()-.5)*.15;this.size=Math.random()*1.8+.4;this.alpha=Math.random()*.55+.15;this.ph=Math.random()*Math.PI*2;this.sp=Math.random()*.012+.004;}
+          update(){this.ph+=this.sp;this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W)this.vx*=-1;if(this.y<0||this.y>H)this.vy*=-1;}
+          draw(){const a=this.alpha*(Math.sin(this.ph)*.3+.7);ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle=`rgba(201,168,76,${a})`;ctx.fill();}
+        }
+        let ambients=[];
+        function initAmb(){resize();ambients=[];const n=Math.min(320,Math.floor(W*H/7000));for(let i=0;i<n;i++)ambients.push(new Amb());}
+        function render(){requestAnimationFrame(render);ctx.fillStyle='rgba(7,7,5,0.18)';ctx.fillRect(0,0,W,H);for(let i=0;i<ambients.length;i++){for(let j=i+1;j<ambients.length;j++){const a=ambients[i],b=ambients[j];const dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);if(d<100){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(201,168,76,${(1-d/100)*.12})`;ctx.lineWidth=.5;ctx.stroke();}}}ambients.forEach(a=>{a.update();a.draw();});}
+        window.addEventListener('resize',initAmb);
+        initAmb();render();
+
+        // ── 2. MOUSE TRAIL & CUSTOM MOUSE LOGIC ──
+        const customMouse = document.getElementById('custom-mouse');
+        const trailColors=['rgba(240,192,64,0.7)','rgba(201,168,76,0.5)','rgba(255,220,80,0.4)'];
+        const trails=[];const TRAIL_COUNT=10;
+        for(let i=0;i<TRAIL_COUNT;i++){const d=document.createElement('div');d.className='trail-particle';const sz=5+i*1.2;d.style.cssText=`width:${sz}px;height:${sz}px;background:${trailColors[i%3]};`;document.body.appendChild(d);trails.push({el:d,x:0,y:0});}
+        let mx=0,my=0;
+        document.addEventListener('mousemove',e=>{mx=e.clientX;my=my=e.clientY;customMouse.style.left=mx+'px';customMouse.style.top=my+'px';});
+        (function trailLoop(){let px=mx,py=my;trails.forEach((t,i)=>{const lag=0.18-i*0.012;t.x+=(px-t.x)*lag;t.y+=(py-t.y)*lag;t.el.style.left=t.x+'px';t.el.style.top=t.y+'px';t.el.style.opacity=1-i/TRAIL_COUNT;px=t.x;py=t.y;});requestAnimationFrame(trailLoop);})();
+
+        // ── 3. TERMINAL ANIMATION LOGIC ──
         const output = document.getElementById('code-output');
         const lines = [
             { t: "> Initializing system...", c: "#fff" },
@@ -206,7 +238,6 @@
             { t: "  output: () => 'Live Product'", isCode: true },
             { t: "};", c: "#666" }
         ];
-
         let i = 0;
         function type() {
             if (i < lines.length) {
@@ -224,22 +255,21 @@
                 setTimeout(type, l.t === "" ? 600 : 350);
             }
         }
+        window.onload = () => setTimeout(type, 1000);
 
-        // 3D Tilt Effect
+        // ── 4. 3D TILT EFFECT ──
         const cards = document.querySelectorAll('.info-card');
         cards.forEach(card => {
             card.addEventListener('mousemove', e => {
                 const r = card.getBoundingClientRect();
                 const x = (e.clientX - r.left) / r.width - 0.5;
                 const y = (e.clientY - r.top) / r.height - 0.5;
-                card.style.transform = `perspective(1000px) rotateX(${y * -15}deg) rotateY(${x * 15}deg) translateZ(30px)`;
+                card.style.transform = `perspective(1000px) rotateX(${y * -12}deg) rotateY(${x * 12}deg) translateZ(35px)`; /* Tăng độ nổi translateZ */
             });
             card.addEventListener('mouseleave', () => {
                 card.style.transform = `none`;
             });
         });
-
-        window.onload = () => setTimeout(type, 1000);
     </script>
 </body>
 </html>
