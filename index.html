@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; cursor: none; }
+        body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; scroll-behavior: smooth; cursor: none; }
 
         /* ── BACKGROUND & CURSOR ── */
         #pcanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
@@ -17,7 +17,7 @@
         .digital-silk { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.6em; color: rgba(240, 192, 64, 0.2); display: flex; align-items: center; justify-content: center; z-index: 100; }
 
         /* ── HERO SECTION ── */
-        #hero-section { display: flex; align-items: center; justify-content: space-around; min-height: 70vh; padding: 0 10%; perspective: 1000px; z-index: 10; position: relative; }
+        #hero-section { display: flex; align-items: center; justify-content: space-around; min-height: 65vh; padding: 0 10%; perspective: 1000px; z-index: 10; position: relative; }
         .hero-text { flex: 1; }
         .hero-text h2 { font-size: clamp(48px, 6vw, 92px); line-height: 1.1; font-weight: 300; white-space: nowrap; }
         .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.4); font-weight: 700; }
@@ -26,7 +26,6 @@
         .line-right { transform: translateX(150%); animation: flyIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; margin-top: -10px; }
         @keyframes flyIn { to { transform: translateX(0); } }
 
-        /* TAGLINE MẠNH BẠO */
         .power-tagline { font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 25px; line-height: 1.8; max-width: 450px; }
         .power-tagline b { color: #f0c040; }
 
@@ -35,11 +34,10 @@
             flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.98); 
             border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; 
             padding: 30px; font-family: 'Space Mono', monospace; font-size: 13px; 
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 450px; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 420px; 
             transform: rotateY(8deg); position: relative; overflow: hidden;
         }
         
-        /* Running Border cho Terminal */
         .t-border { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; z-index: 5; opacity: 0; transition: opacity 0.5s; }
         .t-active .t-border { opacity: 1; }
         .t-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runR 2s linear infinite; }
@@ -53,14 +51,27 @@
         .code-key { color: #f0c040; } .code-val { color: #c9a84c; font-style: italic; }
         .cursor { border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; }
 
-        /* ── STRATEGIC SUMMARY ── */
-        .summary-line { width: 100%; text-align: center; font-family: 'Space Mono', monospace; font-weight: 700; color: #f0c040; font-size: 14px; letter-spacing: 0.4em; text-transform: uppercase; padding: 20px 0; z-index: 10; position: relative; text-shadow: 0 0 10px #f0c040; }
+        /* ── SUMMARY LINE (FLY IN FROM LEFT) ── */
+        .summary-line { 
+            width: 100%; text-align: center; font-family: 'Space Mono', monospace; font-weight: 700; color: #f0c040; 
+            font-size: 14px; letter-spacing: 0.4em; text-transform: uppercase; padding: 15px 0; 
+            z-index: 10; position: relative; text-shadow: 0 0 10px #f0c040;
+            transform: translateX(-100%); opacity: 0;
+            animation: slideInLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.8s forwards;
+        }
+        @keyframes slideInLeft { to { transform: translateX(0); opacity: 1; } }
 
-        /* ── EXPERIENCE GRID: ĐẨY CAO ── */
-        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; padding: 0 10% 50px 8%; z-index: 10; position: relative; }
+        /* ── GRID: ĐẨY SÁT LÊN ── */
+        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; padding: 0 10% 40px 8%; z-index: 10; position: relative; }
         
-        .info-card { background: rgba(15, 15, 12, 0.95); padding: 45px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.15); position: relative; overflow: hidden; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); transform-style: preserve-3d; }
+        .info-card { 
+            background: rgba(15, 15, 12, 0.95); padding: 45px; border-radius: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Viền trắng mảnh mặc định */
+            position: relative; overflow: hidden; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); 
+            transform-style: preserve-3d; 
+        }
         
+        /* Running Border (Dual Gold Lines) */
         .card-border-box { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 1; }
         .info-card:hover .card-border-box { opacity: 1; }
         .b-line { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; }
@@ -71,7 +82,7 @@
         .info-card:hover h3, .info-card:hover p, .info-card:hover li { color: #fff; text-shadow: 0 0 10px #fff; }
 
         .card-label { font-family: 'Space Mono', monospace; font-size: 11px; color: #f0c040; letter-spacing: 5px; margin-bottom: 25px; display: block; }
-        .info-card h3 { font-size: 28px; margin-bottom: 20px; color: #f5f5f5; }
+        .info-card h3 { font-size: 28px; margin-bottom: 20px; font-weight: 400; color: #f5f5f5; }
         .info-card p, .info-card li { color: #bbb; font-family: 'Space Mono', monospace; font-size: 14px; line-height: 1.8; }
         .info-card li { margin-bottom: 12px; padding-left: 20px; position: relative; list-style: none; }
         .info-card li::before { content: '>'; position: absolute; left: 0; color: #f0c040; font-weight: bold; }
@@ -198,15 +209,13 @@
         const term = document.getElementById('terminal-main');
         const codeLines = [
             {t:"> [LIVE]: I am Jade Nguyen...", c:"#f0c040"},
-            {t:"> [INFO]: Nào... hãy cùng trải nghiệm 3D Design.", c:"#fff"},
-            {t:"> [INFO]: Đây là một trong những thế mạnh của tôi.", c:"#fff"},
-            {t:"> [SYST]: Ứng dụng code cho Visual 3D...", c:"#27c93f"},
+            {t:"> [INFO]: Experience 3D design, one of my core strengths.", c:"#fff"},
+            {t:"> [SYST]: Applying code to realize complex 3D visuals.", c:"#27c93f"},
             {t:"", c:""},
-            {t:"const SeniorJade = {", c:"#666"},
+            {t:"const Jade = {", c:"#666"},
             {t:"  status: 'Senior Digital Designer Active',", isCode:true},
-            {t:"  experience: '20+ design projects led',", isCode:true},
-            {t:"  logic: 'HTML/CSS/JS/Python',", isCode:true},
-            {t:"  output: () => 'Live Dynamic Product'", isCode:true},
+            {t:"  experience: '20+ projects led',", isCode:true},
+            {t:"  output: () => 'Live Dynamic Product'", isCode:true}
             {t:"};", c:"#666"}
         ];
         let lineIdx=0;
@@ -216,11 +225,12 @@
                 const l=codeLines[lineIdx];const d=document.createElement('div');
                 if(l.isCode){const p=l.t.split(':');d.innerHTML=`<span class="code-key">${p[0]}</span>:<span class="code-val">${p[1]}</span>`;}
                 else{d.style.color=l.c;d.textContent=l.t;}
-                output.appendChild(d);lineIdx++;setTimeout(typeCode, 120); // Gõ cực nhanh (120ms)
+                output.appendChild(d);lineIdx++;setTimeout(typeCode, 100); // Tăng tốc độ gõ (100ms)
             }
         }
         setTimeout(typeCode, 1200);
 
+        // 3D TILT EFFECT
         document.querySelectorAll('.info-card').forEach(card=>{
             card.addEventListener('mousemove',e=>{
                 const r=card.getBoundingClientRect();
