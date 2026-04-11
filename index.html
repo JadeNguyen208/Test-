@@ -83,6 +83,7 @@ display:flex; flex-direction:column;
 justify-content:center; align-items:center;
 text-align:center;
 pointer-events:none;
+padding-bottom: 18vh;
 }
 
 .eyebrow {
@@ -159,9 +160,9 @@ border-radius:2px;
 box-shadow:0 0 8px #f0c040, 0 0 16px rgba(240,192,64,0.5);
 }
 .b-top    { top:0; left:0; right:0; height:2px; }
-.b-top::after { top:0; height:2px; width:140px; animation:runRight 1.2s linear infinite; }
+.b-top::after { top:0; left:0; height:2px; width:140px; animation:runRight 1.2s linear infinite; }
 .b-bottom { bottom:0; left:0; right:0; height:2px; }
-.b-bottom::after { top:0; height:2px; width:140px; animation:runLeft 1.2s linear infinite; }
+.b-bottom::after { top:0; right:0; height:2px; width:140px; animation:runLeft 1.2s linear infinite; }
 .b-left   { left:0; top:0; bottom:0; width:2px; }
 .b-left::after {
 left:0; width:2px; height:80px;
@@ -274,7 +275,7 @@ opacity:0; animation:fadeIn 1s ease 3s forwards;
 
 /* ── JN badge ── */
 #jn-badge {
-position:fixed; bottom:80px; left:52px; z-index:50;
+position:fixed; bottom:110px; left:20px; z-index:50;
 width:72px; height:72px;
 opacity:0; animation:fadeIn 1s ease 2s forwards;
 }
@@ -372,19 +373,30 @@ background-size:160px; animation:grn .7s steps(1) infinite;
 </div>
 
 <div class="hero-bottom">
-  <div style="display:flex; align-items:center; gap:32px; padding:0 52px 36px;">
-    <div class="status" style="padding:0;">
-      <div class="sdot"></div>
-      <span class="sdot-t">Available for hire</span>
-    </div>
-    <a href="#" class="btn-p" style="opacity:0; animation:fadeIn .8s ease 3.2s forwards; pointer-events:all;"><span>explore my work ↓</span></a>
+  <!-- trái: khoảng trống cho JN + available for hire -->
+  <div style="width:140px; flex-shrink:0;"></div>
+
+  <!-- giữa: explore my work -->
+
+  <div style="flex:1; display:flex; justify-content:center; align-items:flex-end; padding-bottom:32px;">
+    <a href="#" class="btn-p" style="pointer-events:all; padding:10px 28px; font-size:10px; opacity:0; animation:fadeIn .8s ease 3.2s forwards;"><span>explore my work ↓</span></a>
   </div>
-  <div class="stats-bar" id="stats-bar">
+
+  <!-- phải: số liệu -->
+
+  <div class="stats-bar" id="stats-bar" style="margin-right:0; flex-shrink:0;">
     <div class="st"><span class="st-n" id="n1">0</span><span class="st-l">Years<br>Experience</span></div>
     <div class="st"><span class="st-n" id="n2">0</span><span class="st-l">People<br>Led</span></div>
     <div class="st"><span class="st-n" id="n3">0</span><span class="st-l">Projects<br>Led</span></div>
     <div class="st"><span class="st-n" id="n4">0</span><span class="st-l">Languages<br>Spoken</span></div>
   </div>
+</div>
+
+<!-- Available for hire: góc trái dưới JN badge -->
+
+<div style="position:fixed; bottom:22px; left:20px; z-index:60; display:flex; align-items:center; gap:8px; opacity:0; animation:fadeIn .8s ease 3.2s forwards;">
+  <div class="sdot"></div>
+  <span class="sdot-t">Available for hire</span>
 </div>
 
 <script>
