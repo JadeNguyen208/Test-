@@ -3,66 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JN - The Professional Storytelling</title>
+    <title>JN - Precision Minimalist Portfolio</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --bg: #020202; }
+        :root { --gold: #D4AF37; --bg: #050505; }
         body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; cursor: none; }
         
-        /* 1. Nền chấm vàng tĩnh lặng */
+        /* Nền đen chấm vàng */
         #bg-canvas { position: fixed; inset: 0; z-index: -1; }
         
-        /* 2. Chuột Spotlight */
+        /* Chuột Spotlight */
         #cursor-glow { 
-            position: fixed; width: 500px; height: 500px; 
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%); 
+            position: fixed; width: 450px; height: 450px; 
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%); 
             pointer-events: none; z-index: 1000; transform: translate(-50%, -50%); 
         }
 
-        .main-container { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; perspective: 2000px; }
+        .main-container { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; perspective: 1500px; }
 
         /* Tiêu đề trên cùng */
-        .top-title { position: absolute; top: 5%; text-align: center; z-index: 100; }
-        .top-title h1 { font-size: 48px; font-weight: 900; letter-spacing: -2px; }
-        .top-title span { color: var(--gold); font-style: italic; }
+        .top-header { position: absolute; top: 6%; text-align: center; z-index: 200; }
+        .top-header h1 { font-size: 48px; font-weight: 900; letter-spacing: -1px; }
+        .top-header span { color: var(--gold); font-style: italic; }
 
-        /* JN Particle Center */
-        .jn-particle-system { position: relative; z-index: 50; width: 300px; height: 300px; display: flex; justify-content: center; align-items: center; }
-        #jn-canvas { position: absolute; width: 300px; height: 300px; }
-        
-        /* Badge Xoay */
-        #badge-svg { position: absolute; width: 320px; height: 320px; z-index: 60; pointer-events: none; }
-        .badge-text { font-size: 10px; font-weight: 800; text-transform: uppercase; fill: var(--gold); letter-spacing: 5px; }
+        /* JN Center - Style hạt xoay */
+        .jn-system { position: relative; z-index: 50; transform-style: preserve-3d; }
+        #jn-logo { 
+            font-size: 110px; font-weight: 900; letter-spacing: -8px; 
+            background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'), linear-gradient(to bottom, #fff, var(--gold));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.4));
+            animation: rotateJN 10s linear infinite; display: inline-block;
+        }
+        @keyframes rotateJN { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
 
-        /* Lục giác vàng */
-        #hex-svg { position: absolute; width: 480px; height: 480px; pointer-events: none; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
-        .draw-hex { fill: none; stroke: var(--gold); stroke-width: 1.2; stroke-dasharray: 1800; stroke-dashoffset: 1800; opacity: 0.4; }
+        /* Badge văn bản xoay */
+        #badge-svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; height: 340px; pointer-events: none; animation: spinBadge 25s linear infinite; }
+        @keyframes spinBadge { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+        .badge-text { font-size: 11px; font-weight: 800; fill: var(--gold); letter-spacing: 5px; text-transform: uppercase; }
 
-        /* Card: Hình bình hành nghiêng, viền vàng, KHÔNG khung trắng */
+        /* Lục giác mờ */
+        #hex-svg { position: absolute; width: 480px; height: 480px; pointer-events: none; top: 52%; left: 50%; transform: translate(-50%, -50%); }
+        .draw-hex { fill: none; stroke: var(--gold); stroke-width: 1; stroke-dasharray: 1800; stroke-dashoffset: 1800; opacity: 0.3; }
+
+        /* Service Cards - Hình chữ nhật thẳng, viền vàng mảnh */
         .card-wrapper { position: absolute; z-index: 110; }
         .service-card {
-            width: 230px; padding: 15px 20px; 
-            border: 1px solid var(--gold); background: transparent;
-            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+            width: 240px; padding: 18px; 
+            border: 1px solid var(--gold); background: rgba(0,0,0,0.8);
             opacity: 0; transform: translateY(20px);
-            cursor: pointer; transition: background 0.3s;
+            transition: all 0.4s ease; transform-style: preserve-3d;
         }
-        .service-card:hover { background: rgba(212, 175, 55, 0.05); }
+        .service-card:hover { border-width: 2px; background: rgba(212, 175, 55, 0.05); }
         
-        .card-title { font-weight: 800; font-size: 13px; color: var(--gold); text-transform: uppercase; }
-        .card-sub { font-size: 10px; color: #555; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .card-title { font-weight: 800; font-size: 13px; color: var(--gold); text-transform: uppercase; margin-bottom: 2px; }
+        .card-sub { font-size: 9px; color: #666; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
         
-        /* Nội dung chữ trắng hiện khi Click */
-        .card-content { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .service-card.open { clip-path: none; background: rgba(0,0,0,0.9); border-width: 2px; }
-        .service-card.open .card-content { max-height: 200px; opacity: 1; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(212, 175, 55, 0.3); }
+        /* Nội dung chữ trắng hiện sẵn */
+        .bullet-list { font-size: 11px; color: #ffffff; list-style: none; line-height: 1.7; border-top: 1px solid rgba(212, 175, 55, 0.2); padding-top: 10px; }
+        .bullet-list li::before { content: "• "; color: var(--gold); font-weight: bold; margin-right: 5px; }
         
-        .bullet-list { font-size: 11px; color: #ffffff; list-style: none; line-height: 1.8; }
-        .bullet-list li::before { content: "• "; color: var(--gold); margin-right: 5px; }
-        
-        .card-icon { position: absolute; top: -10px; right: -10px; font-size: 20px; filter: drop-shadow(0 0 5px var(--gold)); }
+        .card-icon { position: absolute; top: -12px; right: -12px; font-size: 22px; }
     </style>
 </head>
 <body>
@@ -71,27 +74,24 @@
     <canvas id="bg-canvas"></canvas>
 
     <div class="main-container">
-        <div class="top-title">
+        <div class="top-header">
             <h1>What I can do <span>for you?</span></h1>
         </div>
 
-        <div class="jn-particle-system">
-            <canvas id="jn-canvas"></canvas>
+        <div class="jn-system">
+            <div id="jn-logo">JN</div>
             <svg id="badge-svg" viewBox="0 0 200 200">
-                <path id="badgePath" d="M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0" fill="none" />
-                <text class="badge-text">
-                    <textPath href="#badgePath" startOffset="0%">
-                        • DIGITAL DESIGN • FRONTEND WEB DEVELOPER • DIGITAL DESIGN • FRONTEND WEB DEVELOPER
-                    </textPath>
-                </text>
+                <path id="bp" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" fill="none" />
+                <text class="badge-text"><textPath href="#bp">• DIGITAL DESIGN • FRONTEND WEB DEVELOPER • DIGITAL DESIGN • FRONTEND WEB DEVELOPER</textPath></text>
             </svg>
+            <div style="font-size: 9px; letter-spacing: 5px; color: #444; font-weight: 800; text-transform: uppercase; margin-top: 5px; text-align: center;">Creative Developer</div>
         </div>
 
         <svg id="hex-svg" viewBox="0 0 600 600">
             <path class="draw-hex" id="active-line" d="M 300 50 L 516 175 L 516 425 L 300 550 L 84 425 L 84 175 Z" />
         </svg>
 
-        <div id="elements-layer"></div>
+        <div id="cards-layer"></div>
     </div>
 
     <script>
@@ -100,80 +100,48 @@
             { icon: "🧩", title: "Visual Design", sub: "Branding & Assets", items: ["Social Graphics", "Digital Ads", "UI Components"] },
             { icon: "🎬", title: "Motion & Video", sub: "Short-form content", items: ["After Effects", "CapCut", "AI Video (Veo 3)"] },
             { icon: "✨", title: "Interactive UX", sub: "Experience design", items: ["Canvas API", "Web Audio", "Micro-interactions"] },
-            { icon: "🤖", title: "AI-Powered", sub: "Efficiency & Tech", items: ["AI Image Gen", "Rapid Prototyping", "AI Copywriting"] },
+            { icon: "🤖", title: "AI-Powered", sub: "Efficiency & Tech", items: ["AI Image Gen (Nano Banana Pro)", "AI Video (Veo 3, Kling)", "Rapid prototyping"] },
             { icon: "📈", title: "Marketing", sub: "Growth & SEO", items: ["On-page SEO", "Product Hunt", "Social Strategy"] }
         ];
 
-        // --- 1. Background Dots ---
-        const bgCanvas = document.getElementById('bg-canvas');
-        const bgCtx = bgCanvas.getContext('2d');
-        let bgDots = [];
-        window.addEventListener('resize', () => { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; });
+        // 1. Background Particles
+        const canvas = document.getElementById('bg-canvas'); const ctx = canvas.getContext('2d');
+        let dots = [];
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
         window.dispatchEvent(new Event('resize'));
-        for(let i=0; i<150; i++) bgDots.push({x: Math.random()*bgCanvas.width, y: Math.random()*bgCanvas.height, s: Math.random()*1.5});
-        function drawBg() {
-            bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
-            bgCtx.fillStyle = 'rgba(212, 175, 55, 0.2)';
-            bgDots.forEach(d => { bgCtx.beginPath(); bgCtx.arc(d.x, d.y, d.s, 0, Math.PI*2); bgCtx.fill(); });
-            requestAnimationFrame(drawBg);
+        for(let i=0; i<150; i++) dots.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*1.5});
+        function anim() {
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(212, 175, 55, 0.2)';
+            dots.forEach(d => { ctx.beginPath(); ctx.arc(d.x, d.y, d.s, 0, Math.PI*2); ctx.fill(); });
+            requestAnimationFrame(anim);
         }
-        drawBg();
+        anim();
 
-        // --- 2. JN Particle Gathering (Hình 2) ---
-        const jnCanvas = document.getElementById('jn-canvas');
-        const jnCtx = jnCanvas.getContext('2d');
-        jnCanvas.width = 300; jnCanvas.height = 300;
-        let particles = [];
-        const jnPath = new Path2D("M80 80h40v100h-40z M140 80l40 100v-100h20v140h-20l-40-100v100h-20z"); // Tọa độ JN đơn giản
-
-        for(let i=0; i<800; i++) {
-            particles.push({
-                x: Math.random()*300, y: Math.random()*300,
-                tx: 0, ty: 0, 
-                vx: Math.random()*2-1, vy: Math.random()*2-1,
-                gathering: false
-            });
-        }
-
-        function drawJN() {
-            jnCtx.clearRect(0,0,300,300);
-            jnCtx.fillStyle = '#fff';
-            particles.forEach(p => {
-                jnCtx.beginPath(); jnCtx.arc(p.x, p.y, 1, 0, Math.PI*2); jnCtx.fill();
-                if(p.gathering) {
-                    p.x += (p.tx - p.x) * 0.1; p.y += (p.ty - p.y) * 0.1;
-                } else {
-                    p.x += p.vx; p.y += p.vy;
-                    if(p.x<0||p.x>300) p.vx*=-1; if(p.y<0||p.y>300) p.vy*=-1;
-                }
-            });
-            requestAnimationFrame(drawJN);
-        }
-        drawJN();
-        setTimeout(() => { // Sau 2s hạt hội tụ
-            particles.forEach((p, i) => {
-                p.gathering = true;
-                p.tx = 100 + Math.random()*100; p.ty = 100 + Math.random()*100;
-            });
-        }, 2000);
-
-        // --- 3. Hexagon & Cards Layout ---
-        const layer = document.getElementById('elements-layer');
-        const cx = window.innerWidth/2; const cy = window.innerHeight/2 + 20; const r = 250;
+        // 2. Rectangular Card Layout
+        const layer = document.getElementById('cards-layer');
+        const cx = window.innerWidth/2; const cy = window.innerHeight/2 + 60; const r = 250;
         const pts = [{x:cx, y:cy-r}, {x:cx+r*0.866, y:cy-r*0.5}, {x:cx+r*0.866, y:cy+r*0.5}, {x:cx, y:cy+r}, {x:cx-r*0.866, y:cy+r*0.5}, {x:cx-r*0.866, y:cy-r*0.5}];
 
         services.forEach((s, i) => {
             const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
             const ang = (i * 60 - 90) * (Math.PI/180);
-            wrap.style.left = `${pts[i].x + Math.cos(ang)*110 - 115}px`;
+            wrap.style.left = `${pts[i].x + Math.cos(ang)*115 - 120}px`;
             wrap.style.top = `${pts[i].y + Math.sin(ang)*60 - 60}px`;
-            wrap.innerHTML = `<div class="service-card" onclick="this.classList.toggle('open')"><div class="card-icon">${s.icon}</div><div class="card-title">${i+1}. ${s.title}</div><div class="card-sub">${s.sub}</div><div class="card-content"><ul class="bullet-list">${s.items.map(li => `<li>${li}</li>`).join('')}</ul></div></div>`;
+
+            wrap.innerHTML = `
+                <div class="service-card">
+                    <div class="card-icon">${s.icon}</div>
+                    <div class="card-title">${i+1}. ${s.title}</div>
+                    <div class="card-sub">${s.sub}</div>
+                    <ul class="bullet-list">${s.items.map(li => `<li>${li}</li>`).join('')}</ul>
+                </div>
+            `;
             layer.appendChild(wrap);
         });
 
-        // --- 4. Animations ---
-        gsap.to("#badge-svg", { rotation: 360, duration: 20, repeat: -1, ease: "none" });
-        gsap.to("#active-line", { strokeDashoffset: 0, duration: 7, ease: "none", onUpdate: function() {
+        // 3. Animations & Mouse Interaction
+        const tl = gsap.timeline();
+        tl.to("#active-line", { strokeDashoffset: 0, duration: 6, ease: "none", onUpdate: function() {
             const p = this.progress();
             document.querySelectorAll('.service-card').forEach((card, i) => { if(p >= i/6) gsap.to(card, { opacity: 1, y: 0, duration: 0.5 }); });
         }});
@@ -182,9 +150,9 @@
             gsap.to("#cursor-glow", { x: e.clientX, y: e.clientY, duration: 0.5 });
             document.querySelectorAll('.service-card').forEach(card => {
                 const rect = card.getBoundingClientRect();
-                const x = (e.clientX - rect.left - rect.width/2)/12;
-                const y = (e.clientY - rect.top - rect.height/2)/12;
-                gsap.to(card, { rotationY: x, rotationX: -y, duration: 0.6 });
+                const x = (e.clientX - rect.left - rect.width/2)/15;
+                const y = (e.clientY - rect.top - rect.height/2)/15;
+                gsap.to(card, { rotationY: x, rotationX: -y, duration: 0.5 });
             });
         });
     </script>
