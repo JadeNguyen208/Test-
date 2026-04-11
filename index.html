@@ -6,17 +6,18 @@
     <title>Jade Nguyen — Portfolio 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Space+Mono:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        /* ── RESET & GLOBAL ── */
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
         html { scroll-behavior: smooth; }
-        body { width:100%; background:#070705; color: #fff; overflow-x:hidden; cursor:none; font-family: 'Cormorant Garamond', serif; }
+        body { width:100%; background:#070705; color:#fff; overflow-x:hidden; cursor:none; font-family:'Cormorant Garamond', serif; }
 
-        /* ── GLOBAL CURSOR ── */
-        #cur-dot { position:fixed; z-index:10001; pointer-events:none; width:7px; height:7px; border-radius:50%; background:#f0c040; transform:translate(-50%,-50%); box-shadow:0 0 8px #f0c040; transition:width .3s,height .3s; }
+        /* ── CURSOR (PAGE 1) ── */
+        #cur-dot { position:fixed; z-index:10001; pointer-events:none; width:7px; height:7px; border-radius:50%; background:#f0c040; transform:translate(-50%,-50%); box-shadow:0 0 8px #f0c040, 0 0 20px rgba(240,192,64,.4); transition:width .3s,height .3s; }
         #cur-ring1 { position:fixed; z-index:10000; pointer-events:none; width:28px; height:28px; border-radius:50%; border:1px solid rgba(201,168,76,.7); transform:translate(-50%,-50%); transition:width .4s,height .4s; }
-        .trail { position:fixed; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); }
+        .trail { position:fixed; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:opacity .4s; }
 
-        /* ── SHARED NAVIGATION (FROM PAGE 1) ── */
-        nav { position:fixed; top:0; left:0; right:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; padding:28px 52px; mix-blend-mode: difference; }
+        /* ── NAVIGATION (KEPT FIXED) ── */
+        nav { position:fixed; top:0; left:0; right:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; padding:28px 52px; mix-blend-mode: exclusion; }
         .nav-logo { font-family:'Cormorant Garamond',serif; font-size:11px; letter-spacing:.3em; color:#f0c040; text-transform:uppercase; border:1px solid rgba(201,168,76,.7); padding:8px 16px; line-height:1.6; }
         .nav-links { display:flex; gap:36px; list-style:none; }
         .nav-links a { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; color:#ffffff; text-decoration:none; text-transform:uppercase; transition:color .3s; }
@@ -24,40 +25,68 @@
         .nav-cta { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.15em; color:#070705; background:#ffffff; padding:10px 20px; text-decoration:none; text-transform:uppercase; transition:background .3s,color .3s; }
         .nav-cta:hover { background:#f0c040; color:#070705; }
 
-        /* ── SECTION 1 (PAGE 1 DESIGN) ── */
-        #section-one { position: relative; height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
-        #canvas1 { position: absolute; inset: 0; z-index: 1; }
-        #hero-p1 { position: relative; z-index: 10; text-align: center; pointer-events: none; }
-        .eyebrow { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.45em; color:#f0c040; text-transform:uppercase; border:1px solid rgba(201,168,76,.5); padding:8px 20px; margin-bottom:40px; display: inline-block; }
-        #particle-zone { min-height:160px; width:100%; position:relative; display:flex; justify-content:center; align-items:center; }
-        #dd-text { font-family:'Cormorant Garamond',serif; font-weight:700; font-size:clamp(62px,10vw,148px); line-height:1; color:#f0c040; text-shadow:0 0 30px rgba(240,192,64,0.9); }
-        .frontend-line { font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; font-size:clamp(28px,4.5vw,62px); color:#f0ebe0; margin-top:30px; opacity:0; transition: 1s; }
-        .frontend-line.show { opacity: 1; }
-        .side-r { position:absolute; right:20px; top:50%; transform:translateY(-50%) rotate(90deg); font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.3em; color:rgba(201,168,76,.25); text-transform:uppercase; }
+        /* ── SECTION 1 (EXACT PAGE 1 DESIGN) ── */
+        #section-one { position:relative; height:100vh; width:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; overflow:hidden; }
+        #canvas1 { position:absolute; inset:0; z-index:1; pointer-events:none; }
         
-        /* ── SECTION 2 (PAGE 2 DESIGN) ── */
-        #section-two { position: relative; min-height: 100vh; width: 100%; background: #070705; padding-top: 100px; padding-bottom: 100px; }
-        #canvas2 { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-        .p2-content { position: relative; z-index: 10; }
+        #hero-p1 { position:relative; z-index:10; text-align:center; pointer-events:none; padding-bottom:10vh; }
+        .eyebrow { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.45em; color:#f0c040; text-transform:uppercase; border:1px solid rgba(201,168,76,.5); padding:8px 20px; margin-bottom:clamp(20px,3vw,40px); opacity:0; animation:fadeIn .8s ease .2s forwards; }
         
-        #hero-section-p2 { display: flex; align-items: center; justify-content: space-around; padding: 0 10%; perspective: 1000px; min-height: 70vh; }
-        .hero-text h2 { font-size: clamp(48px, 6vw, 92px); line-height: 1.1; font-weight: 300; }
-        .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.4); font-weight: 700; }
+        #dd-text { font-family:'Cormorant Garamond',serif; font-weight:700; font-size:clamp(62px,10vw,148px); line-height:1; letter-spacing:-.01em; color:#f0c040; position:relative; text-shadow:0 0 30px rgba(240,192,64,0.9),0 0 80px rgba(240,192,64,0.4),0 0 4px rgba(255,240,100,1); animation:ddReveal 1.2s cubic-bezier(.16,1,.3,1) .3s forwards; }
+        .frontend-line { font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; font-size:clamp(28px,4.5vw,62px); letter-spacing:.04em; color:#f0ebe0; line-height:1; margin-top:clamp(20px,2.5vw,36px); opacity:0; transform:translateY(18px); transition:opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
+        .frontend-line.show { opacity:1; transform:translateY(0); }
+        
+        .side-r { position:absolute; right:20px; top:50%; transform:translateY(-50%) rotate(90deg); font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.3em; color:rgba(201,168,76,.25); text-transform:uppercase; white-space:nowrap; z-index:50; }
+
+        /* ── SECTION 2 (EXACT PAGE 2 DESIGN) ── */
+        #section-two { position:relative; min-height:160vh; width:100%; background:#070705; padding-top:15vh; }
+        #canvas2 { position:absolute; inset:0; z-index:1; pointer-events:none; }
+        
+        #hero-section-p2 { display:flex; align-items:center; justify-content:space-around; min-height:65vh; padding:0 10%; perspective:1000px; z-index:10; position:relative; }
+        .hero-text h2 { font-size:clamp(48px, 6vw, 92px); line-height:1.1; font-weight:300; white-space:nowrap; }
+        .gold-highlight { color:#f0c040; text-shadow:0 0 25px rgba(240, 192, 64, 0.4); font-weight:700; }
+        
         .terminal-container { 
             flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.98); 
-            border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; padding: 30px; font-family: 'Space Mono', monospace; 
+            border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; 
+            padding: 30px; font-family: 'Space Mono', monospace; font-size: 12px; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8); min-height: 420px; 
+            transform: rotateY(8deg); position: relative; overflow: hidden;
         }
+        /* RUNNING BORDERS P2 */
+        .t-border { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; z-index: 5; opacity: 0; transition: opacity 0.5s; }
+        .t-active .t-border { opacity: 1; }
+        .t-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runR 2s linear infinite; }
+        .t-2 { bottom: 0; right: -100%; width: 100%; height: 2px; animation: runL 2s linear infinite; }
+
         .summary-line { 
             width: 100%; text-align: center; font-family: 'Space Mono', monospace; font-weight: 700; color: #f0c040; 
             font-size: 13px; letter-spacing: 0.4em; text-transform: uppercase; padding: 60px 0; 
+            position: relative; z-index: 10; text-shadow: 0 0 10px #f0c040;
         }
-        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 0 10%; }
-        .info-card { background: rgba(15, 15, 12, 0.95); padding: 40px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.2); transition: 0.6s; }
-        .info-card:hover { transform: translateY(-5px); border-color: #fff; }
 
-        /* ── UTILS ── */
-        #grain { position:fixed; inset:0; z-index:6; pointer-events:none; opacity:.022; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-        @media (max-width: 900px) { #hero-section-p2 { flex-direction: column; gap: 50px; } #experience-grid { grid-template-columns: 1fr; } }
+        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 0 10% 100px 10%; z-index: 10; position: relative; }
+        .info-card { 
+            background: rgba(15, 15, 12, 0.95); padding: 40px; border-radius: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.2); position: relative; overflow: hidden; 
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); transform-style: preserve-3d; 
+        }
+        .info-card:hover { transform: translateY(-5px) translateZ(40px); background: rgba(20, 20, 18, 1); border-color: #fff; }
+        .card-label { font-family: 'Space Mono', monospace; font-size: 10px; color: #f0c040; letter-spacing: 5px; margin-bottom: 20px; display: block; border-bottom: 1px solid rgba(240,192,64,0.3); width: fit-content; }
+
+        /* ── JN BADGE (FROM PAGE 2) ── */
+        #jn-badge-corner { position:fixed; bottom:30px; left:30px; width:100px; height:100px; z-index:1000; pointer-events:none; }
+        .orbit { fill: none; stroke: rgba(240, 192, 64, 0.4); stroke-width: 0.8px; stroke-dasharray: 4 4; transform-origin: center; animation: jnSpin 10s linear infinite; }
+
+        /* ── ANIMATIONS ── */
+        @keyframes ddReveal { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        @keyframes runR { from { left: -100%; } to { left: 100%; } }
+        @keyframes runL { from { right: -100%; } to { right: 100%; } }
+        @keyframes jnSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        #grain { position:fixed; inset:0; z-index:6; pointer-events:none; opacity:.022; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size:160px; }
     </style>
 </head>
 <body>
@@ -94,13 +123,22 @@
     <div class="p2-content">
         <div id="hero-section-p2">
             <div class="hero-text">
-                <h2>Design that <span class="gold-highlight">works.</span></h2>
-                <h2>Code that <span class="gold-highlight">ships.</span></h2>
-                <p style="font-family: 'Space Mono'; margin-top:20px; color:rgba(255,255,255,0.7)">Using <b>HTML, CSS, JS & Python</b> to build 3D experiences.</p>
+                <h2 style="transform: translateX(0);">Design that <span class="gold-highlight">works.</span></h2>
+                <h2 style="transform: translateX(0); margin-top:-10px;">Code that <span class="gold-highlight">ships.</span></h2>
+                <div style="font-family:'Space Mono'; color:rgba(255,255,255,0.7); font-size:13px; margin-top:25px; line-height:1.8; max-width:450px;">
+                    Using <b>HTML, CSS, JS & Python</b> to build pixel-perfect 3D experiences. Making <b>live products</b>, not just mockups.
+                </div>
             </div>
+
             <div class="terminal-container" id="terminal-main">
-                <div id="code-output" style="font-size:12px; color:#999; line-height:1.8"></div>
-                <span class="cursor" style="border-left: 8px solid #f0c040; animation: blink 0.8s infinite;"></span>
+                <div class="t-border t-1"></div><div class="t-border t-2"></div>
+                <div style="display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:15px;">
+                    <div style="width:8px; height:8px; border-radius:50%; background:#ff5f56"></div>
+                    <div style="width:8px; height:8px; border-radius:50%; background:#ffbd2e"></div>
+                    <div style="width:8px; height:8px; border-radius:50%; background:#27c93f"></div>
+                </div>
+                <div id="code-output" style="color:#999; line-height:1.8;"></div>
+                <span class="cursor" style="border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px;"></span>
             </div>
         </div>
 
@@ -108,91 +146,121 @@
 
         <div id="experience-grid">
             <div class="info-card">
-                <p style="color:#f0c040; font-family:'Space Mono'; font-size:10px; margin-bottom:10px">EXPERTISE</p>
-                <h3 style="font-weight:400; font-size:26px; margin-bottom:15px">Sharp Visual Eye</h3>
-                <p style="font-family:'Space Mono'; font-size:13px; color:#bbb">Bridging aesthetics and engineering. Built <span style="color:#f0c040">SleepSoundMixer</span>: a live product with real-time 3D visuals.</p>
+                <span class="card-label">Expertise</span>
+                <h3 style="font-size:26px; margin-bottom:15px; font-weight:400;">Sharp Visual Eye</h3>
+                <p style="color:#bbb; font-family:'Space Mono'; font-size:13px;">Bridging aesthetics and engineering. Built <span style="color:#f0c040">SleepSoundMixer</span>: a live product with real-time 3D canvas visuals.</p>
             </div>
             <div class="info-card">
-                <p style="color:#f0c040; font-family:'Space Mono'; font-size:10px; margin-bottom:10px">PHILOSOPHY</p>
-                <h3 style="font-weight:400; font-size:26px; margin-bottom:15px">Always Creative</h3>
-                <p style="font-family:'Space Mono'; font-size:13px; color:#bbb">Design is problem-solving with taste. Currently expanding into <span style="color:#f0c040">CS50x</span> to grow across global markets.</p>
+                <span class="card-label">Philosophy</span>
+                <h3 style="font-size:26px; margin-bottom:15px; font-weight:400;">Always Creative</h3>
+                <p style="color:#bbb; font-family:'Space Mono'; font-size:13px;">Design is problem-solving with taste. Currently expanding into <span style="color:#f0c040">CS50x</span> to grow across global markets.</p>
             </div>
         </div>
     </div>
 </section>
 
+<div id="jn-badge-corner">
+    <svg viewBox="0 0 100 100">
+        <circle class="orbit" cx="50" cy="50" r="38" />
+        <text x="50" y="58" text-anchor="middle" style="fill:#fff; font-weight:700; font-size:24px; text-shadow:0 0 10px #f0c040;">JN</text>
+        <path id="orbitPath" d="M15,50 A35,35 0 1,1 85,50 A35,35 0 1,1 15,50" fill="none"/>
+        <text style="fill:#f0c040; font-size:5.5px; letter-spacing:2.1px; text-transform:uppercase; font-family:'Space Mono';"><textPath href="#orbitPath">Digital Designer • Creative Developer •&nbsp;</textPath></text>
+    </svg>
+</div>
+
 <script>
-/* ── 1. GLOBAL CURSOR & TRAIL ── */
-const dot=document.getElementById('cur-dot'), ring1=document.getElementById('cur-ring1');
-let mx=0, my=0, r1x=0, r1y=0;
-document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
-(function tick(){ r1x+=(mx-r1x)*.15; r1y+=(my-r1y)*.15; ring1.style.left=r1x+'px'; ring1.style.top=r1y+'px'; requestAnimationFrame(tick); })();
+    /* ── 1. GLOBAL CURSOR & TRAIL ── */
+    const dot=document.getElementById('cur-dot'), ring1=document.getElementById('cur-ring1');
+    let mx=0, my=0, r1x=0, r1y=0;
+    document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+    (function tick(){ r1x+=(mx-r1x)*.15; r1y+=(my-r1y)*.15; ring1.style.left=r1x+'px'; ring1.style.top=r1y+'px'; requestAnimationFrame(tick); })();
 
-const trails=[];
-for(let i=0;i<8;i++){
-    const d=document.createElement('div'); d.className='trail';
-    d.style.cssText=`width:${4+i}px;height:${4+i}px;background:rgba(240,192,64,${0.6-i*0.05})`;
-    document.body.appendChild(d); trails.push({el:d, x:0, y:0});
-}
-(function trailLoop(){
-    let px=mx, py=my;
-    trails.forEach((t,i)=>{ t.x+=(px-t.x)*0.18; t.y+=(py-t.y)*0.18; t.el.style.left=t.x+'px'; t.el.style.top=t.y+'px'; px=t.x; py=t.y; });
-    requestAnimationFrame(trailLoop);
-})();
-
-/* ── 2. CANVAS 1 PARTICLES (PAGE 1 STYLE) ── */
-const cv1=document.getElementById('canvas1'), ctx1=cv1.getContext('2d');
-let w1, h1;
-function res1(){ w1=cv1.width=window.innerWidth; h1=cv1.height=window.innerHeight; }
-class Part1 {
-    constructor(){ this.x=Math.random()*w1; this.y=Math.random()*h1; this.vx=(Math.random()-.5)*0.2; this.vy=(Math.random()-.5)*0.2; this.sz=Math.random()*1.5; }
-    draw(){ ctx1.beginPath(); ctx1.arc(this.x,this.y,this.sz,0,Math.PI*2); ctx1.fillStyle='rgba(201,168,76,0.5)'; ctx1.fill(); }
-    update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>w1)this.vx*=-1; if(this.y<0||this.y>h1)this.vy*=-1; }
-}
-let ps1=[]; res1(); for(let i=0;i<150;i++) ps1.push(new Part1());
-function anim1(){ ctx1.clearRect(0,0,w1,h1); ps1.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(anim1); }
-anim1();
-
-/* ── 3. CANVAS 2 PARTICLES (PAGE 2 STYLE) ── */
-const cv2=document.getElementById('canvas2'), ctx2=cv2.getContext('2d');
-let w2, h2;
-function res2(){ w2=cv2.width=window.innerWidth; h2=cv2.height=window.innerHeight; }
-class Part2 {
-    constructor(){ this.x=Math.random()*w2; this.y=Math.random()*h2; this.vx=(Math.random()-.5)*0.5; this.vy=(Math.random()-.5)*0.5; this.sz=Math.random()*2; }
-    draw(){ ctx2.beginPath(); ctx2.arc(this.x,this.y,this.sz,0,Math.PI*2); ctx2.fillStyle='rgba(240,192,64,0.3)'; ctx2.fill(); }
-    update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>w2)this.vx*=-1; if(this.y<0||this.y>h2)this.vy*=-1; }
-}
-let ps2=[]; res2(); for(let i=0;i<100;i++) ps2.push(new Part2());
-function anim2(){ ctx2.clearRect(0,0,w2,h2); ps2.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(anim2); }
-anim2();
-
-/* ── 4. TERMINAL TYPING (PAGE 2) ── */
-const output = document.getElementById('code-output');
-const codeLines = [
-    {t:"> [LIVE]: Senior Digital Designer · Available for remote working", c:"#f0c040"},
-    {t:"> [INFO]: Motion meets Engineering.", c:"#fff"},
-    {t:"const SeniorJade = {", c:"#666"},
-    {t:"  focus: 'Motion · Web · 3D Visual Design',", isCode:true},
-    {t:"  experience: '5+ years · Remote',", isCode:true},
-    {t:"  output: () => 'Concepts → Live Products'", isCode:true},
-    {t:"};", c:"#666"}
-];
-let lineIdx=0;
-function typeCode(){
-    if(lineIdx < codeLines.length){
-        const l=codeLines[lineIdx]; const d=document.createElement('div');
-        d.style.color=l.c || "#999"; d.textContent=l.t;
-        output.appendChild(d); lineIdx++; setTimeout(typeCode, 150);
+    const trails=[];
+    for(let i=0;i<8;i++){
+        const d=document.createElement('div'); d.className='trail';
+        d.style.cssText=`width:${4+i}px;height:${4+i}px;background:rgba(240,192,64,${0.6-i*0.05})`;
+        document.body.appendChild(d); trails.push({el:d, x:0, y:0});
     }
-}
+    (function trailLoop(){
+        let px=mx, py=my;
+        trails.forEach((t,i)=>{ t.x+=(px-t.x)*0.18; t.y+=(py-t.y)*0.18; t.el.style.left=t.x+'px'; t.el.style.top=t.y+'px'; px=t.x; py=t.y; });
+        requestAnimationFrame(trailLoop);
+    })();
 
-/* ── 5. SCROLL TRIGGERS ── */
-window.addEventListener('scroll', () => {
-    const s2 = document.getElementById('section-two').getBoundingClientRect();
-    if(s2.top < window.innerHeight/2) typeCode(); // Chạy terminal khi cuộn tới
-});
-setTimeout(() => document.querySelector('.frontend-line').classList.add('show'), 1000);
-window.addEventListener('resize', () => { res1(); res2(); });
+    /* ── 2. CANVAS 1 PARTICLES (PAGE 1) ── */
+    const cv1=document.getElementById('canvas1'), ctx1=cv1.getContext('2d');
+    let w1, h1;
+    function res1(){ w1=cv1.width=window.innerWidth; h1=cv1.height=window.innerHeight; }
+    class Part1 {
+        constructor(){ this.x=Math.random()*w1; this.y=Math.random()*h1; this.vx=(Math.random()-.5)*0.2; this.vy=(Math.random()-.5)*0.2; this.sz=Math.random()*1.5; }
+        draw(){ ctx1.beginPath(); ctx1.arc(this.x,this.y,this.sz,0,Math.PI*2); ctx1.fillStyle='rgba(201,168,76,0.5)'; ctx1.fill(); }
+        update(){ 
+            const dx=this.x-mx, dy=this.y-my, d=Math.sqrt(dx*dx+dy*dy);
+            if(d<80){ this.x-=(dx/d)*1; this.y-=(dy/d)*1; }
+            this.x+=this.vx; this.y+=this.vy; 
+            if(this.x<0||this.x>w1)this.vx*=-1; if(this.y<0||this.y>h1)this.vy*=-1; 
+        }
+    }
+    let ps1=[]; res1(); for(let i=0;i<180;i++) ps1.push(new Part1());
+    function anim1(){ ctx1.clearRect(0,0,w1,h1); ps1.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(anim1); }
+    anim1();
+
+    /* ── 3. CANVAS 2 PARTICLES (PAGE 2) ── */
+    const cv2=document.getElementById('canvas2'), ctx2=cv2.getContext('2d');
+    let w2, h2;
+    function res2(){ w2=cv2.width=window.innerWidth; h2=cv2.height=window.innerHeight; }
+    class Part2 {
+        constructor(){ this.x=Math.random()*w2; this.y=Math.random()*h2; this.vx=(Math.random()-.5)*0.3; this.vy=(Math.random()-.5)*0.3; this.sz=Math.random()*2.2; }
+        draw(){ ctx2.beginPath(); ctx2.arc(this.x,this.y,this.sz,0,Math.PI*2); ctx2.fillStyle='rgba(240,192,64,0.2)'; ctx2.fill(); }
+        update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>w2)this.vx*=-1; if(this.y<0||this.y>h2)this.vy*=-1; }
+    }
+    let ps2=[]; res2(); for(let i=0;i<120;i++) ps2.push(new Part2());
+    function anim2(){ ctx2.clearRect(0,0,w2,h2); ps2.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(anim2); }
+    anim2();
+
+    /* ── 4. TERMINAL TYPING & 3D CARDS (PAGE 2) ── */
+    const output = document.getElementById('code-output');
+    const term = document.getElementById('terminal-main');
+    const codeLines = [
+        {t:"> [LIVE]: Senior Digital Designer · Available for remote working", c:"#f0c040"},
+        {t:"> [INFO]: Motion meets Engineering.", c:"#fff"},
+        {t:"const SeniorJade = {", c:"#666"},
+        {t:"  focus: 'Motion · Web · 3D Visual Design',", isCode:true},
+        {t:"  experience: '5+ years · Remote',", isCode:true},
+        {t:"  output: () => 'Concepts → Live Products'", isCode:true},
+        {t:"};", c:"#666"}
+    ];
+    let lineIdx=0, typingStarted=false;
+    function typeCode(){
+        term.classList.add('t-active');
+        if(lineIdx < codeLines.length){
+            const l=codeLines[lineIdx]; const d=document.createElement('div');
+            d.style.color=l.c || "#999"; d.textContent=l.t;
+            output.appendChild(d); lineIdx++; setTimeout(typeCode, 120);
+        }
+    }
+
+    // Trigger typing on scroll
+    window.addEventListener('scroll', () => {
+        const s2 = document.getElementById('section-two').getBoundingClientRect();
+        if(s2.top < window.innerHeight/1.5 && !typingStarted){ typingStarted=true; setTimeout(typeCode, 500); }
+        
+        // Show Frontend Line P1
+        if(window.scrollY > 100) document.querySelector('.frontend-line').classList.add('show');
+    });
+
+    // 3D Card Hover
+    document.querySelectorAll('.info-card').forEach(card=>{
+        card.addEventListener('mousemove',e=>{
+            const r=card.getBoundingClientRect();
+            const x=(e.clientX-r.left)/r.width-0.5, y=(e.clientY-r.top)/r.height-0.5;
+            card.style.transform=`perspective(1000px) rotateX(${y*-15}deg) rotateY(${x*15}deg) translateZ(40px)`;
+        });
+        card.addEventListener('mouseleave',()=>card.style.transform='none');
+    });
+
+    window.addEventListener('resize', () => { res1(); res2(); });
+    setTimeout(() => document.querySelector('.frontend-line').classList.add('show'), 1500);
 </script>
 
 </body>
