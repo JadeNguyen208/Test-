@@ -9,12 +9,12 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; scroll-behavior: smooth; cursor: none; }
 
-        /* ── BACKGROUND & CURSOR ── */
+        /* ── BACKGROUND ── */
         #pcanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         #custom-mouse { position: fixed; width: 10px; height: 10px; background: #f0c040; border-radius: 50%; z-index: 10000; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 15px #f0c040; }
         .trail { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: opacity 0.4s; }
         
-        .digital-silk { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.6em; color: rgba(240, 192, 64, 0.2); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .digital-silk { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.7em; color: rgba(240, 192, 64, 0.2); display: flex; align-items: center; justify-content: center; z-index: 100; }
 
         /* ── HERO SECTION ── */
         #hero-section { display: flex; align-items: center; justify-content: space-around; min-height: 65vh; padding: 0 10%; perspective: 1000px; z-index: 10; position: relative; }
@@ -29,7 +29,7 @@
         .power-tagline { font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 25px; line-height: 1.8; max-width: 450px; }
         .power-tagline b { color: #f0c040; }
 
-        /* ── TERMINAL + RUNNING BORDER ── */
+        /* ── TERMINAL ── */
         .terminal-container { 
             flex: 1.2; max-width: 600px; background: rgba(10, 10, 8, 0.98); 
             border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; 
@@ -51,7 +51,7 @@
         .code-key { color: #f0c040; } .code-val { color: #c9a84c; font-style: italic; }
         .cursor { border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; }
 
-        /* ── SUMMARY LINE (FLY IN FROM LEFT) ── */
+        /* ── SUMMARY LINE ── */
         .summary-line { 
             width: 100%; text-align: center; font-family: 'Space Mono', monospace; font-weight: 700; color: #f0c040; 
             font-size: 14px; letter-spacing: 0.4em; text-transform: uppercase; padding: 15px 0; 
@@ -66,12 +66,11 @@
         
         .info-card { 
             background: rgba(15, 15, 12, 0.95); padding: 45px; border-radius: 16px; 
-            border: 1px solid rgba(255, 255, 255, 0.2); /* Viền trắng mảnh mặc định */
+            border: 1px solid rgba(255, 255, 255, 0.2); 
             position: relative; overflow: hidden; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); 
             transform-style: preserve-3d; 
         }
         
-        /* Running Border (Dual Gold Lines) */
         .card-border-box { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 1; }
         .info-card:hover .card-border-box { opacity: 1; }
         .b-line { position: absolute; background: #f0c040; box-shadow: 0 0 15px #f0c040; }
@@ -88,7 +87,7 @@
         .info-card li::before { content: '>'; position: absolute; left: 0; color: #f0c040; font-weight: bold; }
         .highlight { color: #f0c040; font-weight: 700; }
 
-        /* ── JN BADGE: DIGITAL ORBIT ── */
+        /* ── JN BADGE ── */
         #jn-badge-corner { position: fixed; bottom: 40px; left: 40px; width: 110px; height: 110px; z-index: 1000; }
         #jn-ring-svg { width: 100%; height: 100%; overflow: visible; }
         .orbit { fill: none; stroke: rgba(240, 192, 64, 0.4); stroke-width: 0.8px; stroke-dasharray: 4 4; transform-origin: center; animation: jnSpin 10s linear infinite; }
@@ -174,18 +173,18 @@
         let W,H,mx=-999,my=-999;
         function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
         class Amb{
-            constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.15;this.vy=(Math.random()-.5)*.15;this.size=Math.random()*2;this.alpha=Math.random()*.5+.1;}
+            constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.15;this.vy=(Math.random()-.5)*.15;this.size=Math.random()*2.2;this.alpha=Math.random()*.5+.15;}
             update(){
                 const dx=this.x-mx, dy=this.y-my, d=Math.sqrt(dx*dx+dy*dy);
-                if(d<80){this.x-=(dx/d)*0.8;this.y-=(dy/d)*0.8;}
+                if(d<85){this.x-=(dx/d)*0.85;this.y-=(dy/d)*0.85;}
                 this.x+=this.vx;this.y+=this.vy;
                 if(this.x<0||this.x>W)this.vx*=-1;if(this.y<0||this.y>H)this.vy*=-1;
             }
             draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle=`rgba(240,192,64,${this.alpha})`;ctx.fill();}
         }
         let ambients=[];
-        function init(){resize();ambients=[];for(let i=0;i<180;i++)ambients.push(new Amb());}
-        function render(){requestAnimationFrame(render);ctx.fillStyle='rgba(7,7,5,0.2)';ctx.fillRect(0,0,W,H);ambients.forEach(a=>{a.update();a.draw();});}
+        function init(){resize();ambients=[];for(let i=0;i<190;i++)ambients.push(new Amb());}
+        function render(){requestAnimationFrame(render);ctx.clearRect(0,0,W,H);ambients.forEach(a=>{a.update();a.draw();});}
         window.addEventListener('resize',init);init();render();
 
         const trails=[];
@@ -201,21 +200,22 @@
         });
         (function trailLoop(){
             let px=mx, py=my;
-            trails.forEach((t,i)=>{t.x+=(px-t.x)*0.15;t.y+=(py-t.y)*0.15;t.el.style.left=t.x+'px';t.el.style.top=t.y+'px';px=t.x;py=t.y;});
+            trails.forEach((t,i)=>{t.x+=(px-t.x)*0.18;t.y+=(py-t.y)*0.18;t.el.style.left=t.x+'px';t.el.style.top=t.y+'px';px=t.x;py=t.y;});
             requestAnimationFrame(trailLoop);
         })();
 
         const output = document.getElementById('code-output');
         const term = document.getElementById('terminal-main');
         const codeLines = [
-            {t:"> [LIVE]: I am Jade Nguyen...", c:"#f0c040"},
+            {t:"> [LIVE]: Senior Digital Designer Active...", c:"#f0c040"},
             {t:"> [INFO]: Experience 3D design, one of my core strengths.", c:"#fff"},
             {t:"> [SYST]: Applying code to realize complex 3D visuals.", c:"#27c93f"},
             {t:"", c:""},
-            {t:"const Jade = {", c:"#666"},
-            {t:"  status: 'Senior Digital Designer Active',", isCode:true},
-            {t:"  experience: '20+ projects led',", isCode:true},
-            {t:"  output: () => 'Live Dynamic Product'", isCode:true}
+            {t:"const SeniorJade = {", c:"#666"},
+            {t:"  focus: '3D Pixel Perfection',", isCode:true},
+            {t:"  leadership: '20+ projects led',", isCode:true},
+            {t:"  mastery: 'HTML/CSS/JS/Python',", isCode:true},
+            {t:"  output: () => 'Live Dynamic Products'", isCode:true},
             {t:"};", c:"#666"}
         ];
         let lineIdx=0;
@@ -225,12 +225,11 @@
                 const l=codeLines[lineIdx];const d=document.createElement('div');
                 if(l.isCode){const p=l.t.split(':');d.innerHTML=`<span class="code-key">${p[0]}</span>:<span class="code-val">${p[1]}</span>`;}
                 else{d.style.color=l.c;d.textContent=l.t;}
-                output.appendChild(d);lineIdx++;setTimeout(typeCode, 100); // Tăng tốc độ gõ (100ms)
+                output.appendChild(d);lineIdx++;setTimeout(typeCode, 100);
             }
         }
-        setTimeout(typeCode, 1200);
+        setTimeout(typeCode, 1400);
 
-        // 3D TILT EFFECT
         document.querySelectorAll('.info-card').forEach(card=>{
             card.addEventListener('mousemove',e=>{
                 const r=card.getBoundingClientRect();
