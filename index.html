@@ -9,51 +9,39 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #070705; color: #fff; font-family: 'Cormorant Garamond', serif; overflow-x: hidden; cursor: none; }
 
-        /* ── BACKGROUND & CURSOR ── */
+        /* ── BACKGROUND ── */
         #pcanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        #custom-mouse { position: fixed; width: 10px; height: 10px; background: #f0c040; border-radius: 50%; z-index: 10000; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 15px #f0c040; transition: width 0.3s, height 0.3s; }
+        #custom-mouse { position: fixed; width: 10px; height: 10px; background: #f0c040; border-radius: 50%; z-index: 10000; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 15px #f0c040; }
         
-        /* ── SIDEBAR VERTICAL TEXT ── */
-        .side-text-vertical { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.6em; color: rgba(240, 192, 64, 0.2); display: flex; align-items: center; justify-content: center; z-index: 5; white-space: nowrap; }
+        /* ── SIDEBAR TYPOGRAPHY ── */
+        .side-text-vertical { position: fixed; right: 25px; top: 0; bottom: 0; writing-mode: vertical-rl; text-transform: uppercase; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.6em; color: rgba(240, 192, 64, 0.3); display: flex; align-items: center; justify-content: center; z-index: 50; white-space: nowrap; }
 
         /* ── HERO SECTION ── */
-        #hero-section { display: flex; align-items: center; justify-content: space-around; min-height: 100vh; padding: 0 12% 0 8%; perspective: 1000px; }
-        .hero-text-3d { flex: 1; opacity: 0; transform: rotateY(-25deg) translateZ(-100px); animation: reveal3D 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .hero-text-3d h2 { font-size: clamp(48px, 6vw, 92px); line-height: 1.1; margin-bottom: 5px; font-weight: 300; color: #eee; }
-        .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.3); font-weight: 700; }
-        @keyframes reveal3D { to { opacity: 1; transform: rotateY(0) translateZ(0); } }
+        #hero-section { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 0 10%; position: relative; z-index: 10; }
+        
+        .hero-text-wrap { margin-bottom: 40px; text-align: center; }
+        .hero-text-wrap h2 { font-size: clamp(40px, 6vw, 80px); line-height: 1.1; font-weight: 300; }
+        .gold-highlight { color: #f0c040; text-shadow: 0 0 25px rgba(240, 192, 64, 0.4); font-weight: 700; }
 
         /* ── TERMINAL ── */
-        .type-header { font-family: 'Space Mono', monospace; color: rgba(240,192,64,0.7); font-size: 16px; margin-bottom: 15px; min-height: 48px; }
-        .terminal-container { flex: 1; max-width: 550px; background: rgba(10, 10, 8, 0.9); border: 1px solid rgba(240, 192, 64, 0.15); border-radius: 12px; padding: 30px; font-family: 'Space Mono', monospace; font-size: 13px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.7); min-height: 380px; transform: rotateY(8deg); }
+        .type-header { font-family: 'Space Mono', monospace; color: rgba(240,192,64,0.8); font-size: 18px; margin-bottom: 20px; min-height: 50px; text-align: center; }
+        .terminal-container { max-width: 600px; width: 100%; background: rgba(10, 10, 8, 0.95); border: 1px solid rgba(240, 192, 64, 0.2); border-radius: 12px; padding: 30px; font-family: 'Space Mono', monospace; font-size: 14px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
         .terminal-header { display: flex; gap: 8px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; }
         .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
-        #code-output { color: #888; line-height: 1.8; }
+        #code-output { color: #999; line-height: 1.8; text-align: left; }
         .code-key { color: #f0c040; }
         .code-val { color: #c9a84c; font-style: italic; }
         .cursor { border-left: 8px solid #f0c040; animation: blink 0.8s infinite; margin-left: 5px; }
         @keyframes blink { 50% { opacity: 0; } }
 
-        /* ── EXPERIENCE GRID & RUNNING BORDER ── */
-        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; padding: 0 12% 100px 8%; }
-
-        .info-card {
-            background: rgba(15, 15, 12, 0.9);
-            padding: 45px;
-            border-radius: 16px;
-            position: relative;
-            overflow: hidden; /* Để border không tràn */
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            transform-style: preserve-3d;
-            border: 1px solid rgba(240, 192, 64, 0.05);
-        }
-
-        /* Container của viền chạy */
-        .card-border-box { position: absolute; inset: 0; pointer-events: none; z-index: 1; opacity: 0; transition: opacity 0.3s; }
+        /* ── EXPERIENCE GRID ── */
+        #experience-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; padding: 100px 10%; position: relative; z-index: 10; }
+        .info-card { background: rgba(15, 15, 12, 0.95); padding: 50px; border-radius: 16px; position: relative; overflow: hidden; border: 1px solid rgba(240, 192, 64, 0.1); transition: all 0.5s ease; }
+        
+        /* Running Border Effect */
+        .card-border-box { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
         .info-card:hover .card-border-box { opacity: 1; }
-
-        /* Hai luồng sáng chạy đối lập */
         .b-line { position: absolute; background: linear-gradient(90deg, transparent, #f0c040, transparent); box-shadow: 0 0 15px #f0c040; }
         .b-line-1 { top: 0; left: -100%; width: 100%; height: 2px; animation: runRight 2s linear infinite; }
         .b-line-2 { bottom: 0; right: -100%; width: 100%; height: 2px; animation: runLeft 2s linear infinite; }
@@ -65,28 +53,27 @@
         @keyframes runUp    { 0% { bottom: -100%; } 100% { bottom: 100%; } }
         @keyframes runDown  { 0% { top: -100%; } 100% { top: 100%; } }
 
-        .info-card:hover { transform: translateZ(30px); background: rgba(20, 20, 18, 1); }
-        .info-card:hover h3, .info-card:hover p, .info-card:hover li { color: #fff; text-shadow: 0 0 12px rgba(255,255,255,0.5); }
+        .info-card:hover { transform: translateY(-10px); border-color: #f0c040; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        .info-card:hover h3, .info-card:hover p, .info-card:hover li { color: #fff; text-shadow: 0 0 10px #fff; }
 
-        .card-label { font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 5px; color: #f0c040; margin-bottom: 30px; display: block; }
-        .info-card h3 { font-size: 28px; margin-bottom: 20px; font-weight: 400; color: #f5f5f5; position: relative; z-index: 2; }
-        .info-card p, .info-card ul { color: #bbb; font-family: 'Space Mono', monospace; font-size: 13px; line-height: 2; position: relative; z-index: 2; }
+        .card-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 5px; color: #f0c040; margin-bottom: 25px; display: block; }
+        .info-card h3 { font-size: 30px; margin-bottom: 20px; font-weight: 400; color: #f0c040; transition: 0.3s; }
+        .info-card p, .info-card ul { color: #fff; font-family: 'Space Mono', monospace; font-size: 14px; line-height: 2; list-style: none; transition: 0.3s; }
         .info-card li { margin-bottom: 12px; padding-left: 20px; position: relative; }
         .info-card li::before { content: '>'; position: absolute; left: 0; color: #f0c040; font-weight: bold; }
 
-        /* ── JN BADGE INTERACTIVE ── */
-        #jn-badge-corner {
-            position: fixed; bottom: 40px; left: 40px; width: 100px; height: 100px; z-index: 100;
-            opacity: 0; animation: reveal 2s ease 3s forwards; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes reveal { to { opacity: 1; } }
-        
-        #jn-badge-corner:hover { transform: scale(1.2); }
+        /* ── JN BADGE ── */
+        #jn-badge-corner { position: fixed; bottom: 40px; left: 40px; width: 100px; height: 100px; z-index: 1000; }
         #jn-ring-svg { width: 100%; height: 100%; overflow: visible; }
-        .orbit-circle { transition: r 0.4s ease, stroke-width 0.4s ease; stroke: #f0c040; fill: none; }
-        #jn-badge-corner:hover .orbit-circle { r: 48; stroke-width: 1.5px; filter: drop-shadow(0 0 10px #f0c040); }
+        .orbit-circle { 
+            fill: none; stroke: #f0c040; stroke-width: 1.5px; stroke-dasharray: 6 4; 
+            transform-origin: center; animation: rotateOrbit 10s linear infinite; 
+        }
+        @keyframes rotateOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #jn-badge-corner:hover .orbit-circle { animation-duration: 3s; filter: drop-shadow(0 0 12px #f0c040); }
+        .jn-text { fill: #fff; font-weight: 700; font-size: 24px; text-shadow: 0 0 15px #f0c040; }
 
-        @media (max-width: 900px) { #hero-section { flex-direction: column; text-align: center; } #experience-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { #experience-grid { grid-template-columns: 1fr; } .side-text-vertical { display: none; } }
     </style>
 </head>
 <body>
@@ -95,75 +82,60 @@
     <div id="custom-mouse"></div>
     <div class="side-text-vertical">Digital Designer & Creative Developer — 2026</div>
 
-    <div class="page-container">
-        <section id="hero-section">
-            <div class="hero-text-3d">
-                <h2>Design that</h2><h2 class="gold-highlight">works.</h2>
-                <h2>Code that</h2><h2 class="gold-highlight">ships.</h2>
+    <section id="hero-section">
+        <div class="hero-text-wrap">
+            <h2>Design that <span class="gold-highlight">works.</span></h2>
+            <h2>Code that <span class="gold-highlight">ships.</span></h2>
+        </div>
+        <div class="type-header" id="type-header"></div>
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
             </div>
+            <div id="code-output"></div>
+            <span class="cursor"></span>
+        </div>
+    </section>
 
-            <div class="terminal-container">
-                <div class="terminal-header">
-                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-                </div>
-                <div class="type-header" id="type-header"></div>
-                <div id="code-output"></div>
-                <span class="cursor"></span>
-            </div>
-        </section>
-
-        <section id="experience-grid">
-            <div class="info-card">
-                <div class="card-border-box">
-                    <div class="b-line b-line-1"></div><div class="b-line b-line-2"></div>
-                    <div class="b-line b-line-3"></div><div class="b-line b-line-4"></div>
-                </div>
-                <span class="card-label">Background</span>
-                <ul>
-                    <li>BSc Digital Marketing Management - Cardiff Met, UK</li>
-                    <li><span style="color:#f0c040; font-weight:700;">CS50p Python & CS50x Harvard</span></li>
-                    <li>Expertise in Data-Driven Visuals</li>
-                </ul>
-            </div>
-            <div class="info-card">
-                <div class="card-border-box">
-                    <div class="b-line b-line-1"></div><div class="b-line b-line-2"></div>
-                    <div class="b-line b-line-3"></div><div class="b-line b-line-4"></div>
-                </div>
-                <span class="card-label">Expertise</span>
-                <h3>Senior Visual Design</h3>
-                <p>Sharp visual eye activated. mastering the intersection of aesthetic precision and functional code.</p>
-            </div>
-            <div class="info-card">
-                <div class="card-border-box">
-                    <div class="b-line b-line-1"></div><div class="b-line b-line-2"></div>
-                    <div class="b-line b-line-3"></div><div class="b-line b-line-4"></div>
-                </div>
-                <span class="card-label">Philosophy</span>
-                <h3>Strategic Execution</h3>
-                <p>I bridge the gap between creative concepts and live products. pixel-perfection on every screen.</p>
-            </div>
-            <div class="info-card">
-                <div class="card-border-box">
-                    <div class="b-line b-line-1"></div><div class="b-line b-line-2"></div>
-                    <div class="b-line b-line-3"></div><div class="b-line b-line-4"></div>
-                </div>
-                <span class="card-label">Status</span>
-                <h3>Open for Hire</h3>
-                <p>Innovative mindset. Rapidly mastering new tech. Ready for international creative projects.</p>
-            </div>
-        </section>
-    </div>
+    <section id="experience-grid">
+        <div class="info-card">
+            <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
+            <span class="card-label">Curriculum Vitae</span>
+            <ul>
+                <li>BSc Digital Marketing Management - Cardiff Met, UK</li>
+                <li><span style="color:#f0c040; font-weight:700;">CS50p Python & CS50x Harvard</span></li>
+                <li><span style="color:#f0c040;">Rapid mastery of new tech</span></li>
+            </ul>
+        </div>
+        <div class="info-card">
+            <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
+            <span class="card-label">Expertise</span>
+            <h3>Senior Visual Design</h3>
+            <p><span style="color:#f0c040;">Sharp visual eye</span> activated. Mastering aesthetic precision and functional code.</p>
+        </div>
+        <div class="info-card">
+            <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
+            <span class="card-label">Philosophy</span>
+            <h3>Strategic Execution</h3>
+            <p>I bridge the gap between creative concepts and live products. <span style="color:#f0c040;">Continuous learning</span> every day.</p>
+        </div>
+        <div class="info-card">
+            <div class="card-border-box"><div class="b-line b-line-1"></div><div class="b-line b-line-2"></div><div class="b-line b-line-3"></div><div class="b-line b-line-4"></div></div>
+            <span class="card-label">Status</span>
+            <h3>Open for Hire</h3>
+            <p>Available for <span style="color:#f0c040;">Senior Digital Design</span> roles. Innovative mindset for international projects.</p>
+        </div>
+    </section>
 
     <div id="jn-badge-corner">
         <svg id="jn-ring-svg" viewBox="0 0 100 100">
-            <circle class="orbit-circle" cx="50" cy="50" r="35" stroke-dasharray="5 5" />
-            <text x="50" y="58" text-anchor="middle" fill="#fff" font-weight="700" font-size="22" style="text-shadow:0 0 10px #f0c040">JN</text>
+            <circle class="orbit-circle" cx="50" cy="50" r="38" />
+            <text x="50" y="58" text-anchor="middle" class="jn-text">JN</text>
         </svg>
     </div>
 
     <script>
-        // ── 1. AMBIENT PARTICLES ──
+        // BACKGROUND PARTICLES
         const cv=document.getElementById('pcanvas'),ctx=cv.getContext('2d');
         let W,H,mx=-999,my=-999;
         function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
@@ -184,17 +156,12 @@
             ambients.forEach(a=>{a.update();a.draw();});
         }
         window.addEventListener('resize',init);init();render();
+        document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;document.getElementById('custom-mouse').style.left=mx+'px';document.getElementById('custom-mouse').style.top=my+'px';});
 
-        document.addEventListener('mousemove',e=>{
-            mx=e.clientX;my=e.clientY;
-            document.getElementById('custom-mouse').style.left=mx+'px';
-            document.getElementById('custom-mouse').style.top=my+'px';
-        });
-
-        // ── 2. TYPEWRITER ──
+        // TYPEWRITER
         const typeHeader = document.getElementById('type-header');
         const output = document.getElementById('code-output');
-        const intro = "> I am Jade Nguyen...\n> Let's come to my creative portfolio...\n> You ready?";
+        const intro = "> I am Jade Nguyen...\n> Let's explore my creative portfolio...\n> You ready?";
         const codeLines = [
             {t:"const jade = {", c:"#666"},
             {t:"  role: 'Senior Digital Designer',", isCode:true},
@@ -217,7 +184,7 @@
                 output.appendChild(d);lineIdx++;setTimeout(typeCode, 350);
             }
         }
-        setTimeout(typeIntro, 1000);
+        setTimeout(typeIntro, 800);
     </script>
 </body>
 </html>
