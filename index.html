@@ -3,516 +3,923 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hệ Thống Quản Lý Chùa</title>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ============================================================
+   SHARED BASE + CSS VARIABLES
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
 :root {
-  --gd:#1a3d2b;--gm:#2d6a4f;--gl:#40916c;--gp:#d8f3dc;
-  --yw:#e6960a;--yp:#fff8e6;
-  --rd:#c0392b;--rp:#fff0ee;--sp:#b71c1c;
-  --bg:#f4f3ef;--wh:#fff;--bd:#e0ddd6;
-  --t1:#1a1a1a;--t2:#6b6b6b;
+–primary:        #1a5c3a;
+–primary-light:  #e8f5ee;
+–primary-mid:    #2d7a52;
+–gold:           #c8a84b;
+–gold-light:     #fdf8ec;
+–accent:         #e07b2a;
+–accent-light:   #fff3e8;
+–danger:         #c62828;
+–danger-light:   #fdecea;
+–warning:        #e6920a;
+–warning-light:  #fff8e1;
+–success:        #2e7d32;
+–success-light:  #e8f5e9;
+–gray-bg:        #f4f5f7;
+–gray-border:    #e0e3e8;
+–gray-text:      #6b7280;
+–dark:           #111827;
+–sidebar-w:      220px;
+–topbar-h:       56px;
+–font:           ‘Be Vietnam Pro’, sans-serif;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--t1);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
 
-/* TOPBAR */
-.topbar{height:52px;background:var(–gd);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.2);}
-.tlogo{display:flex;align-items:center;gap:8px;}
-.tlogo .nm{color:#fff;font-weight:700;font-size:13px;line-height:1.2;}
-.tlogo .sb{color:#a8d5b5;font-size:9px;}
-.tsep{width:1px;height:26px;background:rgba(255,255,255,.2);margin:0 2px;}
-.tdate{flex:1;text-align:center;}
-.tdate .dd{color:#fff;font-size:11px;font-weight:500;}
-.tdate .da{color:#a8d5b5;font-size:9px;margin-top:1px;}
-.tright{display:flex;align-items:center;gap:8px;}
-.tbtn{position:relative;background:rgba(255,255,255,.1);border:none;border-radius:7px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .2s;}
-.tbtn:hover{background:rgba(255,255,255,.2);}
-.tbadge{position:absolute;top:2px;right:2px;background:var(–rd);color:#fff;font-size:7px;font-weight:700;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.uchip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border-radius:20px;padding:3px 10px 3px 3px;cursor:pointer;}
-.uav{width:24px;height:24px;background:var(–gl);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;}
-.unm{color:#fff;font-size:10px;font-weight:600;}
-.url{color:#a8d5b5;font-size:8px;}
-.admin-wrap{position:relative;}
-.admin-dd{position:absolute;top:38px;right:0;background:#fff;border:1px solid var(–bd);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);min-width:185px;z-index:200;display:none;}
-.admin-dd.open{display:block;}
-.addt{padding:7px 12px;font-size:9px;font-weight:700;color:var(–t2);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(–bd);}
-.addi{padding:8px 12px;font-size:11px;color:var(–t1);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;}
-.addi:hover{background:var(–bg);}
+body { font-family: var(–font); min-height: 100vh; }
 
-/* MAIN */
-.main{flex:1;display:flex;overflow:hidden;}
+/* ============================================================
+SCREEN SWITCHING
+============================================================ */
+.screen { display: none; }
+.screen.active { display: flex; }
+#screen-login.active    { align-items: center; justify-content: center; min-height: 100vh; }
+#screen-home.active,
+#screen-dashboard.active { flex-direction: column; height: 100vh; overflow: hidden; }
 
-/* ZONE 1 */
-.z1{width:40%;border-right:1px solid var(–bd);display:flex;flex-direction:column;background:var(–wh);overflow:hidden;}
-.z1hdr{padding:8px 12px 6px;border-bottom:1px solid var(–bd);flex-shrink:0;}
-.z1hdr h2{font-size:11px;font-weight:700;color:var(–gd);}
-.z1hdr p{font-size:9px;color:var(–t2);margin-top:1px;}
-.z1sc{flex:1;overflow-y:auto;padding:7px 7px 0;}
-.z1sc::-webkit-scrollbar{width:3px;}
-.z1sc::-webkit-scrollbar-thumb{background:#ccc;border-radius:2px;}
-.ban-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:7px;}
-.bc{border-radius:6px;padding:6px 4px;cursor:pointer;text-align:center;transition:transform .15s,box-shadow .15s;border:2px solid transparent;position:relative;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.bc:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,.12);}
-.bc.sel{border-color:var(–gd)!important;box-shadow:0 0 0 2px rgba(26,61,43,.3);}
-.bc .bn{font-size:9px;font-weight:600;color:#fff;line-height:1.3;}
-.bc .bid{font-size:7.5px;color:rgba(255,255,255,.65);margin-bottom:1px;}
-.bg{background:var(–gm);}.by{background:var(–yw);}.br{background:var(–rd);animation:blink 1.2s infinite;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.6;}}
-.adot{position:absolute;top:3px;right:3px;width:6px;height:6px;background:#fff;border-radius:50%;box-shadow:0 0 4px rgba(255,255,255,.8);}
-.np{border-top:1px solid var(–bd);flex-shrink:0;}
-.nptog{padding:7px 11px;background:var(–gd);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
-.nptog span{color:#fff;font-size:10px;font-weight:600;}
-.nparr{color:#a8d5b5;font-size:9px;}
-.nplist{max-height:115px;overflow-y:auto;background:#fff;}
-.nplist::-webkit-scrollbar{width:3px;}
-.npi{padding:6px 11px;border-bottom:1px solid #f0ede8;font-size:9.5px;line-height:1.5;}
-.npi.urg{background:var(–rp);border-left:3px solid var(–rd);}
-.nlbl{color:var(–rd);font-weight:700;font-size:8.5px;margin-bottom:1px;}
-.ntag{color:var(–gm);font-weight:600;}
-.ntm{color:#aaa;font-size:8.5px;margin-top:2px;}
+/* ============================================================
+SCREEN 1 — LOGIN
+============================================================ */
+#screen-login {
+background: #0f2318;
+position: relative;
+overflow: hidden;
+}
+#screen-login::before {
+content: ‘’; position: absolute; inset: 0;
+background:
+radial-gradient(ellipse 80% 60% at 50% 0%, rgba(45,122,82,0.25) 0%, transparent 70%),
+radial-gradient(ellipse 40% 40% at 80% 80%, rgba(224,123,42,0.08) 0%, transparent 60%);
+pointer-events: none;
+}
+.deco-top {
+position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+width: 600px; height: 3px;
+background: linear-gradient(90deg, transparent, #c8a84b, #e8c96d, #c8a84b, transparent);
+}
+.deco-bottom {
+position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+width: 600px; height: 3px;
+background: linear-gradient(90deg, transparent, #c8a84b, #e8c96d, #c8a84b, transparent);
+}
+.login-card {
+position: relative; width: 420px;
+background: rgba(255,255,255,0.97); border-radius: 16px; padding: 48px 44px 40px;
+box-shadow: 0 0 0 1px rgba(200,168,75,0.3), 0 24px 64px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3);
+animation: fadeUp 0.5s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+.login-card::before {
+content: ‘’; position: absolute; top: 0; left: 32px; right: 32px; height: 2px;
+background: linear-gradient(90deg, transparent, #c8a84b, #e8c96d, #c8a84b, transparent);
+border-radius: 0 0 2px 2px;
+}
+.logo-area { text-align: center; margin-bottom: 32px; }
+.logo-icon {
+width: 60px; height: 60px; background: #1a5c3a; border-radius: 14px;
+display: inline-flex; align-items: center; justify-content: center;
+margin-bottom: 14px; box-shadow: 0 4px 16px rgba(26,92,58,0.35);
+}
+.logo-title { font-size: 17px; font-weight: 700; color: #1a2e1f; letter-spacing: 0.2px; line-height: 1.3; }
+.logo-sub   { font-size: 12px; color: #6b7280; margin-top: 4px; }
+.divider    { height: 1px; background: #e8eaec; margin-bottom: 28px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 8px; letter-spacing: 0.2px; }
+.form-input {
+width: 100%; padding: 11px 14px; border: 1.5px solid #d1d5db; border-radius: 8px;
+font-family: var(–font); font-size: 14px; color: #111827; background: #fafafa;
+transition: border-color 0.15s, box-shadow 0.15s; outline: none;
+}
+.form-input:focus { border-color: #1a5c3a; background: #fff; box-shadow: 0 0 0 3px rgba(26,92,58,0.1); }
+.form-input::placeholder { color: #b0b7c0; }
+.form-group { margin-bottom: 20px; }
+.btn-login {
+width: 100%; padding: 13px; background: #1a5c3a; color: #fff; border: none;
+border-radius: 8px; font-family: var(–font); font-size: 14px; font-weight: 600;
+cursor: pointer; transition: background 0.15s, transform 0.1s; margin-top: 4px; letter-spacing: 0.2px;
+}
+.btn-login:hover  { background: #155031; }
+.btn-login:active { transform: scale(0.99); }
+.msg { font-size: 12px; padding: 10px 12px; border-radius: 6px; margin-top: 14px; display: none; line-height: 1.4; }
+.msg.error { background: #fdecea; color: #c62828; border: 1px solid rgba(198,40,40,0.2); display: block; }
+.msg.info  { background: #e8f5ee; color: #1a5c3a; border: 1px solid rgba(26,92,58,0.2); display: block; }
+.footer-note { text-align: center; font-size: 11px; color: #9ca3af; margin-top: 24px; line-height: 1.5; }
+.card-bottom-deco { text-align: center; margin-top: 20px; font-size: 16px; opacity: 0.3; letter-spacing: 6px; }
 
-/* ZONE 2 */
-.z2{flex:1;display:flex;flex-direction:column;background:var(–bg);overflow:hidden;}
-.z2hdr{background:var(–wh);border-bottom:1px solid var(–bd);padding:9px 14px 0;flex-shrink:0;}
-.z2htop{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;}
-.z2bn{font-size:16px;font-weight:700;color:var(–gd);}
-.z2tr{font-size:10px;color:var(–t2);margin-top:2px;}
-.z2tr span{color:var(–gm);font-weight:600;}
-.z2acts{display:flex;gap:5px;flex-wrap:wrap;}
-.abtn{padding:4px 9px;border-radius:6px;border:1px solid var(–bd);background:var(–wh);font-family:inherit;font-size:9.5px;font-weight:500;color:var(–t1);cursor:pointer;display:flex;align-items:center;gap:3px;transition:background .15s;}
-.abtn:hover{background:var(–bg);}
-.abtn.pri{background:var(–gd);color:#fff;border-color:var(–gd);}
-.abtn.pri:hover{background:var(–gm);}
-.z2tabs{display:flex;gap:0;border-top:1px solid #f0ede8;}
-.ztab{padding:7px 14px;font-size:10px;font-weight:500;color:var(–t2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
-.ztab.act{color:var(–gd);border-bottom-color:var(–gd);font-weight:700;}
-.ztab:hover:not(.act){color:var(–t1);}
-.z2tl{display:flex;align-items:center;gap:5px;padding:7px 14px 8px;background:var(–wh);border-bottom:1px solid var(–bd);}
-.tll{font-size:9.5px;color:var(–t2);font-weight:500;}
-.tldays{display:flex;gap:3px;}
-.dbt{padding:3px 9px;border-radius:20px;border:1px solid var(–bd);background:var(–wh);font-family:inherit;font-size:9.5px;cursor:pointer;transition:all .15s;text-align:center;}
-.dbt .dd2{font-weight:600;color:var(–t1);display:block;line-height:1.3;}
-.dbt .da2{font-size:8px;color:var(–t2);display:block;}
-.dbt.act{background:var(–gd);border-color:var(–gd);}
-.dbt.act .dd2{color:#fff;}.dbt.act .da2{color:#a8d5b5;}
-.dbt:hover:not(.act){border-color:var(–gm);}
-.tlnav{font-size:13px;color:var(–t2);cursor:pointer;padding:2px 3px;border-radius:3px;}
-.tlnav:hover{background:var(–bd);}
-.z2sc{flex:1;overflow-y:auto;padding:10px 14px;}
-.z2sc::-webkit-scrollbar{width:4px;}
-.z2sc::-webkit-scrollbar-thumb{background:#ccc;border-radius:2px;}
+/* ============================================================
+SHARED — TOPBAR
+============================================================ */
+.topbar {
+height: var(–topbar-h); background: var(–primary);
+display: flex; align-items: center; padding: 0 20px; gap: 16px;
+flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 20;
+}
+.topbar-logo { display: flex; align-items: center; gap: 10px; }
+.topbar-logo-icon {
+width: 34px; height: 34px; background: rgba(255,255,255,0.15);
+border-radius: 8px; display: flex; align-items: center; justify-content: center;
+}
+.topbar-logo-text { color: #fff; font-size: 14px; font-weight: 700; line-height: 1.2; }
+.topbar-logo-sub  { color: rgba(255,255,255,0.6); font-size: 10px; }
+.topbar-date { margin-left: 16px; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 5px 12px; text-align: center; }
+.topbar-date-solar { color: rgba(255,255,255,0.7); font-size: 10px; }
+.topbar-date-lunar { color: #fde68a; font-size: 12px; font-weight: 700; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.topbar-icon-btn {
+width: 34px; height: 34px; background: rgba(255,255,255,0.12); border-radius: 8px;
+display: flex; align-items: center; justify-content: center;
+font-size: 16px; cursor: pointer; position: relative; transition: background 0.15s;
+}
+.topbar-icon-btn:hover { background: rgba(255,255,255,0.22); }
+.badge-count {
+position: absolute; top: -4px; right: -4px; background: var(–danger); color: #fff;
+font-size: 9px; font-weight: 700; width: 16px; height: 16px;
+border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.topbar-user { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.topbar-avatar {
+width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.25);
+display: flex; align-items: center; justify-content: center;
+font-size: 12px; font-weight: 700; color: #fff; border: 2px solid rgba(255,255,255,0.3);
+}
+.topbar-user-name { color: #fff; font-size: 12px; font-weight: 600; }
+.topbar-user-role { color: rgba(255,255,255,0.6); font-size: 10px; }
 
-/* SP BANNER */
-.spb{background:var(–rp);border:1px solid #f5c6c2;border-left:4px solid var(–sp);border-radius:8px;padding:9px 12px;margin-bottom:10px;display:flex;align-items:flex-start;gap:9px;}
-.spbg{background:var(–sp);color:#fff;font-size:8.5px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
-.sptxt{font-size:10.5px;color:var(–sp);font-weight:600;line-height:1.5;}
-.sptm{font-size:8.5px;color:#999;margin-top:2px;}
+/* ============================================================
+SCREEN 2 — TRANG CHỦ
+============================================================ */
+#screen-home { background: var(–gray-bg); color: var(–dark); }
 
-/* TABLE */
-.jt{width:100%;border-collapse:collapse;background:var(–wh);border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
-.jt thead tr{background:var(–gd);}
-.jt thead th{padding:8px 9px;text-align:left;color:#fff;font-size:9.5px;font-weight:600;border-right:1px solid rgba(255,255,255,.1);}
-.jt thead th:last-child{border-right:none;}
-.c1{width:27%}.c2{width:21%}.c3{width:24%}.c4{width:28%}
-.jt tbody tr{border-bottom:1px solid #f0ede8;transition:background .15s;}
-.jt tbody tr:last-child{border-bottom:none;}
-.jt tbody tr:hover{background:#fafaf8;}
-.jt td{padding:9px 9px;vertical-align:top;border-right:1px solid #f0ede8;font-size:10.5px;}
-.jt td:last-child{border-right:none;}
-.tnm{font-weight:600;color:var(–t1);margin-bottom:2px;font-size:10.5px;}
-.ttm{font-size:8.5px;color:var(–t2);margin-bottom:4px;}
-.sc{display:inline-flex;align-items:center;gap:2px;padding:2px 6px;border-radius:10px;font-size:8.5px;font-weight:600;}
-.sg{background:#e8f5e9;color:#2e7d32;}.sy{background:#fff8e1;color:#f57f17;}.sr{background:var(–rp);color:var(–rd);}
-.op{font-size:10px;color:var(–t1);line-height:1.5;}
-.opa{font-weight:600;color:var(–gm);font-size:9px;}
-.optm{color:#aaa;font-size:8.5px;margin-top:2px;}
-.op.emp{color:#ccc;font-style:italic;font-size:9.5px;}
-.spo{font-size:10px;color:var(–sp);font-weight:600;line-height:1.5;}
-.spoa{font-size:9px;font-weight:700;color:var(–sp);margin-bottom:2px;}
-.spotm{color:#aaa;font-size:8.5px;font-weight:400;margin-top:2px;}
-.spo.emp{color:#ccc;font-style:italic;font-weight:400;font-size:9.5px;}
-.add-row{margin-top:9px;}
-.addbtn{width:100%;padding:8px;border:1.5px dashed var(–gl);border-radius:8px;background:transparent;color:var(–gm);font-family:inherit;font-size:10.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s;}
-.addbtn:hover{background:var(–gp);}
+.app-layout { display: flex; flex: 1; overflow: hidden; }
 
-/* LỊCH */
-.lich-wrap{background:var(–wh);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;}
-.lich-hdr{background:var(–gd);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;}
-.lich-hdr-t{color:#fff;font-size:11px;font-weight:700;}
-.lich-nav{display:flex;gap:6px;align-items:center;}
-.lnbtn{background:rgba(255,255,255,.15);border:none;color:#fff;font-family:inherit;font-size:10px;padding:3px 8px;border-radius:5px;cursor:pointer;}
-.lnbtn:hover{background:rgba(255,255,255,.25);}
-.lich-mon{color:#a8d5b5;font-size:10px;}
-.lich-grid{display:grid;grid-template-columns:repeat(7,1fr);}
-.lgh{padding:5px 4px;text-align:center;font-size:9px;font-weight:700;color:var(–t2);background:#f9f8f5;border-bottom:1px solid var(–bd);}
-.lgc{padding:5px 5px;min-height:50px;border-right:1px solid #f0ede8;border-bottom:1px solid #f0ede8;font-size:9px;vertical-align:top;}
-.lgc:nth-child(7n){border-right:none;}
-.lgn{font-weight:600;color:var(–t2);margin-bottom:2px;font-size:9px;}
-.lgn.today{background:var(–gd);color:#fff;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;}
-.lgev{font-size:7.5px;padding:2px 3px;border-radius:3px;margin-top:2px;line-height:1.3;font-weight:500;}
-.lgev.g{background:var(–gp);color:var(–gd);}
-.lgev.r{background:var(–rp);color:var(–rd);}
-.lgev.y{background:var(–yp);color:var(–yw);}
-.lgam{font-size:7px;color:var(–gm);margin-top:1px;font-weight:500;}
-.today-cell{background:#f0f7f2;}
-.lgc.oth .lgam{color:#bbb;}
-.sync-note{background:var(–wh);border-radius:8px;padding:9px 13px;font-size:10px;color:var(–t2);border:1px solid var(–bd);margin-top:10px;}
+.sidebar {
+width: var(–sidebar-w); background: #fff;
+border-right: 1px solid var(–gray-border);
+display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
+}
+.sidebar-section-title {
+font-size: 9px; font-weight: 700; text-transform: uppercase;
+letter-spacing: 0.8px; color: #b0b7c0; padding: 16px 16px 6px;
+}
+.nav-item {
+display: flex; align-items: center; gap: 10px; padding: 9px 16px;
+font-size: 13px; font-weight: 500; color: #374151;
+cursor: pointer; transition: all 0.12s; border-left: 3px solid transparent;
+}
+.nav-item:hover  { background: var(–primary-light); color: var(–primary); }
+.nav-item.active { background: var(–primary-light); color: var(–primary); font-weight: 700; border-left-color: var(–primary); }
+.nav-item .nav-icon  { font-size: 16px; width: 20px; text-align: center; }
+.nav-item .nav-badge { margin-left: auto; background: var(–danger); color: #fff; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 10px; }
+.nav-item .nav-badge.orange { background: var(–accent); }
+.sidebar-divider { height: 1px; background: var(–gray-border); margin: 8px 0; }
 
-/* DỰ TOÁN */
-.dt-wrap{background:var(–wh);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;}
-.dt-hdr{background:var(–gd);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;}
-.dt-hdr-t{color:#fff;font-size:11px;font-weight:700;}
-.dtt{width:100%;border-collapse:collapse;font-size:10px;}
-.dtt th{padding:7px 10px;background:#f5f4f0;font-size:9px;font-weight:700;color:var(–t2);text-align:left;border-bottom:1px solid var(–bd);}
-.dtt td{padding:7px 10px;border-bottom:1px solid #f0ede8;color:var(–t1);}
-.dtt tr:last-child td{border-bottom:none;}
-.dts{display:inline-flex;align-items:center;gap:2px;padding:1px 6px;border-radius:8px;font-size:8.5px;font-weight:600;}
-.dtp{background:var(–yp);color:var(–yw);}.dtok{background:#e8f5e9;color:#2e7d32;}
+.main-content { flex: 1; display: flex; overflow: hidden; }
 
-/* EMPTY */
-.z2emp{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(–t2);}
-.z2emp .ei{font-size:36px;opacity:.3;}
-.z2emp p{font-size:12px;}
+.cal-panel {
+width: 280px; flex-shrink: 0; background: #fff;
+border-right: 1px solid var(–gray-border);
+display: flex; flex-direction: column; overflow-y: auto;
+}
+.cal-header { padding: 16px; border-bottom: 1px solid var(–gray-border); background: var(–primary-light); }
+.cal-header-title { font-size: 13px; font-weight: 700; color: var(–primary); margin-bottom: 2px; }
+.cal-header-sub   { font-size: 11px; color: var(–gray-text); }
+.cal-nav {
+display: flex; align-items: center; justify-content: space-between;
+padding: 12px 16px; border-bottom: 1px solid var(–gray-border);
+}
+.cal-nav-btn {
+width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(–gray-border);
+background: #fff; cursor: pointer; font-size: 14px;
+display: flex; align-items: center; justify-content: center; transition: all 0.12s;
+}
+.cal-nav-btn:hover { background: var(–primary); color: #fff; border-color: var(–primary); }
+.cal-month-label { font-size: 13px; font-weight: 700; color: var(–dark); text-align: center; }
+.cal-month-lunar { font-size: 10px; color: var(–gold); font-weight: 600; text-align: center; display: block; }
+.cal-grid { padding: 8px 12px 4px; }
+.cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px; }
+.cal-dow span { text-align: center; font-size: 10px; font-weight: 700; color: var(–gray-text); padding: 4px 0; text-transform: uppercase; letter-spacing: 0.3px; }
+.cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-day {
+aspect-ratio: 1; display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+border-radius: 6px; cursor: pointer; transition: all 0.12s; position: relative; padding: 2px;
+}
+.cal-day:hover { background: var(–primary-light); }
+.cal-day.today { background: var(–primary); box-shadow: 0 2px 8px rgba(26,92,58,0.4); }
+.cal-day.today .solar { color: #fff !important; font-weight: 700; }
+.cal-day.today .lunar { color: rgba(255,255,255,0.8) !important; }
+.cal-day.other-month  { opacity: 0.3; }
+.cal-day.has-event::after {
+content: ‘’; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+width: 4px; height: 4px; border-radius: 50%; background: var(–accent);
+}
+.cal-day.today.has-event::after { background: rgba(255,255,255,0.8); }
+.cal-day.urgent-day { background: var(–danger-light); }
+.cal-day.urgent-day .solar { color: var(–danger) !important; font-weight: 700; }
+.cal-day .solar { font-size: 12px; font-weight: 500; color: var(–dark); line-height: 1; }
+.cal-day .lunar { font-size: 8px; color: var(–gray-text); margin-top: 1px; line-height: 1; }
+
+.upcoming { padding: 12px 16px; border-top: 1px solid var(–gray-border); }
+.upcoming-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(–gray-text); margin-bottom: 10px; }
+.event-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+.event-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.event-dot.red   { background: var(–danger); }
+.event-dot.green { background: var(–success); }
+.event-dot.gold  { background: var(–gold); }
+.event-name  { font-size: 12px; font-weight: 600; color: var(–dark); line-height: 1.3; }
+.event-lunar { font-size: 10px; color: var(–gold); font-weight: 600; }
+.event-date  { font-size: 10px; color: var(–gray-text); }
+
+.phandu-panel { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 16px; }
+.section-block { }
+.section-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.section-head-title { font-size: 13px; font-weight: 700; color: var(–dark); }
+.section-head-count { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+.count-red    { background: var(–danger-light); color: var(–danger); }
+.count-yellow { background: var(–warning-light); color: var(–warning); }
+.count-gray   { background: #f3f4f6; color: var(–gray-text); }
+
+.task-card {
+background: #fff; border-radius: 10px; border: 1px solid var(–gray-border);
+padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 12px;
+align-items: flex-start; transition: box-shadow 0.12s; cursor: pointer;
+}
+.task-card:hover  { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.task-card.urgent { border-color: rgba(198,40,40,0.3); border-left: 3px solid var(–danger); background: #fff9f9; }
+.task-card.doing  { border-left: 3px solid var(–warning); }
+.task-card-left { flex-shrink: 0; }
+.task-status-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; }
+.dot-red    { background: var(–danger); }
+.dot-yellow { background: var(–warning); }
+.dot-green  { background: var(–success); }
+.task-card-body { flex: 1; min-width: 0; }
+.task-card-top  { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
+.task-ban-tag   { font-size: 10px; font-weight: 700; background: var(–primary-light); color: var(–primary); padding: 2px 7px; border-radius: 4px; flex-shrink: 0; }
+.task-ban-tag.red { background: var(–danger-light); color: var(–danger); }
+.task-name-home { font-size: 13px; font-weight: 600; color: var(–dark); line-height: 1.3; }
+.task-meta      { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.task-deadline  { font-size: 11px; color: var(–gray-text); }
+.task-deadline.overdue { color: var(–danger); font-weight: 600; }
+.sp-box { margin-top: 8px; background: var(–danger-light); border: 1px solid rgba(198,40,40,0.25); border-radius: 6px; padding: 8px 10px; }
+.sp-box-label { font-size: 10px; font-weight: 700; color: var(–danger); margin-bottom: 4px; }
+.sp-box-text  { font-size: 12px; color: var(–danger); font-weight: 500; line-height: 1.4; }
+.sp-box-time  { font-size: 10px; color: #e57373; margin-top: 3px; }
+.new-badge { font-size: 9px; font-weight: 700; background: var(–danger); color: #fff; padding: 2px 6px; border-radius: 3px; animation: pulse-badge 2s infinite; }
+@keyframes pulse-badge { 0%,100%{opacity:1;} 50%{opacity:0.7;} }
+.task-card-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+
+.ban-list { display: flex; flex-direction: column; gap: 6px; }
+.ban-row {
+background: #fff; border-radius: 8px; border: 1px solid var(–gray-border);
+padding: 10px 14px; display: flex; align-items: center; gap: 12px;
+cursor: pointer; transition: all 0.12s;
+}
+.ban-row:hover      { background: var(–primary-light); border-color: var(–primary); }
+.ban-row.has-urgent { border-left: 3px solid var(–danger); background: #fff9f9; }
+.ban-row.has-update { border-left: 3px solid var(–warning); }
+.ban-row-num {
+width: 28px; height: 28px; border-radius: 6px; background: var(–primary); color: #fff;
+font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ban-row-num.red    { background: var(–danger); }
+.ban-row-num.orange { background: var(–accent); }
+.ban-row-name { font-size: 13px; font-weight: 600; color: var(–dark); flex: 1; }
+.ban-row-meta { font-size: 11px; color: var(–gray-text); }
+.ban-row-right { display: flex; align-items: center; gap: 6px; }
+.ban-status-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+.badge-red    { background: var(–danger-light); color: var(–danger); }
+.badge-yellow { background: var(–warning-light); color: var(–warning); }
+.badge-green  { background: var(–success-light); color: var(–success); }
+.badge-gray   { background: #f3f4f6; color: var(–gray-text); }
+
+/* ============================================================
+SCREEN 3 — DASHBOARD
+============================================================ */
+#screen-dashboard { background: #fff; color: var(–dark); }
+
+.app-body { display: flex; flex: 1; overflow: hidden; }
+
+.left-panel {
+width: 260px; flex-shrink: 0; background: #fff;
+border-right: 1px solid var(–gray-border);
+display: flex; flex-direction: column; overflow: hidden;
+}
+.left-header { padding: 12px 14px 8px; border-bottom: 1px solid var(–gray-border); }
+.left-header-title { color: var(–dark); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+.left-header-sub   { color: var(–gray-text); font-size: 10px; margin-top: 2px; }
+.left-search { padding: 8px 10px; }
+.left-search input {
+width: 100%; padding: 6px 10px; border-radius: 6px;
+border: 1px solid var(–gray-border); background: var(–gray-bg);
+color: var(–dark); font-family: var(–font); font-size: 11px; outline: none;
+}
+.left-search input::placeholder { color: #b0b7c0; }
+
+.ban-grid {
+display: grid; grid-template-columns: repeat(4, 1fr);
+gap: 5px; padding: 4px 10px 8px; overflow-y: auto; flex: 1;
+}
+.ban-cell {
+aspect-ratio: 1; border-radius: 8px;
+display: flex; flex-direction: column; align-items: center; justify-content: center;
+cursor: pointer; transition: all 0.15s; padding: 3px; position: relative; gap: 2px;
+background: var(–primary-light); border: 1.5px solid var(–gray-border);
+}
+.ban-cell:hover  { background: #d0eadb; border-color: var(–primary); }
+.ban-cell.active { background: var(–primary); border-color: var(–primary); box-shadow: 0 2px 8px rgba(26,92,58,0.3); }
+.ban-cell.active .ban-num  { color: rgba(255,255,255,0.8) !important; }
+.ban-cell.active .ban-name { color: #fff !important; }
+.ban-cell.status-urgent { background: #c62828; border-color: #8b0000; animation: pulse-cell 1.5s infinite; }
+.ban-cell.status-urgent .ban-num  { color: rgba(255,255,255,0.85); }
+.ban-cell.status-urgent .ban-name { color: #fff; font-weight: 700; }
+.ban-cell.status-doing  { background: #d97706; border-color: #92400e; }
+.ban-cell.status-doing .ban-num   { color: rgba(255,255,255,0.85); }
+.ban-cell.status-doing .ban-name  { color: #fff; font-weight: 700; }
+.ban-cell.status-done   { background: #2e7d32; border-color: #1b5e20; }
+.ban-cell.status-done .ban-num    { color: rgba(255,255,255,0.85); }
+.ban-cell.status-done .ban-name   { color: #fff; font-weight: 700; }
+@keyframes pulse-cell { 0%,100%{box-shadow:0 0 0 0 rgba(198,40,40,0.3);} 50%{box-shadow:0 0 0 4px rgba(198,40,40,0);} }
+.ban-num  { font-size: 9px; font-weight: 700; color: var(–primary); line-height: 1; }
+.ban-name { font-size: 9.5px; font-weight: 700; color: var(–primary); text-align: center; line-height: 1.2; }
+.urgent-dot {
+position: absolute; top: 3px; right: 3px; width: 6px; height: 6px;
+background: var(–danger); border-radius: 50%; animation: blink 1s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+
+.notif-panel {
+border-top: 1px solid var(–gray-border); flex-shrink: 0;
+max-height: 160px; display: flex; flex-direction: column; background: #fff;
+}
+.notif-toggle {
+padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+cursor: pointer; background: var(–gray-bg); border-top: 1px solid var(–gray-border);
+}
+.notif-toggle-title { color: var(–dark); font-size: 11px; font-weight: 700; flex: 1; }
+.notif-toggle-arrow { color: var(–gray-text); font-size: 10px; }
+.notif-list { overflow-y: auto; padding: 6px 10px; }
+.notif-item { padding: 7px 9px; border-radius: 6px; margin-bottom: 5px; cursor: pointer; }
+.notif-item.urgent { background: var(–danger-light); border: 1px solid rgba(198,40,40,0.25); }
+.notif-item.normal { background: var(–gray-bg); border: 1px solid var(–gray-border); }
+.notif-item-label { font-size: 9px; font-weight: 700; color: var(–danger); text-transform: uppercase; margin-bottom: 2px; }
+.notif-item-text  { font-size: 11px; color: var(–dark); font-weight: 500; line-height: 1.3; }
+.notif-item-meta  { font-size: 9px; color: var(–gray-text); margin-top: 2px; }
+
+.right-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
+.ban-header { background: #fff; border-bottom: 1px solid var(–gray-border); padding: 10px 20px 8px; flex-shrink: 0; }
+.ban-header-row1 { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 10px; }
+.ban-header-icon { font-size: 24px; }
+.ban-header-info { flex: 1; }
+.ban-header-name   { font-size: 20px; font-weight: 800; color: var(–dark); line-height: 1.1; }
+.ban-header-truong { font-size: 12px; color: var(–gray-text); margin-top: 2px; }
+.ban-header-truong span { font-weight: 600; color: var(–dark); }
+.ban-header-luong  { font-size: 11px; color: var(–gray-text); margin-top: 2px; }
+.sp-alert { color: var(–danger); font-size: 12px; font-weight: 700; margin-top: 4px; display: flex; align-items: center; gap: 5px; }
+.ban-header-btns { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; }
+.btn-sm {
+padding: 6px 14px; border-radius: 6px; font-family: var(–font);
+font-size: 11px; font-weight: 600; cursor: pointer;
+border: 1px solid var(–gray-border); background: #fff; color: var(–dark);
+display: flex; align-items: center; gap: 5px; white-space: nowrap; transition: all 0.12s;
+}
+.btn-sm:hover         { background: var(–gray-bg); }
+.btn-sm.primary       { background: var(–primary); color: #fff; border-color: var(–primary); }
+.btn-sm.primary:hover { background: var(–primary-mid); }
+.btn-row { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.tab-bar { display: flex; gap: 0; border-bottom: 2px solid var(–gray-border); padding: 0 20px; background: #fff; flex-shrink: 0; }
+.tab {
+padding: 10px 16px; font-size: 12px; font-weight: 600; color: var(–gray-text);
+cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+transition: all 0.12s; display: flex; align-items: center; gap: 6px;
+}
+.tab:hover  { color: var(–primary); }
+.tab.active { color: var(–primary); border-bottom-color: var(–primary); }
+
+.date-bar {
+padding: 10px 20px; background: #fff; border-bottom: 1px solid var(–gray-border);
+display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.date-label   { font-size: 11px; color: var(–gray-text); font-weight: 500; }
+.date-nav-btn { width: 24px; height: 24px; border-radius: 5px; border: 1px solid var(–gray-border); background: #fff; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+.date-btn {
+padding: 5px 12px; border-radius: 6px; border: 1px solid var(–gray-border);
+background: #fff; font-family: var(–font); font-size: 11px; font-weight: 500;
+color: var(–gray-text); cursor: pointer; text-align: center; transition: all 0.12s;
+}
+.date-btn.active { background: var(–primary); color: #fff; border-color: var(–primary); }
+.date-btn .date-solar { font-weight: 600; }
+.date-btn .date-lunar { font-size: 9px; opacity: 0.8; display: block; }
+
+.tab-content { flex: 1; overflow-y: auto; padding: 12px 20px; }
+
+.sp-block {
+position: sticky; top: 0; z-index: 5; background: #fff5f5;
+border: 1.5px solid rgba(198,40,40,0.35); border-left: 4px solid var(–danger);
+border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;
+}
+.sp-block-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.sp-block-badge  { background: var(–danger); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+.sp-block-text   { font-size: 13px; color: var(–danger); font-weight: 600; line-height: 1.5; }
+.sp-block-time   { font-size: 11px; color: #e57373; margin-top: 6px; }
+
+.nk-wrap { background: #fff; border-radius: 10px; border: 1px solid var(–gray-border); overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.nk-table { width: 100%; border-collapse: collapse; }
+.nk-table th {
+padding: 10px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase;
+letter-spacing: 0.5px; color: var(–gray-text); background: #f8f9fb;
+border-bottom: 2px solid var(–gray-border); text-align: left;
+}
+.nk-table th.th-sp { color: var(–danger); background: #fff0f0; border-bottom-color: rgba(198,40,40,0.3); }
+.nk-table td { padding: 11px 12px; border-bottom: 1px solid var(–gray-border); vertical-align: top; font-size: 12px; }
+.nk-table tr:last-child td { border-bottom: none; }
+.nk-table tr:hover td      { background: #fafbfc; }
+.nk-table tr.row-urgent td { background: #fff9f9; }
+.nk-table tr.row-done   td { background: #fafffe; }
+
+.task-name    { font-size: 13px; font-weight: 700; color: var(–dark); margin-bottom: 4px; line-height: 1.3; }
+.task-time    { font-size: 10px; color: var(–gray-text); margin-bottom: 5px; }
+.status-badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.status-done  { background: var(–success-light); color: var(–success); }
+.status-doing { background: var(–warning-light); color: var(–warning); }
+.status-need  { background: var(–danger-light); color: var(–danger); }
+
+.opinion-text  { font-size: 12px; color: #374151; line-height: 1.5; }
+.opinion-who   { font-size: 10px; color: var(–gray-text); margin-top: 4px; }
+
+.td-sp { background: #fff5f5 !important; }
+.sp-taught-tag {
+display: inline-flex; align-items: center; gap: 4px;
+background: var(–danger); color: #fff; font-size: 9px; font-weight: 700;
+padding: 2px 8px; border-radius: 4px; margin-bottom: 6px;
+}
+.sp-opinion-text { font-size: 12px; color: var(–danger); font-weight: 600; line-height: 1.5; }
+.sp-opinion-time { font-size: 10px; color: #e57373; margin-top: 4px; }
+.sp-empty        { font-size: 11px; color: #fca5a5; font-style: italic; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(–gray-border); border-radius: 2px; }
 </style>
 
 </head>
 <body>
 
-<!-- TOPBAR -->
+<!-- ===========================================================
+     SCREEN 1: LOGIN
+     =========================================================== -->
 
-<div class="topbar">
-  <div class="tlogo">
-    <span style="font-size:18px;margin-right:2px;">🏛</span>
-    <div><div class="nm">Hệ Thống Quản Lý Chùa</div><div class="sb">chua-app.vn</div></div>
-  </div>
-  <div class="tsep"></div>
-  <div class="tdate">
-    <div class="dd" id="dd"></div>
-    <div class="da" id="da"></div>
-  </div>
-  <div class="tright">
-    <button class="tbtn">🔔<span class="tbadge">3</span></button>
-    <div class="admin-wrap">
-      <button class="tbtn" onclick="toggleAdmin(event)" title="Quản trị">⚙️</button>
-      <div class="admin-dd" id="adminDd">
-        <div class="addt">⚙️ Quản Trị Hệ Thống</div>
-        <div class="addi">👥 Quản lý Users &amp; Phân quyền</div>
-        <div class="addi">🏗 Cấu hình 32 Ban</div>
-        <div class="addi">📊 Báo cáo thống kê</div>
-        <div class="addi">🔔 Cài đặt thông báo</div>
+<div id="screen-login" class="screen active">
+  <div class="deco-top"></div>
+  <div class="deco-bottom"></div>
+  <div class="login-card">
+    <div class="logo-area">
+      <div class="logo-icon">
+        <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+          <line x1="18" y1="1" x2="18" y2="6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M10 13 Q18 7 26 13" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="8" y1="13" x2="28" y2="13" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M5 21 Q18 14 31 21" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="3" y1="21" x2="33" y2="21" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="13" y="21" width="10" height="8" rx="1" stroke="white" stroke-width="1.5" fill="none"/>
+          <path d="M16 29 L16 25 Q18 23 20 25 L20 29" stroke="white" stroke-width="1.2" fill="none"/>
+          <line x1="4" y1="29" x2="32" y2="29" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
       </div>
+      <div class="logo-title">Hệ Thống Quản Lý Chùa</div>
+      <div class="logo-sub">chua-app.vn</div>
     </div>
-    <div class="tsep"></div>
-    <div class="uchip">
-      <div class="uav">PA</div>
-      <div><div class="unm">Phan Tuấn Anh</div><div class="url">Ban Tri Sự · Trưởng ban</div></div>
+    <div class="divider"></div>
+    <div class="form-group">
+      <label class="form-label">Email đăng nhập</label>
+      <input class="form-input" type="email" id="emailInput"
+        placeholder="Nhập địa chỉ email..." autofocus
+        onkeydown="if(event.key==='Enter') handleLogin()">
     </div>
+    <button class="btn-login" onclick="handleLogin()">Đăng nhập →</button>
+    <div class="msg" id="msgBox"></div>
+    <div class="footer-note">Hệ thống nội bộ — chỉ dành cho thành viên được cấp tài khoản.<br>Liên hệ Ban Tri Sự nếu cần hỗ trợ.</div>
+    <div class="card-bottom-deco">✦ ✦ ✦</div>
   </div>
 </div>
 
-<!-- MAIN -->
+<!-- ===========================================================
+     SCREEN 2: TRANG CHỦ
+     =========================================================== -->
 
-<div class="main">
-  <!-- ZONE 1 -->
-  <div class="z1">
-    <div class="z1hdr">
-      <h2>⬛ Vùng 1 — Lưới 32 Ban</h2>
-      <p>Click vào ban để xem chi tiết</p>
-    </div>
-    <div class="z1sc">
-      <div class="ban-grid" id="banGrid"></div>
-    </div>
-    <div class="np">
-      <div class="nptog" onclick="toggleNotif()">
-        <span>📢 Thông Báo Toàn Chùa</span>
-        <span class="nparr" id="nparr">▲</span>
+<div id="screen-home" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon">
+        <svg width="22" height="22" viewBox="0 0 36 36" fill="none">
+          <line x1="18" y1="1" x2="18" y2="6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M10 13 Q18 7 26 13" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="8" y1="13" x2="28" y2="13" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M5 21 Q18 14 31 21" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="3" y1="21" x2="33" y2="21" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="13" y="21" width="10" height="8" rx="1" stroke="white" stroke-width="1.5" fill="none"/>
+          <path d="M16 29 L16 25 Q18 23 20 25 L20 29" stroke="white" stroke-width="1.2" fill="none"/>
+          <line x1="4" y1="29" x2="32" y2="29" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
       </div>
-      <div class="nplist" id="nplist">
-        <div class="npi urg"><div class="nlbl">📌 KHẨN</div><div>Lễ Phật Đản 12/4 Âm lịch — tất cả các ban chuẩn bị báo cáo trước 3 ngày</div><div class="ntm">28/04/2026 · 07:15 · Sư Phụ</div></div>
-        <div class="npi"><div><span class="ntag">@Ban Vườn</span> phối hợp Ban Mộc về trang trí chánh điện</div><div class="ntm">27/04/2026 · 14:30 · Ban Tri Sự</div></div>
-        <div class="npi"><div>Họp toàn thể Ban vào thứ Hai 04/05 lúc 07:30 tại chánh điện</div><div class="ntm">26/04/2026 · 09:00 · BLĐ</div></div>
+      <div>
+        <div class="topbar-logo-text">Hệ Thống Quản Lý Chùa</div>
+        <div class="topbar-logo-sub">chua-app.vn</div>
+      </div>
+    </div>
+    <div class="topbar-date">
+      <div class="topbar-date-solar">T3, 28/04/2026</div>
+      <div class="topbar-date-lunar">🌙 12 tháng 3 Âm Lịch</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon-btn">🔔<div class="badge-count">3</div></div>
+      <div class="topbar-icon-btn">⚙️</div>
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="homeAvatar">PA</div>
+        <div>
+          <div class="topbar-user-name" id="homeUserName">Phan Tuấn Anh</div>
+          <div class="topbar-user-role" id="homeUserRole">Ban Tri Sự · Trưởng ban</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ZONE 2 -->
+  <div class="app-layout">
+    <div class="sidebar">
+      <div class="sidebar-section-title">Menu</div>
+      <div class="nav-item active"><span class="nav-icon">🏠</span> Trang Chủ</div>
+      <div class="nav-item" onclick="showScreen('screen-dashboard')"><span class="nav-icon">📋</span> Phận Sự Ban CM<span class="nav-badge">5</span></div>
+      <div class="nav-item"><span class="nav-icon">📅</span> Lịch Công Tác</div>
+      <div class="nav-item"><span class="nav-icon">📦</span> Dự Toán Cung Ứng</div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-title">Tương Tác</div>
+      <div class="nav-item"><span class="nav-icon">💬</span> Chat Nội Bộ<span class="nav-badge orange">2</span></div>
+      <div class="nav-item"><span class="nav-icon">📹</span> Họp Trực Tuyến</div>
+      <div class="nav-item"><span class="nav-icon">🔔</span> Thông Báo<span class="nav-badge">3</span></div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-title">Hệ Thống</div>
+      <div class="nav-item"><span class="nav-icon">📊</span> Báo Cáo Tổng Hợp</div>
+      <div class="nav-item"><span class="nav-icon">⚙️</span> Cài Đặt</div>
+    </div>
 
-  <div class="z2" id="zone2">
-    <div class="z2emp"><div class="ei">📋</div><p>Chọn một ban để xem chi tiết</p></div>
+```
+<div class="main-content">
+  <div class="cal-panel">
+    <div class="cal-header">
+      <div class="cal-header-title">📅 Lịch Âm Tháng 3</div>
+      <div class="cal-header-sub">Năm Bính Ngọ · 2026</div>
+    </div>
+    <div class="cal-nav">
+      <button class="cal-nav-btn">◀</button>
+      <div>
+        <div class="cal-month-label">Tháng 3 Âm Lịch</div>
+        <span class="cal-month-lunar">Tháng 4/2026 Dương Lịch</span>
+      </div>
+      <button class="cal-nav-btn">▶</button>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-dow">
+        <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span>
+        <span style="color:var(--danger)">CN</span>
+      </div>
+      <div class="cal-days" id="calDays"></div>
+    </div>
+    <div class="upcoming">
+      <div class="upcoming-title">📌 Ngày Lễ & Sự Kiện Sắp Tới</div>
+      <div class="event-item"><div class="event-dot gold"></div><div><div class="event-name">Lễ Phật Đản</div><div class="event-lunar">15 tháng 4 Âm Lịch</div><div class="event-date">12/05/2026 Dương Lịch</div></div></div>
+      <div class="event-item"><div class="event-dot red"></div><div><div class="event-name">Báo cáo tổng kết Quý I</div><div class="event-lunar">Hạn: 12 tháng 4 Âm Lịch</div><div class="event-date">Hạn: 30/04/2026</div></div></div>
+      <div class="event-item"><div class="event-dot green"></div><div><div class="event-name">Họp Ban Tri Sự định kỳ</div><div class="event-lunar">14 tháng 3 Âm Lịch</div><div class="event-date">30/04/2026 Dương Lịch</div></div></div>
+    </div>
+  </div>
+
+  <div class="phandu-panel">
+    <div class="section-block">
+      <div class="section-head"><span style="font-size:16px;">🔴</span><div class="section-head-title">Khẩn Cấp & SP Chỉ Đạo Mới</div><span class="section-head-count count-red">2 việc</span></div>
+      <div class="task-card urgent">
+        <div class="task-card-left"><div class="task-status-dot dot-red"></div></div>
+        <div class="task-card-body">
+          <div class="task-card-top"><span class="task-ban-tag red">Ban Tri Sự</span><div class="task-name-home">Báo cáo tổng kết Quý I</div></div>
+          <div class="task-meta"><span class="task-deadline overdue">⏰ Hạn: 30/04/2026</span><span class="new-badge">SP Chỉ Đạo</span></div>
+          <div class="sp-box"><div class="sp-box-label">🔴 Sư Phụ Chỉ Dạy</div><div class="sp-box-text">Yêu cầu Ban Tri Sự hoàn thành báo cáo tổng kết Quý I trước 30/04. Đặc biệt chú ý phần ngân sách cung ứng vật tư.</div><div class="sp-box-time">28/04/2026 · 06:30</div></div>
+        </div>
+        <div class="task-card-right"><span class="ban-status-badge badge-red">Quá hạn</span></div>
+      </div>
+      <div class="task-card urgent">
+        <div class="task-card-left"><div class="task-status-dot dot-red"></div></div>
+        <div class="task-card-body">
+          <div class="task-card-top"><span class="task-ban-tag red">Ban Vườn</span><div class="task-name-home">Chuẩn bị hoa tươi cho Lễ Vu Lan</div></div>
+          <div class="task-meta"><span class="task-deadline overdue">⏰ Hạn: 28/04 · 17:00</span><span class="new-badge">Mới</span></div>
+          <div class="sp-box"><div class="sp-box-label">🔴 Sư Phụ Chỉ Dạy</div><div class="sp-box-text">@Ban Vườn phối hợp Ban Mộc về trang trí chánh điện. Cần hoàn thành trước 17:00 hôm nay.</div><div class="sp-box-time">27/04/2026 · 14:30</div></div>
+        </div>
+        <div class="task-card-right"><span class="ban-status-badge badge-red">Khẩn</span></div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-head"><span style="font-size:16px;">🟡</span><div class="section-head-title">Phận Sự Đang Diễn Ra Hôm Nay</div><span class="section-head-count count-yellow">3 việc</span></div>
+      <div class="task-card doing"><div class="task-card-left"><div class="task-status-dot dot-yellow"></div></div><div class="task-card-body"><div class="task-card-top"><span class="task-ban-tag">Ban Tri Sự</span><div class="task-name-home">Vệ Sinh Chánh Điện</div></div><div class="task-meta"><span class="task-deadline">⏰ 06:00 – 12:00 · Hôm nay</span><span class="new-badge" style="background:var(--warning);">Cập nhật mới</span></div></div><div class="task-card-right"><span class="ban-status-badge badge-yellow">Đang làm</span></div></div>
+      <div class="task-card doing"><div class="task-card-left"><div class="task-status-dot dot-yellow"></div></div><div class="task-card-body"><div class="task-card-top"><span class="task-ban-tag">Ban Trang Trí</span><div class="task-name-home">Trang Trí Lễ Vu Lan</div></div><div class="task-meta"><span class="task-deadline">⏰ 28–30/04/2026</span></div></div><div class="task-card-right"><span class="ban-status-badge badge-yellow">Đang làm</span></div></div>
+      <div class="task-card doing"><div class="task-card-left"><div class="task-status-dot dot-yellow"></div></div><div class="task-card-body"><div class="task-card-top"><span class="task-ban-tag">Ban Tài Chính</span><div class="task-name-home">Dự Toán Cung Ứng Vật Tư</div></div><div class="task-meta"><span class="task-deadline">⏰ Hạn: 28/04 · 17:00</span></div></div><div class="task-card-right"><span class="ban-status-badge badge-yellow">Đang làm</span></div></div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-head"><span style="font-size:16px;">📋</span><div class="section-head-title">Phận Sự Các Ban — Tổng Quan</div><span class="section-head-count count-gray">32 Ban</span></div>
+      <div class="ban-list">
+        <div class="ban-row has-urgent" onclick="showScreen('screen-dashboard')"><div class="ban-row-num red">01</div><div class="ban-row-name">Ban Tri Sự</div><div class="ban-row-meta">3 việc · 1 quá hạn</div><div class="ban-row-right"><span class="new-badge">SP Mới</span><span class="ban-status-badge badge-red">Khẩn</span></div></div>
+        <div class="ban-row has-update"><div class="ban-row-num orange">02</div><div class="ban-row-name">Ban Hướng Dẫn</div><div class="ban-row-meta">2 việc · đang làm</div><div class="ban-row-right"><span class="new-badge" style="background:var(--warning);">Mới</span><span class="ban-status-badge badge-yellow">Đang làm</span></div></div>
+        <div class="ban-row"><div class="ban-row-num">03</div><div class="ban-row-name">Ban Nghi Lễ</div><div class="ban-row-meta">2 việc · hoàn thành</div><div class="ban-row-right"><span class="ban-status-badge badge-green">Hoàn thành</span></div></div>
+        <div class="ban-row"><div class="ban-row-num">04</div><div class="ban-row-name">Ban Môi Trường</div><div class="ban-row-meta">1 việc · đang làm</div><div class="ban-row-right"><span class="ban-status-badge badge-yellow">Đang làm</span></div></div>
+        <div class="ban-row has-urgent"><div class="ban-row-num red">05</div><div class="ban-row-name">Ban May</div><div class="ban-row-meta">2 việc · 1 quá hạn</div><div class="ban-row-right"><span class="ban-status-badge badge-red">Quá hạn</span></div></div>
+        <div class="ban-row"><div class="ban-row-num">06</div><div class="ban-row-name">Ban Y Tế</div><div class="ban-row-meta">1 việc · hoàn thành</div><div class="ban-row-right"><span class="ban-status-badge badge-green">Hoàn thành</span></div></div>
+        <div class="ban-row"><div class="ban-row-num">07</div><div class="ban-row-name">Ban Đời Sống</div><div class="ban-row-meta">Chưa có báo cáo hôm nay</div><div class="ban-row-right"><span class="ban-status-badge badge-gray">Chưa có</span></div></div>
+        <div class="ban-row"><div class="ban-row-num">08</div><div class="ban-row-name">Ban Quốc Tế</div><div class="ban-row-meta">1 việc · đang làm</div><div class="ban-row-right"><span class="ban-status-badge badge-yellow">Đang làm</span></div></div>
+        <div class="ban-row has-update"><div class="ban-row-num orange">19</div><div class="ban-row-name">Ban Vườn</div><div class="ban-row-meta">2 việc · có cập nhật</div><div class="ban-row-right"><span class="new-badge" style="background:var(--warning);">Mới</span><span class="ban-status-badge badge-yellow">Đang làm</span></div></div>
+        <div class="ban-row" style="border-style:dashed;opacity:0.6;" onclick="showScreen('screen-dashboard')"><div class="ban-row-num" style="background:#9ca3af;">…</div><div class="ban-row-name" style="color:var(--gray-text);">Xem tất cả 32 Ban →</div><div class="ban-row-right"><span class="ban-status-badge badge-gray">Xem đầy đủ</span></div></div>
+      </div>
+    </div>
   </div>
 </div>
+```
+
+  </div>
+</div><!-- /screen-home -->
+
+<!-- ===========================================================
+     SCREEN 3: DASHBOARD
+     =========================================================== -->
+
+<div id="screen-dashboard" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon">
+        <svg width="22" height="22" viewBox="0 0 36 36" fill="none">
+          <line x1="18" y1="1" x2="18" y2="6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M9 13 Q18 7 27 13" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <line x1="7" y1="13" x2="29" y2="13" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M5 21 Q18 14 31 21" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <line x1="3" y1="21" x2="33" y2="21" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="13" y="21" width="10" height="8" rx="1" stroke="white" stroke-width="1.5" fill="none"/>
+          <path d="M16 29 L16 25 Q18 23 20 25 L20 29" stroke="white" stroke-width="1.2" fill="none"/>
+          <line x1="4" y1="29" x2="32" y2="29" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="topbar-logo-text">Hệ Thống Quản Lý Chùa</div>
+        <div class="topbar-logo-sub">chua-app.vn</div>
+      </div>
+    </div>
+    <div class="topbar-date">
+      <div class="topbar-date-solar">T3, 28/04/2026</div>
+      <div class="topbar-date-lunar">🌙 12 tháng 3 Âm Lịch</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon-btn">🔔<div class="badge-count">3</div></div>
+      <div class="topbar-icon-btn">⚙️</div>
+      <div class="topbar-avatar" id="dashAvatar">PA</div>
+      <div>
+        <div class="topbar-user-name" id="dashUserName">Phan Tuấn Anh</div>
+        <div class="topbar-user-role" id="dashUserRole">Ban Tri Sự · Trưởng ban</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <div class="left-panel">
+      <div class="left-header">
+        <div class="left-header-title">🏢 Bảng Tổng Hợp <span style="font-size:10px;font-weight:400;opacity:0.6;">32 Ban</span></div>
+        <div class="left-header-sub">Click vào ban để xem chi tiết</div>
+      </div>
+      <div class="left-search"><input type="text" placeholder="🔍 Tìm ban..."></div>
+      <div class="ban-grid">
+        <div class="ban-cell status-urgent active" onclick="selectBan(this,'Ban Tri Sự','Phan Tuấn Anh','Kỹ thuật → BTS → BLĐ',true)"><div class="urgent-dot"></div><div class="ban-num">01</div><div class="ban-name">Ban Tri Sự</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban Hướng Dẫn','Thích Minh Tâm','Nghiệp vụ → BLĐ',false)"><div class="ban-num">02</div><div class="ban-name">Ban Hướng Dẫn</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Nghi Lễ','Thích Phước An','Nghiệp vụ → BLĐ',false)"><div class="ban-num">03</div><div class="ban-name">Ban Nghi Lễ</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban Môi Trường','Nguyễn Văn Bình','Kỹ thuật → BTS → BLĐ',false)"><div class="ban-num">04</div><div class="ban-name">Ban Môi Trường</div></div>
+        <div class="ban-cell status-urgent" onclick="selectBan(this,'Ban May','Trần Thị Lan','Kỹ thuật → BTS → BLĐ',false)"><div class="urgent-dot"></div><div class="ban-num">05</div><div class="ban-name">Ban May</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Y Tế','Lê Thị Hoa','Nghiệp vụ → BLĐ',false)"><div class="ban-num">06</div><div class="ban-name">Ban Y Tế</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban Đời Sống','Phạm Văn Nam','Kỹ thuật → BTS → BLĐ',false)"><div class="ban-num">07</div><div class="ban-name">Ban Đời Sống</div></div>
+        <div class="ban-cell"              onclick="selectBan(this,'Ban Quốc Tế','Thích Thiện Hải','Nghiệp vụ → BLĐ',false)"><div class="ban-num">08</div><div class="ban-name">Ban Quốc Tế</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Hành Hương','Nguyễn Thị Mai','Nghiệp vụ → BLĐ',false)"><div class="ban-num">09</div><div class="ban-name">Ban Hành Hương</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban Quản Lý DA','Trần Văn Hùng','Kỹ thuật → BTS → BLĐ',false)"><div class="ban-num">10</div><div class="ban-name">Ban Quản Lý DA</div></div>
+        <div class="ban-cell status-urgent" onclick="selectBan(this,'Ban Vật Tư','Lê Văn Mạnh','Kỹ thuật → BTS → BLĐ',false)"><div class="urgent-dot"></div><div class="ban-num">11</div><div class="ban-name">Ban Vật Tư</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Cơ Giới','Phạm Hữu Đức','Kỹ thuật → BTS → BLĐ',false)"><div class="ban-num">12</div><div class="ban-name">Ban Cơ Giới</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban Trang Trí','Nguyễn Thị Thu','Nghiệp vụ → BLĐ',false)"><div class="ban-num">13</div><div class="ban-name">Ban Trang Trí</div></div>
+        <div class="ban-cell"              onclick="selectBan(this,'Ban Bảo Tàng','Thích Tâm Giác','Nghiệp vụ → BLĐ',false)"><div class="ban-num">14</div><div class="ban-name">Ban Bảo Tàng</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Thư Viện','Trần Thị Bích','Nghiệp vụ → BLĐ',false)"><div class="ban-num">15</div><div class="ban-name">Ban Thư Viện</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban Thị Giả','Nguyễn Văn An','Nghiệp vụ → BLĐ',false)"><div class="ban-num">16</div><div class="ban-name">Ban Thị Giả</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Tri Khổ','Lê Thị Ngọc','Kỹ thuật → BTS → BLĐ',false)"><div class="ban-num">17</div><div class="ban-name">Ban Tri Khổ</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban An Ninh','Phạm Văn Dũng','Kỹ thuật → BTS → BLĐ',false)"><div class="ban-num">18</div><div class="ban-name">Ban An Ninh</div></div>
+        <div class="ban-cell status-urgent" onclick="selectBan(this,'Ban Vườn','Trần Văn Tám','Kỹ thuật → BTS → BLĐ',false)"><div class="urgent-dot"></div><div class="ban-num">19</div><div class="ban-name">Ban Vườn</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban Mộc','Nguyễn Văn Sơn','Kỹ thuật → BTS → BLĐ',false)"><div class="ban-num">20</div><div class="ban-name">Ban Mộc</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Cơ Khí','Lê Văn Tú','Kỹ thuật → BTS → BLĐ',false)"><div class="ban-num">21</div><div class="ban-name">Ban Cơ Khí</div></div>
+        <div class="ban-cell"              onclick="selectBan(this,'Ban Điện Nước','Trần Văn Khoa','Kỹ thuật → BTS → BLĐ',false)"><div class="ban-num">22</div><div class="ban-name">Ban Điện Nước</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban CS NCT','Nguyễn Thị Hằng','Nghiệp vụ → BLĐ',false)"><div class="ban-num">23</div><div class="ban-name">Ban CS NCT</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Tổ Chức SK','Phạm Thị Lan','Nghiệp vụ → BLĐ',false)"><div class="ban-num">24</div><div class="ban-name">Ban TC SK</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban An Sinh','Lê Thị Vân','Nghiệp vụ → BLĐ',false)"><div class="ban-num">25</div><div class="ban-name">Ban An Sinh</div></div>
+        <div class="ban-cell"              onclick="selectBan(this,'Ban HD Phật Tử','Thích Thiện Tâm','Nghiệp vụ → BLĐ',false)"><div class="ban-num">26</div><div class="ban-name">Ban HD Phật Tử</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban HT CVT','Nguyễn Văn Phúc','Nghiệp vụ → BLĐ',false)"><div class="ban-num">27</div><div class="ban-name">Ban HT CVT</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Văn Phòng','Trần Thị Hương','Nghiệp vụ → BLĐ',false)"><div class="ban-num">28</div><div class="ban-name">Ban Văn Phòng</div></div>
+        <div class="ban-cell status-done"   onclick="selectBan(this,'Ban Tài Chính','Lê Văn Quang','Nghiệp vụ → BLĐ',false)"><div class="ban-num">29</div><div class="ban-name">Ban Tài Chính</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban Nhân Sự','Phạm Thị Mai','Nghiệp vụ → BLĐ',false)"><div class="ban-num">30</div><div class="ban-name">Ban Nhân Sự</div></div>
+        <div class="ban-cell"              onclick="selectBan(this,'Ban Tiếp Tăng','Thích Minh Quang','Nghiệp vụ → BLĐ',false)"><div class="ban-num">31</div><div class="ban-name">Ban Tiếp Tăng</div></div>
+        <div class="ban-cell status-doing"  onclick="selectBan(this,'Ban Giáo Dục','Nguyễn Thị Phương','Nghiệp vụ → BLĐ',false)"><div class="ban-num">32</div><div class="ban-name">Ban Giáo Dục</div></div>
+      </div>
+      <div class="notif-panel">
+        <div class="notif-toggle"><span style="font-size:14px;">📢</span><div class="notif-toggle-title">Thông Báo Toàn Chùa</div><span class="notif-toggle-arrow">▲</span></div>
+        <div class="notif-list">
+          <div class="notif-item urgent"><div class="notif-item-label">📌 KHẨN</div><div class="notif-item-text">Lễ Phật Đản 12/4 Âm lịch — tất cả các ban chuẩn bị báo cáo trước 3 ngày</div><div class="notif-item-meta">28/04/2026 · 07:15 · Sư Phụ</div></div>
+          <div class="notif-item normal"><div class="notif-item-text">@Ban Vườn phối hợp Ban Mộc về trang trí chánh điện</div><div class="notif-item-meta">27/04/2026 · 14:30 · Ban Tri Sự</div></div>
+        </div>
+      </div>
+    </div>
+
+```
+<div class="right-panel">
+  <div class="ban-header">
+    <div class="ban-header-row1">
+      <div class="ban-header-icon">📋</div>
+      <div class="ban-header-info">
+        <div class="ban-header-name" id="banName">Ban Tri Sự</div>
+        <div class="ban-header-truong">Trưởng ban: <span id="banTruong">Phan Tuấn Anh</span></div>
+        <div class="ban-header-luong">Luồng: <span id="banLuong">Kỹ thuật → BTS → BLĐ</span></div>
+        <div class="sp-alert" id="spAlert">🔴 Có chỉ dạy SP mới</div>
+      </div>
+      <div class="ban-header-btns">
+        <div class="btn-row">
+          <button class="btn-sm">💬 Chat</button>
+          <button class="btn-sm">📹 Họp</button>
+          <button class="btn-sm">📦 Dự Toán</button>
+          <button class="btn-sm">+ Đề Xuất</button>
+          <button class="btn-sm" onclick="showScreen('screen-home')">🏠 Trang Chủ</button>
+        </div>
+        <button class="btn-sm primary" style="width:100%;">+ Thêm Việc</button>
+      </div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab(this)">📝 Nhật Ký Công Việc</div>
+    <div class="tab" onclick="switchTab(this)">📅 Lịch Công Tác</div>
+    <div class="tab" onclick="switchTab(this)">📦 Dự Toán Cung Ứng</div>
+  </div>
+  <div class="date-bar">
+    <span class="date-label">🗓 Xem theo ngày:</span>
+    <button class="date-nav-btn">◀</button>
+    <button class="date-btn" onclick="setDate(this)"><span class="date-solar">Hôm qua · 27/04</span><span class="date-lunar">🌙 11 tháng 3</span></button>
+    <button class="date-btn active" onclick="setDate(this)"><span class="date-solar">Hôm nay · 28/04</span><span class="date-lunar">🌙 12 tháng 3</span></button>
+    <button class="date-btn" onclick="setDate(this)"><span class="date-solar">Ngày mai · 29/04</span><span class="date-lunar">🌙 13 tháng 3</span></button>
+    <button class="date-nav-btn">▶</button>
+  </div>
+  <div class="tab-content">
+    <div class="sp-block">
+      <div class="sp-block-header"><div class="sp-block-badge">🔴 SƯ PHỤ CHỈ DẠY</div></div>
+      <div class="sp-block-text">Yêu cầu Ban Tri Sự hoàn thành báo cáo tổng kết Quý I trước 30/04. Đặc biệt chú ý phần ngân sách cung ứng vật tư.</div>
+      <div class="sp-block-time">28/04/2026 · 06:30</div>
+    </div>
+    <div class="nk-wrap">
+      <table class="nk-table">
+        <thead>
+          <tr>
+            <th style="width:26%">Đầu Mục Công Việc</th>
+            <th style="width:24%">Ý Kiến Ban Phối Hợp</th>
+            <th style="width:22%">Ý Kiến BTS</th>
+            <th class="th-sp" style="width:28%">🔴 Ý Kiến Sư Phụ / BLĐ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-urgent">
+            <td><div class="task-name">Báo cáo tổng kết Quý I</div><div class="task-time">⏰ Hạn: 30/04/2026</div><span class="status-badge status-doing">⏳ Đang làm</span></td>
+            <td><div class="opinion-text">Ban Tài Chính: Đã gửi số liệu ngân sách quý I. Cần bổ sung chi tiết từng khoản.</div><div class="opinion-who">Ban Tài Chính · 27/04 · 16:45</div></td>
+            <td><div class="opinion-text">Đề nghị bổ sung đánh giá tiến độ từng ban kỹ thuật.</div><div class="opinion-who">BTS · 27/04 · 16:45</div></td>
+            <td class="td-sp"><div class="sp-taught-tag">🔴 SP Đã Chỉ Dạy</div><div class="sp-opinion-text">Cần hoàn thành đúng hạn. Phần ngân sách phải chi tiết từng khoản mục. Không được thiếu mục vật tư.</div><div class="sp-opinion-time">Sư Phụ · 28/04/2026 · 06:30</div></td>
+          </tr>
+          <tr>
+            <td><div class="task-name">Vệ Sinh Chánh Điện</div><div class="task-time">⏰ 06:00 – 12:00 · 28/04</div><span class="status-badge status-doing">⏳ Đang làm</span></td>
+            <td><div class="opinion-text">Đồng ý mua loại tốt, chú ý an toàn khi quét trần cao.</div><div class="opinion-who">Ban Tài Chính · 28/04 · 07:45</div></td>
+            <td><div class="opinion-text">Đã bảo Ban Cung Ứng chuẩn bị hàng. Dự kiến xong trước 12:00.</div><div class="opinion-who">BTS · 28/04 · 08:00</div></td>
+            <td class="td-sp"><div class="sp-taught-tag">🔴 SP Đã Chỉ Dạy</div><div class="sp-opinion-text">Cần thêm 5 bộ chổi quét trần mới cho tuần sau. Ưu tiên loại cán dài.</div><div class="sp-opinion-time">Sư Phụ · 28/04/2026 · 08:30</div></td>
+          </tr>
+          <tr class="row-urgent">
+            <td><div class="task-name">Dự Toán Cung Ứng Vật Tư</div><div class="task-time">⏰ Hạn: 28/04 · 17:00</div><span class="status-badge status-need">⚠ Cần xin ý kiến</span></td>
+            <td><div class="opinion-text">Nến bơ loại lớn: 50 thùng. Hoa tươi các loại: 120 bó.</div><div class="opinion-who">Ban Kế Toán · 28/04 · 09:00</div></td>
+            <td><div class="opinion-text">Đã giải ngân tạm ứng. Chờ xác nhận số lượng cuối.</div><div class="opinion-who">BTS · 28/04 · 09:10</div></td>
+            <td class="td-sp"><div class="sp-taught-tag">🔴 SP Đã Chỉ Dạy</div><div class="sp-opinion-text">Trưởng ban Tri Sự cần xác nhận trước 17:00 hôm nay. Không được trễ.</div><div class="sp-opinion-time">Sư Phụ · 28/04/2026 · 09:15</div></td>
+          </tr>
+          <tr>
+            <td><div class="task-name">Trang Trí Lễ Vu Lan</div><div class="task-time">⏰ 28–30/04/2026</div><span class="status-badge status-doing">⏳ Đang làm</span></td>
+            <td><div class="opinion-text">Thiết kế thêm cụm hoa sen đà ở cổng tam quan.</div><div class="opinion-who">Ban Trang Trí · 28/04 · 08:30</div></td>
+            <td><div class="opinion-text">Cần duyệt kinh phí trước khi thi công.</div><div class="opinion-who">BTS · 28/04 · 09:00</div></td>
+            <td class="td-sp"><div class="sp-empty">Chờ chỉ dạy từ Sư Phụ...</div></td>
+          </tr>
+          <tr class="row-done">
+            <td><div class="task-name">Báo Cáo Tháng 4</div><div class="task-time">✅ Hoàn thành: 27/04</div><span class="status-badge status-done">✓ Đã làm</span></td>
+            <td><div class="opinion-text">Nội dung đầy đủ, trình bày rõ ràng.</div><div class="opinion-who">Ban Văn Phòng · 26/04</div></td>
+            <td><div class="opinion-text">Đã duyệt và chuyển BLĐ.</div><div class="opinion-who">BTS · 27/04</div></td>
+            <td class="td-sp"><div class="sp-taught-tag">🔴 SP Đã Chỉ Dạy</div><div class="sp-opinion-text">Tốt. Tháng sau cần bổ sung mục phân tích chi phí vật tư chi tiết hơn.</div><div class="sp-opinion-time">Sư Phụ · 27/04/2026 · 10:15</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</div><!-- /screen-dashboard -->
 
 <script>
-const DAYS=['CN','T2','T3','T4','T5','T6','T7'];
-const now=new Date();
-const p2=n=>String(n).padStart(2,'0');
-const fDate=d=>`${DAYS[d.getDay()]}, ${p2(d.getDate())}/${p2(d.getMonth()+1)}/${d.getFullYear()}`;
+/* ============================================================
+   SCREEN ROUTER
+   ============================================================ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-// ── THUẬT TOÁN ÂM LỊCH (Hồ Ngọc Đức) ──
-function INT(d){return Math.floor(d);}
-function jdFromDate(dd,mm,yy){
-  var a=INT((14-mm)/12),y=yy+4800-a,m=mm+12*a-3;
-  var jd=dd+INT((153*m+2)/5)+365*y+INT(y/4)-INT(y/100)+INT(y/400)-32045;
-  if(jd<2299161){jd=dd+INT((153*m+2)/5)+365*y+INT(y/4)-32083;}
-  return jd;
-}
-function jdToDate(jd){
-  var a,b,c,d,e,m;
-  if(jd>2299160){a=jd+32044;b=INT((4*a+3)/146097);c=a-INT((146097*b)/4);}
-  else{b=0;c=jd+32082;}
-  d=INT((4*c+3)/1461);e=c-INT((1461*d)/4);m=INT((5*e+2)/5);
-  var day=e-INT((153*m+2)/5)+1;
-  var month=m+3-12*INT(m/10);
-  var year=100*b+d-4800+INT(m/10);
-  return[day,month,year];
-}
-function NewMoon(k){
-  var T=k/1236.85,T2=T*T,T3=T2*T,dr=Math.PI/180;
-  var Jd1=2415020.75933+29.53058868*k+0.0001178*T2-0.000000155*T3;
-  Jd1=Jd1+0.00033*Math.sin((166.56+132.87*T-0.009173*T2)*dr);
-  var M=359.2242+29.10535608*k-0.0000333*T2-0.00000347*T3;
-  var Mpr=306.0253+385.81691806*k+0.0107306*T2+0.00001236*T3;
-  var F=21.2964+390.67050646*k-0.0016528*T2-0.00000239*T3;
-  var C1=(0.1734-0.000393*T)*Math.sin(M*dr)+0.0021*Math.sin(2*dr*M);
-  C1=C1-0.4068*Math.sin(Mpr*dr)+0.0161*Math.sin(dr*2*Mpr);
-  C1=C1-0.0004*Math.sin(dr*3*Mpr)+0.0104*Math.sin(dr*2*F);
-  C1=C1-0.0051*Math.sin(dr*(M+Mpr))-0.0074*Math.sin(dr*(M-Mpr));
-  C1=C1+0.0004*Math.sin(dr*(2*F+M))-0.0004*Math.sin(dr*(2*F-M));
-  C1=C1-0.0006*Math.sin(dr*(2*F+Mpr))+0.0010*Math.sin(dr*(2*F-Mpr));
-  C1=C1+0.0005*Math.sin(dr*(M+2*Mpr));
-  var deltat=1;
-  if(T<-11)deltat=0.001+0.000839*T+0.0002261*T2-0.00000845*T3-0.000000081*T*T3;
-  else deltat=-0.000278+0.000265*T+0.000262*T2;
-  return Jd1+C1-deltat;
-}
-function SunLongitude(jdn){
-  var T=(jdn-2451545.0)/36525,T2=T*T,dr=Math.PI/180,M,L0,DL,L;
-  L0=280.46645+36000.76983*T+0.0003032*T2;
-  M=357.52910+35999.05030*T-0.0001559*T2-0.00000048*T*T2;
-  DL=(1.9146-0.004817*T-0.000014*T2)*Math.sin(dr*M);
-  DL=DL+(0.019993-0.000101*T)*Math.sin(dr*2*M)+0.00029*Math.sin(dr*3*M);
-  L=L0+DL;var omega=125.04-1934.136*T;
-  L=L-0.00569-0.00478*Math.sin(omega*dr);
-  L=L*dr;L=L-Math.PI*2*INT(L/(Math.PI*2));
-  return INT(L/Math.PI*6);
-}
-function getNewMoonDay(k,timeZone){return INT(NewMoon(k)+0.5+timeZone/24);}
-function getSunLongitude(dayNumber,timeZone){return SunLongitude(dayNumber-0.5-timeZone/24);}
-function getLunarMonth11(yy,timeZone){
-  var off=jdFromDate(31,12,yy)-2415021;
-  var k=INT(off/29.530588853);
-  var nm=getNewMoonDay(k,timeZone);
-  var sunLong=getSunLongitude(nm,timeZone);
-  if(sunLong>=9)nm=getNewMoonDay(k-1,timeZone);
-  return nm;
-}
-function getLeapMonthOffset(a11,timeZone){
-  var k=INT((a11-2415021.076998695)/29.530588853+0.5),last,i=1,arc;
-  arc=getSunLongitude(getNewMoonDay(k+i,timeZone),timeZone);
-  do{last=arc;i++;arc=getSunLongitude(getNewMoonDay(k+i,timeZone),timeZone);}
-  while(arc!==last&&i<14);
-  return i-1;
-}
-function convertSolar2Lunar(dd,mm,yy,timeZone){
-  var dayNumber=jdFromDate(dd,mm,yy);
-  var k=INT((dayNumber-2415021.076998695)/29.530588853);
-  var monthStart=getNewMoonDay(k+1,timeZone);
-  if(monthStart>dayNumber)monthStart=getNewMoonDay(k,timeZone);
-  var a11=getLunarMonth11(yy,timeZone);
-  var b11=a11;
-  var lunarYear;
-  if(a11>=monthStart){lunarYear=yy;a11=getLunarMonth11(yy-1,timeZone);}
-  else{lunarYear=yy+1;b11=getLunarMonth11(yy+1,timeZone);}
-  var lunarDay=dayNumber-monthStart+1;
-  var diff=INT((monthStart-a11)/29);
-  var lunarLeap=0,lunarMonth=diff+11;
-  if(b11-a11>365){
-    var leapMonthDiff=getLeapMonthOffset(a11,timeZone);
-    if(diff>=leapMonthDiff){lunarMonth=diff+10;if(diff===leapMonthDiff)lunarLeap=1;}
+/* ============================================================
+   LOGIN
+   ============================================================ */
+const accounts = {
+  'suphu@chua.vn': { name: 'Sư Phụ',       initials: 'SP', roleLabel: 'Sư Phụ' },
+  'bld@chua.vn':   { name: 'Ban Lãnh Đạo',  initials: 'BL', roleLabel: 'Ban Lãnh Đạo' },
+  'bts@chua.vn':   { name: 'Ban Trị Sự',    initials: 'BT', roleLabel: 'Ban Trị Sự · Trưởng ban' },
+  'ban1@chua.vn':  { name: 'Phan Tuấn Anh', initials: 'PA', roleLabel: 'Ban Tri Sự · Trưởng ban' },
+};
+
+function handleLogin() {
+  const email = document.getElementById('emailInput').value.trim().toLowerCase();
+  const msg   = document.getElementById('msgBox');
+  msg.className = 'msg'; msg.textContent = '';
+  if (!email) { msg.className = 'msg error'; msg.textContent = 'Vui lòng nhập địa chỉ email.'; return; }
+  if (!email.includes('@')) { msg.className = 'msg error'; msg.textContent = 'Email không hợp lệ.'; return; }
+  const user = accounts[email];
+  if (user) {
+    msg.className = 'msg info';
+    msg.textContent = `✓ Xin chào ${user.name} · Đang chuyển đến Trang Chủ...`;
+    ['homeAvatar','dashAvatar'].forEach(id => document.getElementById(id).textContent = user.initials);
+    ['homeUserName','dashUserName'].forEach(id => document.getElementById(id).textContent = user.name);
+    ['homeUserRole','dashUserRole'].forEach(id => document.getElementById(id).textContent = user.roleLabel);
+    setTimeout(() => showScreen('screen-home'), 900);
+  } else {
+    msg.className = 'msg error';
+    msg.textContent = 'Email chưa được đăng ký. Liên hệ Ban Tri Sự để được cấp tài khoản.';
   }
-  if(lunarMonth>12)lunarMonth=lunarMonth-12;
-  if(lunarMonth>=11&&diff<4)lunarYear--;
-  return[lunarDay,lunarMonth,lunarYear,lunarLeap];
 }
 
-// Wrapper tiện dùng
-function toLunar(d){return convertSolar2Lunar(d.getDate(),d.getMonth()+1,d.getFullYear(),7);}
-const AM_DAY=['','Mùng 1','Mùng 2','Mùng 3','Mùng 4','Mùng 5','Mùng 6','Mùng 7','Mùng 8','Mùng 9','Mùng 10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30'];
-function amFull(d){const[ld,lm]=toLunar(d);return`${AM_DAY[ld]} tháng ${lm} Âm Lịch`;}
-function amShort(d){const[ld]=toLunar(d);return AM_DAY[ld];}
-
-document.getElementById('dd').textContent=fDate(now);
-document.getElementById('da').textContent='🌙 '+amFull(now);
-
-const bans=[
-  {id:1,name:'Ban Tri Sự',s:'r',data:true},
-  {id:2,name:'Ban Hướng Dẫn',s:'g'},{id:3,name:'Ban Nghi Lễ',s:'y'},
-  {id:4,name:'Ban Môi Trường',s:'g'},{id:5,name:'Ban May',s:'g'},
-  {id:6,name:'Ban Y Tế',s:'g'},{id:7,name:'Ban Đời Sống',s:'y'},
-  {id:8,name:'Ban Quốc Tế',s:'g'},{id:9,name:'Ban Hành Hương',s:'g'},
-  {id:10,name:'Ban Quản Lý DA',s:'y'},{id:11,name:'Ban Vật Tư',s:'r'},
-  {id:12,name:'Ban Cơ Giới',s:'g'},{id:13,name:'Ban Trang Trí',s:'y'},
-  {id:14,name:'Ban Bảo Tàng',s:'g'},{id:15,name:'Ban Thư Viện',s:'g'},
-  {id:16,name:'Ban Thị Giá',s:'g'},{id:17,name:'Ban Tri Khổ',s:'y'},
-  {id:18,name:'Ban An Ninh',s:'g'},{id:19,name:'Ban Vườn',s:'r'},
-  {id:20,name:'Ban Mộc',s:'y'},{id:21,name:'Ban Cơ Khí',s:'g'},
-  {id:22,name:'Ban Điện Nước',s:'y'},{id:23,name:'Ban Tượng',s:'g'},
-  {id:24,name:'Ban Công Nhật',s:'g'},{id:25,name:'Ban Tài Chính',s:'g'},
-  {id:26,name:'Ban Nhân Sự',s:'y'},{id:27,name:'Ban Văn Phòng',s:'g'},
-  {id:28,name:'Ban Giáo Dục',s:'g'},{id:29,name:'Ban Truyền Thông',s:'g'},
-  {id:30,name:'Ban Chăm Sóc',s:'y'},{id:31,name:'Ban Tổ Chức',s:'g'},
-  {id:32,name:'Ban An Sinh',s:'g'},
-];
-
-let sel=null,curTab='nhatky';
-const grid=document.getElementById('banGrid');
-bans.forEach(b=>{
-  const c=document.createElement('div');
-  c.className=`bc b${b.s}`;c.id=`bc${b.id}`;
-  c.innerHTML=`<div class="bid">${p2(b.id)}</div><div class="bn">${b.name}</div>${b.s==='r'?'<div class="adot"></div>':''}`;
-  c.onclick=()=>selectBan(b);
-  grid.appendChild(c);
-});
-selectBan(bans[0]);
-
-function selectBan(b){
-  if(sel) document.getElementById(`bc${sel.id}`)?.classList.remove('sel');
-  sel=b; curTab='nhatky';
-  document.getElementById(`bc${b.id}`)?.classList.add('sel');
-  renderZ2(b);
+/* ============================================================
+   CALENDAR
+   ============================================================ */
+const lunarOffset = 16;
+function getLunar(d) {
+  const offset = d - 1 - lunarOffset;
+  return offset < 0 ? String(29 + offset + 1) : String(offset + 1);
+}
+const calDays = document.getElementById('calDays');
+const startDay = 2, totalDays = 30, todayD = 28;
+const urgentDays = [30], eventDays = [28, 30];
+for (let i = 0; i < startDay; i++) {
+  const d = document.createElement('div');
+  d.className = 'cal-day other-month';
+  d.innerHTML = `<span class="solar">${31 - startDay + i + 1}</span>`;
+  calDays.appendChild(d);
+}
+for (let d = 1; d <= totalDays; d++) {
+  const div = document.createElement('div');
+  let cls = 'cal-day';
+  if (d === todayD)           cls += ' today';
+  if (urgentDays.includes(d)) cls += ' urgent-day';
+  if (eventDays.includes(d))  cls += ' has-event';
+  div.className = cls;
+  div.innerHTML = `<span class="solar">${d}</span><span class="lunar">${getLunar(d)}</span>`;
+  calDays.appendChild(div);
 }
 
-function renderZ2(b){
-  const z2=document.getElementById('zone2');
-  if(!b.data){z2.innerHTML=`<div class="z2emp"><div class="ei">📋</div><p><strong>${b.name}</strong> — Chưa có dữ liệu</p></div>`;return;}
-  const days=[-1,0,1].map(o=>{const d=new Date(now);d.setDate(now.getDate()+o);return{d,lbl:o===-1?'Hôm qua':o===0?'Hôm nay':'Ngày mai',act:o===0};});
-  z2.innerHTML=`
-    <div class="z2hdr">
-      <div class="z2htop">
-        <div>
-          <div class="z2bn">📋 Ban Tri Sự</div>
-          <div class="z2tr">Trưởng ban: <span>Phan Tuấn Anh</span> &nbsp;·&nbsp; Luồng: Kỹ thuật → BTS → BLĐ &nbsp;·&nbsp; <span style="color:var(--sp);font-weight:700;">● Có chỉ đạo SP mới</span></div>
-        </div>
-        <div class="z2acts">
-          <button class="abtn">💬 Chat</button>
-          <button class="abtn">🎥 Họp</button>
-          <button class="abtn">📦 Dự Toán</button>
-          <button class="abtn">➕ Đề Xuất</button>
-          <button class="abtn pri">+ Thêm Việc</button>
-        </div>
-      </div>
-      <div class="z2tabs">
-        <div class="ztab ${curTab==='nhatky'?'act':''}" onclick="switchTab('nhatky',event)">📝 Nhật Ký Công Việc</div>
-        <div class="ztab ${curTab==='lich'?'act':''}" onclick="switchTab('lich',event)">📅 Lịch Công Tác</div>
-        <div class="ztab ${curTab==='dutoán'?'act':''}" onclick="switchTab('dutoán',event)">📦 Dự Toán Cung Ứng</div>
-      </div>
-    </div>
-    <div id="z2tl" class="z2tl" style="${curTab==='lich'?'display:none':''}">
-      <span class="tll">📅 Xem theo ngày:</span>
-      <span class="tlnav">◀</span>
-      <div class="tldays">${days.map(({d,lbl,act})=>`<button class="dbt ${act?'act':''}" onclick="switchDay(this)"><span class="dd2">${lbl}</span><span class="da2">${p2(d.getDate())}/${p2(d.getMonth()+1)} · 🌙${amShort(d)}</span></button>`).join('')}</div>
-      <span class="tlnav">▶</span>
-    </div>
-    <div class="z2sc" id="z2sc">${tabHTML(curTab)}</div>
-  `;
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function selectBan(el, name, truong, luong, hasSP) {
+  document.querySelectorAll('.ban-cell').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('banName').textContent   = name;
+  document.getElementById('banTruong').textContent = truong;
+  document.getElementById('banLuong').textContent  = luong;
+  document.getElementById('spAlert').style.display = hasSP ? 'flex' : 'none';
 }
-
-function switchTab(tab,e){
-  curTab=tab;
-  document.querySelectorAll('.ztab').forEach(t=>t.classList.remove('act'));
-  e.target.classList.add('act');
-  document.getElementById('z2sc').innerHTML=tabHTML(tab);
-  const tl=document.getElementById('z2tl');
-  if(tl) tl.style.display=tab==='lich'?'none':'';
+function switchTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
 }
-
-function tabHTML(tab){
-  if(tab==='nhatky') return `
-    <div class="spb"><span class="spbg">👑 SƯ PHỤ CHỈ ĐẠO</span>
-      <div><div class="sptxt">Yêu cầu Ban Tri Sự hoàn thành báo cáo tổng kết quý I trước 30/04. Đặc biệt chú ý phần ngân sách cung ứng vật tư.</div><div class="sptm">28/04/2026 · 06:30</div></div>
-    </div>
-    <table class="jt">
-      <thead><tr>
-        <th class="c1">Đầu mục công việc</th>
-        <th class="c2">Ý kiến ban phối hợp</th>
-        <th class="c3">Ý kiến BTS</th>
-        <th class="c4">Ý kiến Sư Phụ / BLĐ</th>
-      </tr></thead>
-      <tbody>
-        <tr>
-          <td><div class="tnm">Báo cáo tổng kết quý I</div><div class="ttm">⏰ Hạn: 30/04/2026</div><span class="sc sy">🟡 Đang làm</span></td>
-          <td><div class="op"><div class="opa">Ban Tài Chính:</div>Đã gửi số liệu ngân sách quý I. Cần bổ sung chi phí phát sinh tháng 3.<div class="optm">27/04 · 15:20</div></div></td>
-          <td><div class="op"><div class="opa">BTS:</div>Đề nghị bổ sung đánh giá tiến độ từng ban kỹ thuật.<div class="optm">27/04 · 16:45</div></div></td>
-          <td><div class="spo"><div class="spoa">👑 Sư Phụ:</div>Cần hoàn thành đúng hạn. Phần ngân sách phải chi tiết từng khoản mục.<div class="spotm">28/04 · 06:30</div></div></td>
-        </tr>
-        <tr>
-          <td><div class="tnm">Kiểm tra điện nước khu tăng xá</div><div class="ttm">⏰ Hạn: 29/04/2026</div><span class="sc sr">🔴 Quá hạn</span></td>
-          <td><div class="op"><div class="opa">Ban Điện Nước:</div>Đã kiểm tra khu A và B. Khu C còn chờ thiết bị thay thế.<div class="optm">26/04 · 10:10</div></div></td>
-          <td><div class="op"><div class="opa">BTS:</div>Ưu tiên khu C — ảnh hưởng sinh hoạt tăng ni.<div class="optm">26/04 · 11:00</div></div></td>
-          <td><div class="spo emp">— Chưa có ý kiến —</div></td>
-        </tr>
-        <tr>
-          <td><div class="tnm">Chuẩn bị lễ Phật Đản</div><div class="ttm">⏰ Hạn: 10/05/2026</div><span class="sc sg">🟢 Đã lên kế hoạch</span></td>
-          <td><div class="op"><div class="opa">Ban Nghi Lễ:</div>Đã lên chương trình. Cần xác nhận số lượng tham dự từ Ban Quản Chúng.<div class="optm">25/04 · 09:30</div></div></td>
-          <td><div class="op emp">— Chưa có ý kiến —</div></td>
-          <td><div class="spo emp">— Chưa có ý kiến —</div></td>
-        </tr>
-        <tr>
-          <td><div class="tnm">Họp giao ban tháng 5</div><div class="ttm">⏰ Ngày: 04/05/2026</div><span class="sc sg">🟢 Đã lên kế hoạch</span></td>
-          <td><div class="op emp">— Chưa có ý kiến —</div></td>
-          <td><div class="op"><div class="opa">BTS:</div>Chánh điện tầng 1. Mời trưởng ban có mặt lúc 07:15.<div class="optm">28/04 · 08:00</div></div></td>
-          <td><div class="spo emp">— Chưa có ý kiến —</div></td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="add-row"><button class="addbtn">＋ Thêm đầu mục công việc mới</button></div>`;
-
-  if(tab==='lich'){
-    const dn=['T2','T3','T4','T5','T6','T7','CN'];
-    let cells='';
-    dn.forEach(d=>{cells+=`<div class="lgh">${d}</div>`;});
-    const cy=now.getFullYear(),cm=now.getMonth();
-    const firstDay=new Date(cy,cm,1),lastDay=new Date(cy,cm+1,0),totalDays=lastDay.getDate();
-    let startOffset=(firstDay.getDay()+6)%7;
-    const prevLast=new Date(cy,cm,0).getDate();
-    for(let i=0;i<startOffset;i++){const pd=new Date(cy,cm-1,prevLast-startOffset+i+1);const[pld]=toLunar(pd);cells+=`<div class="lgc oth"><div class="lgn">${pd.getDate()}</div><div class="lgam">${AM_DAY[pld]}</div></div>`;}
-    const evs={4:[{t:'07:30 Họp giao ban',c:'g'}],10:[{t:'Lễ Phật Đản',c:'r'}],15:[{t:'Kiểm tra định kỳ',c:'y'}],20:[{t:'Họp BTS',c:'g'}]};
-    for(let d=1;d<=totalDays;d++){const dd=new Date(cy,cm,d);const[ld]=toLunar(dd);const isToday=(d===now.getDate()&&cm===now.getMonth()&&cy===now.getFullYear());const ev=evs[d]||[];cells+=`<div class="lgc${isToday?' today-cell':''}"><div class="lgn${isToday?' today':''}">${d}</div><div class="lgam">${AM_DAY[ld]}</div>${ev.map(e=>`<div class="lgev ${e.c}">${e.t}</div>`).join('')}</div>`;}
-    const endOffset=(startOffset+totalDays)%7;
-    if(endOffset>0){for(let i=1;i<=7-endOffset;i++){const nd=new Date(cy,cm+1,i);const[nld]=toLunar(nd);cells+=`<div class="lgc oth"><div class="lgn">${i}</div><div class="lgam">${AM_DAY[nld]}</div></div>`;}}
-    const mName=`Tháng ${cm+1}/${cy} · Âm Lịch`;
-    return `<div class="lich-wrap">
-      <div class="lich-hdr"><span class="lich-hdr-t">📅 Lịch Công Tác — Ban Tri Sự</span>
-        <div class="lich-nav"><button class="lnbtn">◀ Trước</button><span class="lich-mon">${mName}</span><button class="lnbtn">Sau ▶</button></div>
-      </div>
-      <div class="lich-grid">${cells}</div>
-    </div>
-    <div class="sync-note">🔗 Lịch Ban Tri Sự được đồng bộ với lịch chung toàn chùa — hiển thị trên lịch tổng hợp của BLĐ và Sư Phụ.</div>`;
-  }
-
-  if(tab==='dutoán') return `<div class="dt-wrap">
-    <div class="dt-hdr"><span class="dt-hdr-t">📦 Dự Toán Cung Ứng — Ban Tri Sự</span>
-      <button class="abtn" style="background:rgba(255,255,255,.15);color:#fff;border-color:transparent;">+ Thêm yêu cầu</button>
-    </div>
-    <table class="dtt">
-      <thead><tr><th>Đầu mục công việc</th><th>Vật tư / Thiết bị</th><th>Số lượng</th><th>Đơn vị</th><th>Ghi chú</th><th>Trạng thái</th></tr></thead>
-      <tbody>
-        <tr><td>Kiểm tra điện nước</td><td>Dây điện 3 lõi</td><td>50</td><td>mét</td><td>Loại chịu nhiệt, khu C</td><td><span class="dts dtp">⏳ Chờ duyệt</span></td></tr>
-        <tr><td>Kiểm tra điện nước</td><td>Ổ cắm chống nước</td><td>20</td><td>cái</td><td></td><td><span class="dts dtp">⏳ Chờ duyệt</span></td></tr>
-        <tr><td>Chuẩn bị lễ Phật Đản</td><td>Đèn lồng trang trí</td><td>100</td><td>cái</td><td>Màu vàng, đỏ</td><td><span class="dts dtok">✅ Đã duyệt</span></td></tr>
-        <tr><td>Chuẩn bị lễ Phật Đản</td><td>Vải phủ bàn</td><td>30</td><td>mét</td><td>Gửi Ban Cung Ứng trước 05/05</td><td><span class="dts dtok">✅ Đã duyệt</span></td></tr>
-      </tbody>
-    </table></div>`;
-  return '';
+function setDate(el) {
+  document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
 }
-
-function switchDay(btn){document.querySelectorAll('.dbt').forEach(b=>b.classList.remove('act'));btn.classList.add('act');}
-let notifOpen=true;
-function toggleNotif(){notifOpen=!notifOpen;document.getElementById('nplist').style.display=notifOpen?'block':'none';document.getElementById('nparr').textContent=notifOpen?'▲':'▼';}
-let adminOpen=false;
-function toggleAdmin(e){e.stopPropagation();adminOpen=!adminOpen;document.getElementById('adminDd').classList.toggle('open',adminOpen);}
-document.addEventListener('click',()=>{adminOpen=false;document.getElementById('adminDd').classList.remove('open');});
 </script>
 
 </body>
